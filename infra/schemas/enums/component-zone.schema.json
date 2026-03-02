@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "enums/component-zone.schema.json",
+  "title": "ComponentZone",
+  "type": "string",
+  "enum": [
+    "Front Wing", "Rear Wing", "Floor", "Floor Edge", "Sidepod",
+    "Diffuser", "Bargeboard", "Engine Cover", "Brake Duct",
+    "Suspension Arm", "Halo", "Nose", "Other"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "event.schema.json",
+  "title": "Event",
+  "description": "A race weekend event containing upgrades, evidence, and assets",
+  "type": "object",
+  "required": ["id", "race_id", "status", "created_at"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "race_id": { "type": "string", "format": "uuid" },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "ingesting", "annotating", "reconstructing", "published"]
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

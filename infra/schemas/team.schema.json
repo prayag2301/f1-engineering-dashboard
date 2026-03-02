@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "team.schema.json",
+  "title": "Team",
+  "type": "object",
+  "required": ["id", "name", "full_name", "created_at"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "name": { "type": "string" },
+    "full_name": { "type": "string" },
+    "base": { "type": ["string", "null"] },
+    "team_principal": { "type": ["string", "null"] },
+    "power_unit": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "race.schema.json",
+  "title": "Race",
+  "type": "object",
+  "required": ["id", "name", "circuit", "round_number", "season", "date", "created_at"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "name": { "type": "string" },
+    "circuit": { "type": "string" },
+    "country": { "type": ["string", "null"] },
+    "round_number": { "type": "integer" },
+    "season": { "type": "integer" },
+    "date": { "type": "string", "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
