@@ -1,0 +1,4 @@
+redis>=5.0.0
+# GPU/ML dependencies (install separately based on CUDA version):
+# torch>=2.0.0
+# nerfstudio>=1.0.0

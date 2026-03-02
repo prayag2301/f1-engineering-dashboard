@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "enums/upgrade-category.schema.json",
+  "title": "UpgradeCategory",
+  "type": "string",
+  "enum": ["Aero", "Mechanical", "Cooling", "Floor", "Suspension", "Power Unit", "Other"]
+}

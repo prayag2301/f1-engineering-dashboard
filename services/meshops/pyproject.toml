@@ -1,0 +1,12 @@
+[project]
+name = "f1-service-meshops"
+version = "0.1.0"
+description = "Mesh alignment, delta computation, and heatmap generation"
+requires-python = ">=3.12"
+dependencies = [
+    "redis>=5.0.0",
+    "numpy>=1.26.0",
+]
+
+[project.scripts]
+f1-meshops = "meshops.worker:main"

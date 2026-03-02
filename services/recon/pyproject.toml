@@ -1,0 +1,11 @@
+[project]
+name = "f1-service-recon"
+version = "0.1.0"
+description = "GPU worker for 3D reconstruction (NeRF/Gaussian Splat)"
+requires-python = ">=3.12"
+dependencies = [
+    "redis>=5.0.0",
+]
+
+[project.scripts]
+f1-recon = "recon.worker:main"
