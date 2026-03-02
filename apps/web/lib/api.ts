@@ -1,7 +1,7 @@
 const API_BASE =
   typeof window !== "undefined"
     ? (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1")
-    : (process.env.INTERNAL_API_URL ?? "http://backend:8000/api/v1");
+    : (process.env.INTERNAL_API_URL ?? "http://api:8000/api/v1");
 
 export interface Team {
   id: string;
@@ -92,4 +92,53 @@ export async function getRaces(season?: number): Promise<Race[]> {
 
 export async function seedDatabase(): Promise<{ message: string; seeded: boolean }> {
   return apiFetch("/seed/", { method: "POST" });
+}
+
+export interface UpgradeIntelligencePreview {
+  inferred_category: string;
+  inferred_component_zone: string;
+  confidence: number;
+  aero_reasoning: string;
+  mechanical_reasoning: string;
+  performance_hypothesis: string;
+  signals: string[];
+}
+
+export async function previewUpgradeIntelligence(payload: {
+  description: string;
+  technical_detail?: string;
+  expected_effect?: string;
+  source?: string;
+}): Promise<UpgradeIntelligencePreview> {
+  return apiFetch("/upgrades/intelligence/preview", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export interface UpgradeBatchIngestResult {
+  created: number;
+  skipped_duplicates: number;
+  upgrades: Upgrade[];
+}
+
+export async function ingestUpgrades(payload: {
+  items: Array<{
+    team_id: string;
+    race_id: string;
+    component_id: string;
+    description: string;
+    technical_detail?: string;
+    expected_effect?: string;
+    category?: string;
+    confidence?: number;
+    source?: string;
+  }>;
+  enrich_missing_fields?: boolean;
+  skip_duplicates?: boolean;
+}): Promise<UpgradeBatchIngestResult> {
+  return apiFetch("/upgrades/ingest", {
+    method: "POST",
+    body: JSON.stringify({ enrich_missing_fields: true, skip_duplicates: true, ...payload }),
+  });
 }

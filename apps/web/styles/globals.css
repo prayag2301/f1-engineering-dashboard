@@ -225,6 +225,18 @@ a {
   border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
+.badge--power-unit {
+  background: rgba(168, 85, 247, 0.12);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.badge--other {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-accent);
+}
+
 .badge--confidence {
   background: var(--bg-secondary);
   color: var(--text-secondary);
@@ -456,5 +468,208 @@ a {
 
   .focus-viewer {
     min-height: 280px;
+  }
+}
+
+/* ── Analyze page ───────────────────────────────────────── */
+
+.analyze-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 860px;
+}
+
+.analyze-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.analyze-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.analyze-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.analyze-label {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.analyze-required {
+  color: var(--accent-red);
+}
+
+.analyze-optional {
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.analyze-textarea,
+.analyze-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  padding: 10px 12px;
+  resize: vertical;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.analyze-textarea:focus,
+.analyze-input:focus {
+  outline: none;
+  border-color: var(--accent-green);
+}
+
+.analyze-input {
+  resize: none;
+}
+
+.analyze-submit {
+  align-self: flex-start;
+  background: var(--accent-green);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 10px 24px;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+}
+
+.analyze-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.analyze-error {
+  background: rgba(225, 6, 0, 0.08);
+  border: 1px solid rgba(225, 6, 0, 0.2);
+  border-radius: 6px;
+  color: var(--accent-red);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 16px 20px;
+  line-height: 1.6;
+}
+
+.analyze-result {
+  background: var(--bg-card);
+  border: 1px solid var(--border-accent);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+}
+
+.analyze-result__header {
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
+  padding: 20px;
+}
+
+.analyze-result__badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.analyze-result__label {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.analyze-result__confidence {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.confidence-bar {
+  width: 120px;
+  height: 4px;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.confidence-bar__fill {
+  height: 100%;
+  background: var(--accent-green);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.confidence-bar__value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-green);
+  min-width: 36px;
+}
+
+.analyze-result__section {
+  border-bottom: 1px solid var(--border);
+  padding: 18px 20px;
+}
+
+.analyze-result__section:last-child {
+  border-bottom: none;
+}
+
+.analyze-result__section-title {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.analyze-result__text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.analyze-result__signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 640px) {
+  .analyze-row {
+    grid-template-columns: 1fr;
+  }
+
+  .analyze-result__confidence {
+    margin-left: 0;
   }
 }

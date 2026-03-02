@@ -1,5 +1,5 @@
 {
-  "name": "f1-engineering-dashboard-frontend",
+  "name": "@f1/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {

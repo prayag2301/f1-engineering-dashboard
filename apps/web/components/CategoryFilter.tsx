@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
 
-const CATEGORIES = ["All", "Aero", "Mechanical", "Cooling", "Floor", "Suspension"];
+const CATEGORIES = ["All", "Aero", "Mechanical", "Cooling", "Floor", "Suspension", "Power Unit", "Other"];
 
 export default function CategoryFilter({
   selected,

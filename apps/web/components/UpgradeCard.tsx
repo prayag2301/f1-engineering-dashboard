@@ -7,6 +7,8 @@ function categoryClass(category: string): string {
     Cooling: "badge--cooling",
     Floor: "badge--floor",
     Suspension: "badge--suspension",
+    "Power Unit": "badge--power-unit",
+    Other: "badge--other",
   };
   return map[category] ?? "badge--confidence";
 }

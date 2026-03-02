@@ -24,6 +24,7 @@ export default function RootLayout({
               <a href="/">Upgrades</a>
               <a href="/teams">Teams</a>
               <a href="/performance">Performance</a>
+              <a href="/analyze">Analyze</a>
             </nav>
           </header>
           <main>{children}</main>
