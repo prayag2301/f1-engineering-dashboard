@@ -17,35 +17,66 @@ services:
       timeout: 5s
       retries: 5
 
-  backend:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: f1admin
+      MINIO_ROOT_PASSWORD: f1adminpass
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
     build:
       context: .
-      dockerfile: infra/docker/Dockerfile.backend
+      dockerfile: infra/docker/Dockerfile.api
     ports:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://f1user:f1pass@db:5432/f1dashboard
+      REDIS_URL: redis://redis:6379/0
       DEBUG: "true"
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
-      - ./backend:/app/backend
+      - ./apps/api/backend:/app/backend
 
-  frontend:
+  web:
     build:
       context: .
-      dockerfile: infra/docker/Dockerfile.frontend
+      dockerfile: infra/docker/Dockerfile.web
     ports:
       - "3000:3000"
     environment:
-      INTERNAL_API_URL: http://backend:8000/api/v1
-      BACKEND_URL: http://backend:8000
+      INTERNAL_API_URL: http://api:8000/api/v1
+      BACKEND_URL: http://api:8000
     depends_on:
-      - backend
+      - api
     volumes:
-      - ./frontend:/app
+      - ./apps/web:/app
       - /app/node_modules
 
 volumes:
   pgdata:
+  miniodata:
