@@ -77,6 +77,81 @@ services:
       - ./apps/web:/app
       - /app/node_modules
 
+  ingest:
+    build:
+      context: .
+      dockerfile: services/ingest/Dockerfile
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      API_URL: http://api:8000/api/v1
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: "9000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_started
+    profiles:
+      - workers
+
+  annotate:
+    build:
+      context: .
+      dockerfile: services/annotate/Dockerfile
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      API_URL: http://api:8000/api/v1
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - workers
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: services/scheduler/Dockerfile
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      API_URL: http://api:8000/api/v1
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - workers
+
+  recon:
+    build:
+      context: .
+      dockerfile: services/recon/Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      API_URL: http://api:8000/api/v1
+      MINIO_ENDPOINT: minio:9000
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - workers
+      - gpu
+
+  meshops:
+    build:
+      context: .
+      dockerfile: services/meshops/Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      API_URL: http://api:8000/api/v1
+      MINIO_ENDPOINT: minio:9000
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - workers
+
 volumes:
   pgdata:
   miniodata:
