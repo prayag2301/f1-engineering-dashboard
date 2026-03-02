@@ -1,6 +1,7 @@
 # Environment
 .env
 .env.local
+.env.*.local
 
 # Python
 __pycache__/
@@ -9,6 +10,7 @@ __pycache__/
 dist/
 venv/
 .venv/
+.pytest_cache/
 
 # Node
 node_modules/
@@ -18,13 +20,15 @@ out/
 # Data
 data/raw/*
 data/processed/*
+data/upgrade_logs/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+!data/upgrade_logs/.gitkeep
 
 # 3D assets (large files)
-3d_pipeline/blender_assets/*.blend1
-3d_pipeline/processed_models/*.glb
-3d_pipeline/nerf_experiments/output/
+services/meshops/3d_pipeline/blender_assets/*.blend1
+services/meshops/3d_pipeline/processed_models/*.glb
+services/meshops/3d_pipeline/nerf_experiments/output/
 
 # Docker
 pgdata/
@@ -34,3 +38,6 @@ pgdata/
 .idea/
 *.swp
 .DS_Store
+
+# Build artifacts
+*.tsbuildinfo
