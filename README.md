@@ -1,102 +1,96 @@
 # F1 Engineering Dashboard
 
-The most technically insightful open-source F1 platform on the internet.  
+The most technically insightful open-source F1 platform on the internet.
 Not drama. Not headlines. **Pure engineering.**
-
----
-
-## Architecture
-
-```
-f1-engineering-dashboard/
-│
-├── backend/                FastAPI + PostgreSQL
-│   ├── api/                REST endpoints (teams, races, upgrades, performance)
-│   ├── ingestion/          Data ingestion pipelines (Sprint 2)
-│   ├── upgrade_parser/     Upgrade classification system (Sprint 2)
-│   ├── models/             SQLAlchemy ORM models
-│   ├── rag/                RAG-based AI explanation layer (Sprint 3)
-│   └── schemas/            Pydantic validation schemas
-│
-├── frontend/               Next.js 14 (App Router) + TypeScript
-│   ├── app/                Pages — upgrades, teams, performance
-│   ├── components/         Reusable UI components
-│   ├── charts/             Data visualization (Sprint 4)
-│   ├── three/              Three.js 3D viewer (Sprint 5)
-│   └── styles/             Global CSS — dark engineering aesthetic
-│
-├── 3d_pipeline/            3D car visualization pipeline (Sprint 5–6)
-│   ├── blender_assets/     Source .blend files
-│   ├── exporters/          glTF/GLB export scripts
-│   ├── nerf_experiments/   NeRF-based 3D generation R&D
-│   └── processed_models/   Production-ready 3D models
-│
-├── data/                   Raw + processed datasets
-│   ├── raw/
-│   ├── processed/
-│   └── upgrade_logs/
-│
-├── infra/                  Infrastructure
-│   ├── docker/             Dockerfiles (backend, frontend)
-│   ├── deploy/             Deployment configs
-│   └── ci/                 CI/CD pipelines
-│
-└── docker-compose.yml      One-command local stack
-```
 
 ---
 
 ## Quick Start
 
 ```bash
-# Clone and start everything
+# Clone and bootstrap everything
 git clone <repo-url> && cd f1-engineering-dashboard
-docker compose up --build
-
-# Seed the database with 2025 F1 data
-curl -X POST http://localhost:8000/api/v1/seed/
+./scripts/bootstrap_local.sh
 
 # Open the dashboard
 open http://localhost:3000
 ```
 
-| Service  | URL                              |
-|----------|----------------------------------|
-| Frontend | http://localhost:3000             |
-| Backend  | http://localhost:8000             |
-| API Docs | http://localhost:8000/docs        |
-| Database | postgresql://localhost:5432       |
+| Service    | URL                          |
+|------------|------------------------------|
+| Web        | http://localhost:3000         |
+| API        | http://localhost:8000         |
+| API Docs   | http://localhost:8000/docs    |
+| MinIO      | http://localhost:9001         |
+| PostgreSQL | localhost:5432               |
+| Redis      | localhost:6379               |
 
 ---
 
-## Database Schema
+## Repository Structure
 
-Five core tables powering the engineering intelligence layer:
-
-- **teams** — Constructor identity, base, power unit
-- **races** — 2025 calendar with circuit metadata
-- **components** — Car zones (front wing, floor, diffuser, etc.)
-- **upgrades** — Structured upgrade records with aero reasoning, mechanical reasoning, and performance hypothesis
-- **performance_deltas** — Lap time evolution and upgrade efficiency scores
+```
+f1-engineering-dashboard/
+├── apps/
+│   ├── api/              FastAPI REST API (Python 3.12)
+│   └── web/              Next.js 14 dashboard (TypeScript)
+│
+├── services/
+│   ├── ingest/           Media + article ingestion (TypeScript/BullMQ)
+│   ├── annotate/         LLM upgrade analysis (TypeScript/BullMQ)
+│   ├── scheduler/        Pipeline orchestration (TypeScript/BullMQ)
+│   ├── recon/            3D reconstruction — NeRF/Splat (Python/GPU)
+│   └── meshops/          Mesh alignment + delta heatmaps (Python)
+│
+├── packages/
+│   ├── common/           Shared types (Python + TypeScript)
+│   └── clients/          Shared API client (TypeScript)
+│
+├── infra/
+│   ├── docker/           Dockerfiles
+│   ├── schemas/          Canonical JSON Schemas
+│   ├── migrations/       Database migrations
+│   └── nginx/            Reverse proxy config
+│
+├── scripts/              bootstrap_local.sh, backfill_weekend.sh
+├── docs/                 Architecture, API contract, playbooks
+├── data/                 Raw, processed, samples
+│
+├── docker-compose.yml    Full local stack
+├── Makefile              Common commands
+└── package.json          npm workspace root
+```
 
 ---
 
-## API Endpoints
+## Commands
 
-| Method | Endpoint                    | Description                        |
-|--------|-----------------------------|------------------------------------|
-| GET    | `/api/v1/teams/`           | List all teams                     |
-| POST   | `/api/v1/teams/`           | Create team                        |
-| GET    | `/api/v1/races/`           | List races (filter by season)      |
-| POST   | `/api/v1/races/`           | Create race                        |
-| GET    | `/api/v1/components/`      | List components (filter by zone)   |
-| GET    | `/api/v1/upgrades/`        | List upgrades (filter by category, team, race) |
-| GET    | `/api/v1/upgrades/{id}`    | Get upgrade detail with relations  |
-| POST   | `/api/v1/upgrades/`        | Create upgrade                     |
-| DELETE | `/api/v1/upgrades/{id}`    | Delete upgrade                     |
-| GET    | `/api/v1/performance/`     | List performance deltas            |
-| POST   | `/api/v1/performance/`     | Create performance delta           |
-| POST   | `/api/v1/seed/`            | Seed database with sample data     |
+```bash
+# Bootstrap (starts everything + seeds DB)
+make bootstrap
+
+# Run tests
+make test
+
+# Lint + typecheck
+make lint
+make typecheck
+
+# Build web for production
+make build
+
+# Start worker services
+make workers
+
+# Backfill a race weekend
+make backfill SEASON=2026 RACE=R05
+
+# Validate JSON schemas
+make validate-schemas
+
+# Tear down everything
+make clean
+```
 
 ---
 
@@ -112,28 +106,26 @@ Every upgrade in this system must have:
 
 ---
 
-## Sprint Roadmap
+## Documentation
 
-| Sprint | Week | Focus                          | Status  |
-|--------|------|--------------------------------|---------|
-| 1      | 1    | Project Foundation             | Done    |
-| 2      | 2    | Upgrade Intelligence System    | Next    |
-| 3      | 3    | AI Engineering Explanation (RAG) |        |
-| 4      | 4    | Performance Delta Modeling     |         |
-| 5      | 5–6  | 3D Visualization Engine        |         |
-| 6      | 5–6  | NeRF Experimental (Optional)   |         |
-| 7      | 7    | Engineering Dashboard UI       |         |
-| 8      | 8    | Production & Open Source Release |       |
+- [Architecture](docs/architecture.md) — system diagram + components
+- [API Contract](docs/api_contract.md) — endpoints + schema links
+- [Ingestion Rules](docs/ingestion_rules.md) — licensing + evidence scoring
+- [Reconstruction Playbook](docs/reconstruction_playbook.md) — 3D pipeline guidance
 
 ---
 
 ## Tech Stack
 
-- **Backend**: Python 3.12, FastAPI, SQLAlchemy 2.0, PostgreSQL 16
-- **Frontend**: Next.js 14, React 18, TypeScript
-- **3D**: Three.js, Blender, NeRF (experimental)
-- **AI/RAG**: Vector DB + LLM pipeline (Sprint 3)
-- **Infra**: Docker Compose, CI/CD
+| Layer | Technology |
+|-------|-----------|
+| API | Python 3.12, FastAPI, SQLAlchemy 2.0, PostgreSQL 16 |
+| Web | Next.js 14, React 18, TypeScript |
+| Workers | BullMQ (TS), Redis queues (Python) |
+| 3D | Three.js, Nerfstudio, Gaussian Splatting |
+| AI | LLM pipeline (Claude), rule-based classification |
+| Storage | MinIO (S3-compatible), PostgreSQL |
+| Infra | Docker Compose, Redis 7 |
 
 ---
 
