@@ -1,27 +1,10 @@
 {
-  "name": "f1-engineering-dashboard",
+  "name": "f1-3d-dashboard",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "apps/web",
-    "packages/common/typescript",
-    "packages/clients",
-    "services/ingest",
-    "services/annotate",
-    "services/scheduler"
-  ],
   "scripts": {
-    "dev:web": "npm -w @f1/web run dev",
-    "dev:api": "cd apps/api && uvicorn backend.main:app --reload --port 8000",
-    "build:web": "npm -w @f1/web run build",
-    "typecheck": "npm -ws --if-present run typecheck",
-    "test:api": "cd apps/api && python -m pytest",
-    "lint": "npm -ws --if-present run lint",
-    "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down",
-    "docker:workers": "docker compose --profile workers up -d",
-    "bootstrap": "./scripts/bootstrap_local.sh",
-    "backfill": "./scripts/backfill_weekend.sh",
-    "validate:schemas": "./scripts/validate_schemas.sh"
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && uvicorn app.main:app --reload --port 8000",
+    "build:frontend": "cd frontend && npm run build"
   }
 }
