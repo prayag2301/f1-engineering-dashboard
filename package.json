@@ -1,0 +1,10 @@
+{
+  "name": "f1-3d-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && uvicorn app.main:app --reload --port 8000",
+    "build:frontend": "cd frontend && npm run build"
+  }
+}
