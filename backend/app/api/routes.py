@@ -12,6 +12,7 @@ from backend.api.seed import router as seed_router
 router = APIRouter()
 
 router.include_router(teams_router, prefix="/teams", tags=["Teams"])
+router.include_router(teams_router, prefix="/cars", tags=["Cars"])
 router.include_router(races_router, prefix="/races", tags=["Races"])
 router.include_router(components_router, prefix="/components", tags=["Components"])
 router.include_router(upgrades_router, prefix="/upgrades", tags=["Upgrades"])
