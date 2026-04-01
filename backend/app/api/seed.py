@@ -15,8 +15,10 @@ try:
         PerformanceDelta,
         Event,
         Evidence,
+        RegulationConstraint,
     )
     from app.models.enums import UpgradeCategory, ComponentZone, EventStatus
+    from app.services.regulation_parser import parse_regulations
 except ModuleNotFoundError:  # Docker image expects backend.* imports
     from backend.database import get_db
     from backend.models.models import (
@@ -27,8 +29,10 @@ except ModuleNotFoundError:  # Docker image expects backend.* imports
         PerformanceDelta,
         Event,
         Evidence,
+        RegulationConstraint,
     )
     from backend.models.enums import UpgradeCategory, ComponentZone, EventStatus
+    from backend.services.regulation_parser import parse_regulations
 
 router = APIRouter()
 
@@ -85,51 +89,51 @@ SAMPLE_EVIDENCE = [
         "team": "Red Bull",
         "race": "Bahrain GP",
         "component": "Floor Edge",
-        "source": "FIA Technical Directive 2025-003 Addendum",
-        "license": "public",
+        "source": "Motorsport Week — Bahrain GP upgrades overview",
+        "license": "editorial",
         "credibility_score": 0.92,
         "media_path": "s3://f1-evidence/2025/bahrain/redbull/floor-edge/photo-1.jpg",
-        "article_path": "https://www.fia.com/documents/technical-directive-2025-003",
+        "article_path": "https://www.motorsportweek.com/2025/04/11/ferrari-leads-f1-bahrain-gp-upgrades-list-with-extensive-package/",
     },
     {
         "team": "Ferrari",
         "race": "Bahrain GP",
         "component": "Sidepod Inlet",
-        "source": "Scuderia Ferrari Technical Briefing",
-        "license": "team-release",
+        "source": "The Race — Ferrari SF-25 Bahrain GP upgrade revealed",
+        "license": "editorial",
         "credibility_score": 0.86,
         "media_path": "s3://f1-evidence/2025/bahrain/ferrari/sidepod-inlet/photo-2.jpg",
-        "article_path": "https://media.ferrari.com/f1-technical-briefing-bahrain-2025",
+        "article_path": "https://www.the-race.com/formula-1/ferrari-sf25-bahrain-gp-upgrade-floor/",
     },
     {
         "team": "McLaren",
         "race": "Miami GP",
         "component": "Front Wing Endplate",
-        "source": "McLaren Trackside Engineering Notes",
+        "source": "The Race — McLaren & Mercedes Miami GP upgrades declared",
         "license": "editorial",
         "credibility_score": 0.81,
         "media_path": "s3://f1-evidence/2025/miami/mclaren/front-wing-endplate/photo-3.jpg",
-        "article_path": "https://www.mclaren.com/racing/formula-1/miami-2025-tech-notes",
+        "article_path": "https://www.the-race.com/formula-1/mclaren-mercedes-upgrades-miami-gp-f1-declared/",
     },
     {
         "team": "Mercedes",
         "race": "Spanish GP",
         "component": "Diffuser Strake",
-        "source": "Mercedes-AMG Technical Bulletin",
+        "source": "Motorsport Week — Mercedes leads Spanish GP upgrades",
         "license": "editorial",
         "credibility_score": 0.79,
         "media_path": "s3://f1-evidence/2025/spain/mercedes/diffuser-strake/photo-4.jpg",
-        "article_path": "https://www.mercedesamgf1.com/news/spanish-gp-2025-technical-update",
+        "article_path": "https://www.motorsportweek.com/2025/05/30/mercedes-leads-the-way-with-upgrades-for-f1-spanish-gp/",
     },
     {
         "team": "Red Bull",
         "race": "Emilia Romagna GP",
         "component": "Suspension Fairing",
-        "source": "Red Bull Racing Technical Overview",
-        "license": "team-release",
+        "source": "PlanetF1 — Why Red Bull's big RB21 Imola upgrade will have everyone taking note",
+        "license": "editorial",
         "credibility_score": 0.84,
         "media_path": "s3://f1-evidence/2025/imola/redbull/suspension-fairing/photo-5.jpg",
-        "article_path": "https://www.redbullracing.com/int-en/imola-2025-technical-overview",
+        "article_path": "https://www.planetf1.com/features/red-bull-rb21-upgrade-f1-imola-gp-analysis",
     },
 ]
 
@@ -138,9 +142,34 @@ SAMPLE_EVIDENCE = [
 def seed_database(db: Session = Depends(get_db)):
     """Populate database with initial F1 2025 data."""
 
-    # Check if already seeded
+    # Check if already seeded — if so, only backfill regulations if missing
     if db.query(Team).first():
-        return {"message": "Database already seeded", "seeded": False}
+        existing_regs = (
+            db.query(RegulationConstraint)
+            .filter(RegulationConstraint.season == 2026)
+            .count()
+        )
+        if existing_regs == 0:
+            constraints = parse_regulations(season=2026)
+            for c in constraints:
+                db.add(
+                    RegulationConstraint(
+                        season=c.season,
+                        component=c.component,
+                        parameter=c.parameter,
+                        value=c.value,
+                        unit=c.unit,
+                        article_ref=c.article_ref,
+                        notes=c.notes,
+                    )
+                )
+            db.commit()
+            return {
+                "message": "Core data already seeded; regulation constraints backfilled",
+                "seeded": False,
+                "regulation_constraints_seeded": len(constraints),
+            }
+        return {"message": "Database already seeded", "seeded": False, "regulation_constraints_seeded": 0}
 
     # Teams
     team_objs = {}
@@ -329,6 +358,31 @@ def seed_database(db: Session = Depends(get_db)):
 
     db.commit()
 
+    # Seed regulation constraints (runs even if core data was already present)
+    existing_regs = (
+        db.query(RegulationConstraint)
+        .filter(RegulationConstraint.season == 2026)
+        .count()
+    )
+    if existing_regs == 0:
+        constraints = parse_regulations(season=2026)
+        for c in constraints:
+            db.add(
+                RegulationConstraint(
+                    season=c.season,
+                    component=c.component,
+                    parameter=c.parameter,
+                    value=c.value,
+                    unit=c.unit,
+                    article_ref=c.article_ref,
+                    notes=c.notes,
+                )
+            )
+        db.commit()
+        regulations_seeded = len(constraints)
+    else:
+        regulations_seeded = 0
+
     return {
         "message": "Database seeded successfully",
         "seeded": True,
@@ -339,4 +393,5 @@ def seed_database(db: Session = Depends(get_db)):
         "events": len(SAMPLE_EVENTS),
         "evidence": len(SAMPLE_EVIDENCE),
         "performance_deltas": len(sample_deltas),
+        "regulation_constraints_seeded": regulations_seeded,
     }

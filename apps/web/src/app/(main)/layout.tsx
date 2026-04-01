@@ -13,6 +13,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
           <a href="/performance">Performance</a>
           <a href="/evidence">Evidence</a>
           <a href="/analyze">Analyze</a>
+          <a href="/models">Models</a>
         </nav>
       </header>
       <main>{children}</main>

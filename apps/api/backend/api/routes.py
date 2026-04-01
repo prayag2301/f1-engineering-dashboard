@@ -9,6 +9,7 @@ from backend.api.evidence import router as evidence_router
 from backend.api.assets import router as assets_router
 from backend.api.seed import router as seed_router
 from backend.api.regulations import router as regulations_router
+from backend.api.models import router as models_router
 
 router = APIRouter()
 

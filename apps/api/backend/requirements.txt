@@ -8,3 +8,5 @@ pydantic-settings==2.1.0
 python-dotenv==1.0.0
 httpx==0.26.0
 PyMuPDF==1.24.3
+trimesh==4.4.0
+numpy==1.26.4
