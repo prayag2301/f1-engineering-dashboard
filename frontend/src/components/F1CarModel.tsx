@@ -60,13 +60,13 @@ export function F1CarModel({ teamId = "red-bull", autoRotate = false }: F1CarMod
     const tireWidth = isFront ? 0.305 : 0.405;
     return (
       <group position={[x, tireRadius, z]}>
-        <mesh material={materials.tire} rotation={[Math.PI / 2, 0, 0]}>
+        <mesh material={materials.tire} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[tireRadius, tireRadius, tireWidth, 32]} />
         </mesh>
-        <mesh material={materials.rim} rotation={[Math.PI / 2, 0, 0]}>
+        <mesh material={materials.rim} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.225, 0.225, tireWidth + 0.01, 16]} />
         </mesh>
-        <mesh material={materials.rim} position={[x > 0 ? 0.01 : -0.01, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <mesh material={materials.rim} position={[x > 0 ? 0.01 : -0.01, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.09, 0.09, 0.03, 16]} />
         </mesh>
       </group>
