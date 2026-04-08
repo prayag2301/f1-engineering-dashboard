@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { TEAM_LIVERIES } from "@/components/F1CarModel";
-import { useCarModel, findTeamByRouteParam } from "@/hooks/useCarModel";
+import { useCarModel, useGlbUrl, findTeamByRouteParam } from "@/hooks/useCarModel";
 
 const CarViewer = dynamic(() => import("@/components/CarViewer"), {
   ssr: false,
@@ -39,6 +39,7 @@ export default function CarPage({ params }: { params: { teamId: string } }) {
 
   const backendTeam = findTeamByRouteParam(teams, teamId);
   const resolvedTeamKey = backendTeam?.liveryKey ?? (TEAM_LIVERIES[teamId] ? teamId : "red-bull");
+  const glbUrl = useGlbUrl(resolvedTeamKey);
   const livery = TEAM_LIVERIES[resolvedTeamKey] ?? TEAM_LIVERIES["red-bull"];
   const drivers = TEAM_DRIVERS[resolvedTeamKey] ?? ["Driver 1", "Driver 2"];
   const displayName = backendTeam?.fullName ?? teamId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -46,7 +47,7 @@ export default function CarPage({ params }: { params: { teamId: string } }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "#0a0a0a" }}>
-      <CarViewer teamId={resolvedTeamKey} height="100%" />
+      <CarViewer teamId={resolvedTeamKey} height="100%" glbUrl={glbUrl ?? undefined} />
 
       {/* Back button */}
       <div style={{ position: "fixed", top: "24px", left: "24px", zIndex: 10 }}>

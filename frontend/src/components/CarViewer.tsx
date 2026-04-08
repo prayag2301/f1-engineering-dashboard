@@ -2,12 +2,21 @@
 
 import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment, ContactShadows, Grid } from "@react-three/drei";
+import { OrbitControls, Environment, ContactShadows, Grid, useGLTF } from "@react-three/drei";
 import { F1CarModel } from "./F1CarModel";
 
 export interface CarViewerProps {
   teamId?: string;
   height?: string;
+  /** Optional URL to a backend-generated GLB. If provided and loads successfully,
+   *  it replaces the procedural Three.js model. Falls back to Three.js on error. */
+  glbUrl?: string;
+}
+
+/** Loads and renders a GLB served from the backend parametric pipeline. */
+function BackendCarModel({ url }: { url: string }) {
+  const { scene } = useGLTF(url);
+  return <primitive object={scene} />;
 }
 
 function LoadingFallback() {
@@ -19,12 +28,13 @@ function LoadingFallback() {
   );
 }
 
-export default function CarViewer({ teamId = "red-bull", height = "600px" }: CarViewerProps) {
+export default function CarViewer({ teamId = "red-bull", height = "600px", glbUrl }: CarViewerProps) {
   return (
     <div style={{ height, width: "100%", background: "#0a0a0a", borderRadius: "8px", overflow: "hidden" }}>
       <Canvas
         camera={{ position: [5, 2.5, 7], fov: 45, near: 0.1, far: 100 }}
         gl={{ antialias: true, toneMapping: 4 }}
+        frameloop="demand"
         shadows
       >
         <ambientLight intensity={0.4} />
@@ -44,7 +54,11 @@ export default function CarViewer({ teamId = "red-bull", height = "600px" }: Car
         <spotLight position={[-4, 3, 6]} intensity={0.4} angle={0.5} penumbra={0.8} />
 
         <Suspense fallback={<LoadingFallback />}>
-          <F1CarModel teamId={teamId} autoRotate={false} />
+          {glbUrl ? (
+            <BackendCarModel url={glbUrl} />
+          ) : (
+            <F1CarModel teamId={teamId} autoRotate={false} />
+          )}
         </Suspense>
 
         <ContactShadows position={[0, 0, 0]} opacity={0.55} scale={14} blur={2.5} far={1.2} />
