@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
-from backend.database import get_db
-from backend.models.models import Race
-from backend.schemas.schemas import RaceCreate, RaceRead
+from app.database import get_db
+from app.models.models import Race
+from app.schemas.schemas import RaceCreate, RaceRead
 
 router = APIRouter()
 

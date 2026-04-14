@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional
 from uuid import UUID
 
-from backend.database import get_db
-from backend.models.models import Upgrade
-from backend.models.enums import UpgradeCategory
-from backend.schemas.schemas import (
+from app.database import get_db
+from app.models.models import Upgrade
+from app.models.enums import UpgradeCategory
+from app.schemas.schemas import (
     UpgradeBatchIngestRequest,
     UpgradeBatchIngestResult,
     UpgradeCreate,
@@ -14,8 +14,8 @@ from backend.schemas.schemas import (
     UpgradeIntelligencePreviewResponse,
     UpgradeRead,
 )
-from backend.upgrade_parser import analyze_upgrade
-from backend.ingestion import ingest_upgrade_items
+from app.upgrade_parser import analyze_upgrade
+from app.ingestion import ingest_upgrade_items
 
 router = APIRouter()
 

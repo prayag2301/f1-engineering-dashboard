@@ -1,8 +1,8 @@
 """Unit tests for the upgrade intelligence engine (no database required)."""
 import pytest
 
-from backend.models.enums import ComponentZone, UpgradeCategory
-from backend.upgrade_parser.intelligence import (
+from app.models.enums import ComponentZone, UpgradeCategory
+from app.upgrade_parser.intelligence import (
     _confidence_score,
     analyze_upgrade,
     infer_category,

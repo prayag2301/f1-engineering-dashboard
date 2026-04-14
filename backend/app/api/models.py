@@ -43,8 +43,8 @@ def _generate(team_id: str, season: int) -> bytes:
         from app.services.model_generator import generate_car_glb
         from app.services.mesh_deformer import build_deform_params
     except ModuleNotFoundError:
-        from backend.app.services.model_generator import generate_car_glb
-        from backend.app.services.mesh_deformer import build_deform_params
+        from app.app.services.model_generator import generate_car_glb
+        from app.app.services.mesh_deformer import build_deform_params
 
     deform_params = build_deform_params(team_id)
     return generate_car_glb(team_id=team_id, season=season, deform_params=deform_params)
