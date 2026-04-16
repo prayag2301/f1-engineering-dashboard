@@ -4,7 +4,7 @@ from typing import List, Optional
 from uuid import UUID
 
 from backend.database import get_db
-from backend.models.models import Upgrade
+from backend.models.models import Race, Upgrade
 from backend.models.enums import UpgradeCategory
 from backend.schemas.schemas import (
     UpgradeBatchIngestRequest,
@@ -16,6 +16,7 @@ from backend.schemas.schemas import (
 )
 from backend.upgrade_parser import analyze_upgrade
 from backend.ingestion import ingest_upgrade_items
+from backend.services.upgrade_tracker import collect_upgrade_ingest_items
 
 router = APIRouter()
 
@@ -59,6 +60,7 @@ def list_upgrades(
     category: Optional[UpgradeCategory] = None,
     team_id: Optional[UUID] = None,
     race_id: Optional[UUID] = None,
+    race_weekend: Optional[str] = Query(default=None),
     limit: int = Query(default=50, le=200),
     offset: int = 0,
     db: Session = Depends(get_db),
@@ -74,6 +76,8 @@ def list_upgrades(
         q = q.filter(Upgrade.team_id == team_id)
     if race_id:
         q = q.filter(Upgrade.race_id == race_id)
+    if race_weekend:
+        q = q.join(Upgrade.race).filter(Race.name.ilike(f"%{race_weekend}%"))
     return q.order_by(Upgrade.created_at.desc()).offset(offset).limit(limit).all()
 
 
@@ -112,6 +116,60 @@ def ingest_upgrades(payload: UpgradeBatchIngestRequest, db: Session = Depends(ge
         skipped_duplicates=outcome.skipped_duplicates,
         upgrades=[u for u in upgrades if u is not None],
     )
+
+
+@router.post("/fetch", status_code=201)
+def fetch_upgrades(
+    season: Optional[int] = Query(default=None),
+    max_entries: int = Query(default=50, ge=1, le=200),
+    enrich_missing_fields: bool = Query(default=True),
+    skip_duplicates: bool = Query(default=True),
+    db: Session = Depends(get_db),
+):
+    """
+    Fetch external RSS upgrade reports, map them to known teams/components/races,
+    then ingest them through the existing enrichment + dedupe pipeline.
+    """
+    items, stats = collect_upgrade_ingest_items(
+        db=db,
+        season=season,
+        max_entries=max_entries,
+    )
+
+    if not items:
+        return {
+            "scanned_entries": stats.scanned_entries,
+            "candidates": stats.candidates,
+            "created": 0,
+            "skipped_duplicates": 0,
+            "skipped_non_upgrade": stats.skipped_non_upgrade,
+            "skipped_no_team": stats.skipped_no_team,
+            "skipped_no_component": stats.skipped_no_component,
+            "skipped_no_race": stats.skipped_no_race,
+            "feed_errors": stats.feed_errors,
+            "upgrade_ids": [],
+        }
+
+    outcome = ingest_upgrade_items(
+        db=db,
+        items=items,
+        enrich_missing_fields=enrich_missing_fields,
+        skip_duplicates=skip_duplicates,
+    )
+    db.commit()
+
+    return {
+        "scanned_entries": stats.scanned_entries,
+        "candidates": stats.candidates,
+        "created": len(outcome.created),
+        "skipped_duplicates": outcome.skipped_duplicates,
+        "skipped_non_upgrade": stats.skipped_non_upgrade,
+        "skipped_no_team": stats.skipped_no_team,
+        "skipped_no_component": stats.skipped_no_component,
+        "skipped_no_race": stats.skipped_no_race,
+        "feed_errors": stats.feed_errors,
+        "upgrade_ids": [str(upgrade.id) for upgrade in outcome.created],
+    }
 
 
 @router.get("/{upgrade_id}", response_model=UpgradeRead)
