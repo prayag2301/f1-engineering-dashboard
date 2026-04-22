@@ -41,3 +41,4 @@ pgdata/
 
 # Build artifacts
 *.tsbuildinfo
+Instructions.md

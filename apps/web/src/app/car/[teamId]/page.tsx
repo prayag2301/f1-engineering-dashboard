@@ -79,13 +79,31 @@ export default function CarPage({ params }: { params: { teamId: string } }) {
         )}
       </div>
 
-      {/* Branding */}
+      {/* Branding + upgrades link */}
       <div style={{
         position: "fixed", top: "24px", right: "24px", zIndex: 10,
-        fontFamily: "monospace", fontSize: "12px", color: "#555",
-        letterSpacing: "2px", textTransform: "uppercase",
+        display: "flex", alignItems: "center", gap: "16px",
+        fontFamily: "monospace", fontSize: "12px",
       }}>
-        F1 // Engineering
+        <Link
+          href={`/car/${teamId}/upgrades`}
+          style={{
+            padding: "8px 14px",
+            background: "rgba(10,10,10,0.85)",
+            border: "1px solid #2a2a2a",
+            borderRadius: "6px",
+            color: "#e5e5e5",
+            textDecoration: "none",
+            letterSpacing: "1px",
+            textTransform: "uppercase",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          Upgrades →
+        </Link>
+        <span style={{ color: "#555", letterSpacing: "2px", textTransform: "uppercase" }}>
+          F1 // Engineering
+        </span>
       </div>
 
       {/* Team info overlay */}
