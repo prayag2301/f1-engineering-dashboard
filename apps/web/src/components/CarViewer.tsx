@@ -5,10 +5,26 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Environment, ContactShadows, Grid } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import * as THREE from "three";
-import { F1CarModel, type HighlightMap } from "./F1CarModel";
+import { F1CarModel, type HighlightMap, type ModelQuality } from "./F1CarModel";
 import UpgradeAnnotation from "./UpgradeAnnotation";
 import type { Upgrade } from "@/lib/api";
 import { anchorForZone, type Vec3 } from "@/lib/annotationAnchors";
+
+export interface CameraSyncState {
+  target: THREE.Vector3;
+  position: THREE.Vector3;
+  lastWriter: string | null;
+  version: number;
+}
+
+export function createCameraSyncState(): CameraSyncState {
+  return {
+    target: new THREE.Vector3(0, 0.4, 0),
+    position: new THREE.Vector3(5, 2.5, 7),
+    lastWriter: null,
+    version: 0,
+  };
+}
 
 export interface CarViewerProps {
   teamId?: string;
@@ -19,6 +35,10 @@ export interface CarViewerProps {
   highlightedZones?: HighlightMap;
   focusTarget?: Vec3 | null;
   focusCameraOffset?: Vec3 | null;
+  quality?: ModelQuality;
+  drsOpen?: boolean;
+  syncRef?: React.MutableRefObject<CameraSyncState> | null;
+  syncId?: string;
 }
 
 function LoadingFallback() {
@@ -64,6 +84,47 @@ function CameraRig({
   return null;
 }
 
+function CameraSync({
+  controlsRef,
+  syncRef,
+  syncId,
+}: {
+  controlsRef: React.RefObject<OrbitControlsImpl>;
+  syncRef: React.MutableRefObject<CameraSyncState>;
+  syncId: string;
+}) {
+  const lastSeenVersion = useRef(syncRef.current.version);
+
+  useEffect(() => {
+    const controls = controlsRef.current;
+    if (!controls) return;
+    const onChange = () => {
+      const state = syncRef.current;
+      state.target.copy(controls.target);
+      state.position.copy(controls.object.position);
+      state.lastWriter = syncId;
+      state.version += 1;
+      lastSeenVersion.current = state.version;
+    };
+    controls.addEventListener("change", onChange);
+    return () => controls.removeEventListener("change", onChange);
+  }, [controlsRef, syncRef, syncId]);
+
+  useFrame((state) => {
+    const controls = controlsRef.current;
+    if (!controls) return;
+    const sync = syncRef.current;
+    if (sync.lastWriter && sync.lastWriter !== syncId && sync.version !== lastSeenVersion.current) {
+      controls.target.copy(sync.target);
+      state.camera.position.copy(sync.position);
+      controls.update();
+      lastSeenVersion.current = sync.version;
+    }
+  });
+
+  return null;
+}
+
 export default function CarViewer({
   teamId = "red-bull",
   height = "600px",
@@ -73,6 +134,10 @@ export default function CarViewer({
   highlightedZones,
   focusTarget,
   focusCameraOffset,
+  quality = "high",
+  drsOpen = false,
+  syncRef = null,
+  syncId,
 }: CarViewerProps) {
   const controlsRef = useRef<OrbitControlsImpl>(null);
 
@@ -100,7 +165,13 @@ export default function CarViewer({
         <spotLight position={[-4, 3, 6]} intensity={0.4} angle={0.5} penumbra={0.8} />
 
         <Suspense fallback={<LoadingFallback />}>
-          <F1CarModel teamId={teamId} autoRotate={false} highlightedZones={highlightedZones} />
+          <F1CarModel
+            teamId={teamId}
+            autoRotate={false}
+            highlightedZones={highlightedZones}
+            quality={quality}
+            drsOpen={drsOpen}
+          />
         </Suspense>
 
         {upgrades.map((u) => {
@@ -147,6 +218,9 @@ export default function CarViewer({
           focusTarget={focusTarget}
           focusCameraOffset={focusCameraOffset}
         />
+        {syncRef && syncId && (
+          <CameraSync controlsRef={controlsRef} syncRef={syncRef} syncId={syncId} />
+        )}
       </Canvas>
     </div>
   );

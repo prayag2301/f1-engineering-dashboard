@@ -26,11 +26,21 @@ const DEFAULT_LIVERY = TEAM_LIVERIES["red-bull"];
 
 export type HighlightMap = Record<string, string>;
 
+export type ModelQuality = "high" | "medium" | "low";
+
 export interface F1CarModelProps {
   teamId?: string;
   autoRotate?: boolean;
   highlightedZones?: HighlightMap;
+  quality?: ModelQuality;
+  drsOpen?: boolean;
 }
+
+const SEGMENTS: Record<ModelQuality, { cyl: number; rim: number }> = {
+  high:   { cyl: 32, rim: 24 },
+  medium: { cyl: 20, rim: 16 },
+  low:    { cyl: 12, rim: 10 },
+};
 
 function ZoneGroup({
   zone,
@@ -84,9 +94,17 @@ function ZoneGroup({
   );
 }
 
-export function F1CarModel({ teamId = "red-bull", autoRotate = false, highlightedZones }: F1CarModelProps) {
+export function F1CarModel({
+  teamId = "red-bull",
+  autoRotate = false,
+  highlightedZones,
+  quality = "high",
+  drsOpen = false,
+}: F1CarModelProps) {
   const groupRef = useRef<Group>(null);
   const livery = TEAM_LIVERIES[teamId] ?? DEFAULT_LIVERY;
+  const segs = SEGMENTS[quality];
+  const mirror = quality !== "low";
 
   useFrame((_state, delta) => {
     if (autoRotate && groupRef.current) {
@@ -117,14 +135,14 @@ export function F1CarModel({ teamId = "red-bull", autoRotate = false, highlighte
     const tireWidth = isFront ? 0.305 : 0.405;
     return (
       <group position={[x, tireRadius, z]}>
-        <mesh material={materials.tire} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[tireRadius, tireRadius, tireWidth, 32]} />
+        <mesh material={materials.tire} rotation={[0, 0, Math.PI / 2]} castShadow>
+          <cylinderGeometry args={[tireRadius, tireRadius, tireWidth, segs.cyl]} />
         </mesh>
         <mesh material={materials.rim} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.225, 0.225, tireWidth + 0.01, 16]} />
+          <cylinderGeometry args={[0.225, 0.225, tireWidth + 0.01, segs.rim]} />
         </mesh>
         <mesh material={materials.rim} position={[x > 0 ? 0.01 : -0.01, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.09, 0.09, 0.03, 16]} />
+          <cylinderGeometry args={[0.09, 0.09, 0.03, segs.rim]} />
         </mesh>
       </group>
     );
@@ -151,11 +169,24 @@ export function F1CarModel({ teamId = "red-bull", autoRotate = false, highlighte
         <mesh material={materials.body} position={[0, 0.44, -0.35]}>
           <boxGeometry args={[0.24, 0.14, 0.9]} />
         </mesh>
+        {mirror && ([-1, 1] as const).map((side) => (
+          <group key={side}>
+            <mesh material={materials.halo} position={[side * 0.36, 0.55, -0.4]} rotation={[0, side * -0.18, 0]}>
+              <boxGeometry args={[0.012, 0.025, 0.18]} />
+            </mesh>
+            <mesh material={materials.body} position={[side * 0.46, 0.56, -0.45]} rotation={[0, side * -0.22, 0]}>
+              <boxGeometry args={[0.05, 0.07, 0.13]} />
+            </mesh>
+          </group>
+        ))}
       </ZoneGroup>
 
       <ZoneGroup zone="Nose" highlight={h["Nose"]}>
         <mesh material={materials.body} position={[0, 0.29, -1.625]} rotation={[0.06, 0, 0]}>
-          <cylinderGeometry args={[0.035, 0.09, 1.55, 16]} />
+          <cylinderGeometry args={[0.035, 0.09, 1.55, segs.cyl]} />
+        </mesh>
+        <mesh material={materials.body} position={[0, 0.32, -2.36]}>
+          <sphereGeometry args={[0.05, segs.rim, segs.rim / 2]} />
         </mesh>
       </ZoneGroup>
 
@@ -189,7 +220,7 @@ export function F1CarModel({ teamId = "red-bull", autoRotate = false, highlighte
           <boxGeometry args={[0.06, 0.2, 0.08]} />
         </mesh>
         <mesh material={materials.halo} position={[0, 0.52, -0.55]}>
-          <cylinderGeometry args={[0.025, 0.025, 0.62, 8]} />
+          <cylinderGeometry args={[0.025, 0.025, 0.62, segs.rim / 2]} />
         </mesh>
         <mesh material={materials.halo} position={[0, 0.82, -0.15]}>
           <boxGeometry args={[0.52, 0.04, 0.72]} />
@@ -233,7 +264,11 @@ export function F1CarModel({ teamId = "red-bull", autoRotate = false, highlighte
         <mesh material={materials.wing} position={[0, 0.895, 2.05]}>
           <boxGeometry args={[0.95, 0.065, 0.3]} />
         </mesh>
-        <mesh material={materials.wing} position={[0, 0.985, 2.0]} rotation={[-0.1, 0, 0]}>
+        <mesh
+          material={materials.wing}
+          position={[0, drsOpen ? 1.04 : 0.985, drsOpen ? 1.96 : 2.0]}
+          rotation={[drsOpen ? -0.55 : -0.1, 0, 0]}
+        >
           <boxGeometry args={[0.9, 0.052, 0.24]} />
         </mesh>
         <mesh material={materials.accent} position={[-0.475, 0.895, 2.02]}>
