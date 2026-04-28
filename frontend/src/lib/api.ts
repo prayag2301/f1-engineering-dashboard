@@ -3,6 +3,8 @@ const API_BASE =
     ? (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1")
     : (process.env.INTERNAL_API_URL ?? "http://api:8000/api/v1");
 
+export const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
 export interface Team {
   id: string;
   name: string;
@@ -83,6 +85,9 @@ export interface AssetRecord {
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  if (IS_DEMO) {
+    throw new Error("demo mode — backend disabled");
+  }
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
     headers: { "Content-Type": "application/json", ...init?.headers },

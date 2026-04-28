@@ -4,11 +4,28 @@ import { useEffect, useMemo, useState } from "react";
 import {
   getEvidence,
   getUpgrades,
+  IS_DEMO,
   type EvidenceRecord,
   type Upgrade,
 } from "@/lib/api";
+import ComingSoon from "@/components/ComingSoon";
 
 export default function EvidencePage() {
+  if (IS_DEMO) {
+    return (
+      <>
+        <h1 className="page-title">Evidence</h1>
+        <p className="page-subtitle">
+          Source-cited upgrade evidence from the ingestion pipeline.
+        </p>
+        <ComingSoon feature="Evidence browser" />
+      </>
+    );
+  }
+  return <EvidencePageInner />;
+}
+
+function EvidencePageInner() {
   const [evidence, setEvidence] = useState<EvidenceRecord[]>([]);
   const [upgrades, setUpgrades] = useState<Upgrade[]>([]);
   const [teamId, setTeamId] = useState("All");

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getTeams, getModelUrl } from "@/lib/api";
+import { getTeams, getModelUrl, IS_DEMO } from "@/lib/api";
 
 export interface Team {
   id: string;
@@ -82,7 +82,7 @@ export function useCarModel() {
       })
       .catch(() => {
         if (cancelled) return;
-        setError("Could not reach API — using static data");
+        if (!IS_DEMO) setError("Could not reach API — using static data");
         setTeams(STATIC_TEAMS);
       })
       .finally(() => {
@@ -104,7 +104,7 @@ export function useGlbUrl(liveryKey: string, season = 2026): string | null {
   const [glbUrl, setGlbUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!liveryKey) return;
+    if (!liveryKey || IS_DEMO) return;
     let cancelled = false;
     const url = getModelUrl(liveryKey, season);
 

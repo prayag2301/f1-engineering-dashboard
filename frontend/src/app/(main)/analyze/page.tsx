@@ -1,9 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { previewUpgradeIntelligence, type UpgradeIntelligencePreview } from "@/lib/api";
+import { previewUpgradeIntelligence, IS_DEMO, type UpgradeIntelligencePreview } from "@/lib/api";
+import ComingSoon from "@/components/ComingSoon";
 
 export default function AnalyzePage() {
+  if (IS_DEMO) {
+    return (
+      <>
+        <h1 className="page-title">Analyze</h1>
+        <p className="page-subtitle">
+          Run live upgrade intelligence inference on a free-text description.
+        </p>
+        <ComingSoon feature="Upgrade analyzer" />
+      </>
+    );
+  }
+  return <AnalyzePageInner />;
+}
+
+function AnalyzePageInner() {
   const [description, setDescription] = useState("");
   const [technicalDetail, setTechnicalDetail] = useState("");
   const [expectedEffect, setExpectedEffect] = useState("");

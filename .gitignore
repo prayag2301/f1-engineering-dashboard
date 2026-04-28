@@ -42,3 +42,6 @@ pgdata/
 # Build artifacts
 *.tsbuildinfo
 Instructions.md
+
+# Personal notes
+DEPLOY_PLAN.md
