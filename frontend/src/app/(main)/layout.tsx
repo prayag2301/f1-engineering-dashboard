@@ -1,18 +1,19 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 
 export default function MainLayout({ children }: { children: ReactNode }) {
   return (
     <div className="container">
       <header className="header">
-        <a href="/" className="header__logo">
+        <Link href="/" className="header__logo">
           F1 // Engineering
-        </a>
+        </Link>
         <nav className="header__nav">
-          <a href="/">Cars</a>
-          <a href="/teams">Teams</a>
-          <a href="/performance">Performance</a>
-          <a href="/evidence">Evidence</a>
-          <a href="/analyze">Analyze</a>
+          <Link href="/">Cars</Link>
+          <Link href="/teams">Teams</Link>
+          <Link href="/performance">Performance</Link>
+          <Link href="/evidence">Evidence</Link>
+          <Link href="/analyze">Analyze</Link>
         </nav>
       </header>
       <main>{children}</main>
