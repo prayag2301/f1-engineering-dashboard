@@ -9,6 +9,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
         </a>
         <nav className="header__nav">
           <a href="/">Cars</a>
+          <a href="/compare">Compare</a>
           <a href="/teams">Teams</a>
           <a href="/performance">Performance</a>
           <a href="/evidence">Evidence</a>
