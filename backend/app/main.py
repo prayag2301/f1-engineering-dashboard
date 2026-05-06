@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.config import get_settings
-from backend.database import engine, Base
 from backend.api.routes import router as api_router
 
 settings = get_settings()
@@ -29,7 +28,14 @@ def create_app() -> FastAPI:
 
     @app.on_event("startup")
     async def on_startup():
-        Base.metadata.create_all(bind=engine)
+        from pathlib import Path
+        from alembic.config import Config
+        from alembic import command
+
+        alembic_ini = Path(__file__).resolve().parents[1] / "alembic.ini"
+        alembic_cfg = Config(str(alembic_ini))
+        alembic_cfg.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+        command.upgrade(alembic_cfg, "head")
 
     @app.get("/health")
     async def health():

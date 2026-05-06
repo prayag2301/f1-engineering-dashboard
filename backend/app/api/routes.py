@@ -8,6 +8,7 @@ from backend.api.events import router as events_router
 from backend.api.evidence import router as evidence_router
 from backend.api.assets import router as assets_router
 from backend.api.seed import router as seed_router
+from backend.api.regulations import router as regulations_router
 
 router = APIRouter()
 
@@ -21,3 +22,4 @@ router.include_router(events_router, prefix="/events", tags=["Events"])
 router.include_router(evidence_router, prefix="/evidence", tags=["Evidence"])
 router.include_router(assets_router, prefix="/assets", tags=["Assets"])
 router.include_router(seed_router, prefix="/seed", tags=["Seed Data"])
+router.include_router(regulations_router, prefix="/regulations", tags=["Regulations"])
