@@ -161,7 +161,6 @@ class UpgradeRecord(Base):
 
 ---
 
-
 ## Key Technical Decisions
 
 **Why parametric + deformation rather than pure generative AI (e.g. 3D diffusion models)?**
