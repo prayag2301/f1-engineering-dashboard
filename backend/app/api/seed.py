@@ -20,8 +20,8 @@ try:
     from app.models.enums import UpgradeCategory, ComponentZone, EventStatus
     from app.services.regulation_parser import parse_regulations
 except ModuleNotFoundError:  # Docker image expects backend.* imports
-    from backend.database import get_db
-    from backend.models.models import (
+    from app.database import get_db
+    from app.models.models import (
         Team,
         Race,
         Component,
@@ -31,8 +31,8 @@ except ModuleNotFoundError:  # Docker image expects backend.* imports
         Evidence,
         RegulationConstraint,
     )
-    from backend.models.enums import UpgradeCategory, ComponentZone, EventStatus
-    from backend.services.regulation_parser import parse_regulations
+    from app.models.enums import UpgradeCategory, ComponentZone, EventStatus
+    from app.services.regulation_parser import parse_regulations
 
 router = APIRouter()
 

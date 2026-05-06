@@ -182,6 +182,33 @@ export interface UpgradeBatchIngestResult {
   upgrades: Upgrade[];
 }
 
+// ── 3D Models ─────────────────────────────────────────────────────────────────
+
+export interface ModelMeta {
+  team_id: string;
+  season: number;
+  size_bytes: number;
+  cached_at: number;
+  url: string;
+}
+
+/**
+ * Returns the absolute URL for a team's latest parametric GLB.
+ * The URL points directly at the FastAPI binary endpoint.
+ * Pass this to CarViewer's glbUrl prop.
+ */
+export function getModelUrl(teamId: string, season = 2026): string {
+  return `${API_BASE}/models/${encodeURIComponent(teamId)}/latest.glb?season=${season}`;
+}
+
+export async function listModels(season = 2026): Promise<ModelMeta[]> {
+  return apiFetch<ModelMeta[]>(`/models/?season=${season}`);
+}
+
+export async function regenerateModel(teamId: string, season = 2026): Promise<ModelMeta & { generated_in_ms: number }> {
+  return apiFetch(`/models/${encodeURIComponent(teamId)}/regenerate?season=${season}`, { method: "POST" });
+}
+
 export async function ingestUpgrades(payload: {
   items: Array<{
     team_id: string;

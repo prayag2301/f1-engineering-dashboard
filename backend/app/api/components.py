@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
-from backend.database import get_db
-from backend.models.models import Component
-from backend.schemas.schemas import ComponentCreate, ComponentRead
-from backend.models.enums import ComponentZone
+from app.database import get_db
+from app.models.models import Component
+from app.schemas.schemas import ComponentCreate, ComponentRead
+from app.models.enums import ComponentZone
 
 router = APIRouter()
 

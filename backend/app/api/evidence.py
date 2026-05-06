@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
-from backend.database import get_db
-from backend.models.models import Evidence
-from backend.schemas.schemas import EvidenceCreate, EvidenceRead
+from app.database import get_db
+from app.models.models import Evidence
+from app.schemas.schemas import EvidenceCreate, EvidenceRead
 
 router = APIRouter()
 

@@ -161,13 +161,6 @@ class UpgradeRecord(Base):
 
 ---
 
-## Week-by-Week Development Plan
-
-Each week targets a **small, demonstrable increment**. Every week ends with something you can see or test. Weeks are grouped into phases but designed so you can pause after any week and still have a coherent partial project.
-
----
-
-
 ## Key Technical Decisions
 
 **Why parametric + deformation rather than pure generative AI (e.g. 3D diffusion models)?**
@@ -222,21 +215,6 @@ docker-compose up -d
 
 ---
 
-## Claude Code Usage Guide
-
-This README is designed to be your primary reference when working with Claude Code. For best results:
-
-1. **Always point Claude Code to this README** at the start of a session: `"Read README.md and understand the project structure before proceeding."`
-
-2. **Reference specific weeks** when asking for implementation: `"Implement Week 5 tasks — build the parametric front wing generator as described in README.md."`
-
-3. **Reference specific files** by their path in the project structure: `"Build backend/app/services/regulation_parser.py as specified in README.md Week 4."`
-
-4. **Use the Claude Code prompt hints** included in each week — they are written to give Claude Code the right context and constraints.
-
-5. **Iterate within weeks** — if a week's output needs refinement, ask Claude Code to improve the specific file rather than regenerating everything: `"The front wing mesh from model_generator.py is too blocky. Add filleted edges and smooth the upper surface curvature while staying within regulation constraints."`
-
----
 
 ## License
 

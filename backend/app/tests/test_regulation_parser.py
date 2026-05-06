@@ -8,7 +8,7 @@ Run with:
 import pytest
 from unittest.mock import patch
 
-from backend.app.services.regulation_parser import (
+from app.app.services.regulation_parser import (
     ParsedConstraint,
     get_static_constraints,
     parse_regulations,

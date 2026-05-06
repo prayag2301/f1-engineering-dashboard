@@ -4,14 +4,14 @@ from uuid import uuid4
 
 import pytest
 
-from backend.ingestion.upgrade_ingestion import (
+from app.ingestion.upgrade_ingestion import (
     BatchIngestOutcome,
     _build_upgrade_model,
     _is_duplicate,
     ingest_upgrade_items,
 )
-from backend.models.enums import UpgradeCategory
-from backend.schemas.schemas import UpgradeIngestItem
+from app.models.enums import UpgradeCategory
+from app.schemas.schemas import UpgradeIngestItem
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────

@@ -4,7 +4,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { TEAM_LIVERIES } from "@/components/F1CarModel";
-import { useCarModel } from "@/hooks/useCarModel";
+import { useCarModel, useGlbUrl } from "@/hooks/useCarModel";
 import TeamSelector from "@/components/TeamSelector";
 
 const CarViewer = dynamic(() => import("@/components/CarViewer"), {
@@ -30,6 +30,7 @@ const CarViewer = dynamic(() => import("@/components/CarViewer"), {
 export default function Home() {
   const [activeTeamId, setActiveTeamId] = useState("red-bull");
   const { teams, loading, error } = useCarModel();
+  const glbUrl = useGlbUrl(activeTeamId);
 
   const activeLivery = TEAM_LIVERIES[activeTeamId] ?? TEAM_LIVERIES["red-bull"];
   const activeTeam = teams.find((t) => t.liveryKey === activeTeamId);
@@ -54,7 +55,7 @@ export default function Home() {
 
       {/* 3D Viewer */}
       <div style={{ marginBottom: "20px", borderRadius: "8px", overflow: "hidden", border: "1px solid #1a1a1a" }}>
-        <CarViewer teamId={activeTeamId} height="600px" />
+        <CarViewer teamId={activeTeamId} height="600px" glbUrl={glbUrl ?? undefined} />
       </div>
 
       {/* Active team banner */}

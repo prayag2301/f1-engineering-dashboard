@@ -16,8 +16,8 @@ try:
     from app.database import Base
     from app.models.enums import UpgradeCategory, ComponentZone, EventStatus, AssetType
 except ModuleNotFoundError:  # Docker image expects backend.* imports
-    from backend.database import Base
-    from backend.models.enums import UpgradeCategory, ComponentZone, EventStatus, AssetType
+    from app.database import Base
+    from app.models.enums import UpgradeCategory, ComponentZone, EventStatus, AssetType
 
 
 class Team(Base):

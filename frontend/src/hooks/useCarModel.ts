@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getTeams } from "@/lib/api";
+import { getTeams, getModelUrl } from "@/lib/api";
 
 export interface Team {
   id: string;
@@ -93,6 +93,34 @@ export function useCarModel() {
   }, []);
 
   return { teams, loading, error };
+}
+
+/**
+ * Probes the backend for a parametric GLB for the given team.
+ * Returns the URL if the endpoint responds with a GLB (200 + correct content-type),
+ * otherwise returns null so the caller can fall back to the Three.js model.
+ */
+export function useGlbUrl(liveryKey: string, season = 2026): string | null {
+  const [glbUrl, setGlbUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!liveryKey) return;
+    let cancelled = false;
+    const url = getModelUrl(liveryKey, season);
+
+    fetch(url, { method: "HEAD" })
+      .then((res) => {
+        if (cancelled) return;
+        if (res.ok && res.headers.get("content-type")?.includes("gltf")) {
+          setGlbUrl(url);
+        }
+      })
+      .catch(() => { /* backend unavailable — stay on Three.js fallback */ });
+
+    return () => { cancelled = true; };
+  }, [liveryKey, season]);
+
+  return glbUrl;
 }
 
 /** Reverse-lookup: livery key → Team (from a pre-fetched list) */

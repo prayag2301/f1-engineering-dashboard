@@ -1,7 +1,7 @@
 """Unit tests for seed endpoint behavior (database mocked)."""
 from unittest.mock import MagicMock
 
-from backend.api.seed import seed_database
+from app.api.seed import seed_database
 
 
 class TestSeedDatabase:

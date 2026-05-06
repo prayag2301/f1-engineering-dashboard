@@ -1,14 +1,15 @@
 from fastapi import APIRouter
-from backend.api.teams import router as teams_router
-from backend.api.races import router as races_router
-from backend.api.components import router as components_router
-from backend.api.upgrades import router as upgrades_router
-from backend.api.performance import router as performance_router
-from backend.api.events import router as events_router
-from backend.api.evidence import router as evidence_router
-from backend.api.assets import router as assets_router
-from backend.api.seed import router as seed_router
-from backend.api.regulations import router as regulations_router
+from app.api.teams import router as teams_router
+from app.api.races import router as races_router
+from app.api.components import router as components_router
+from app.api.upgrades import router as upgrades_router
+from app.api.performance import router as performance_router
+from app.api.events import router as events_router
+from app.api.evidence import router as evidence_router
+from app.api.assets import router as assets_router
+from app.api.seed import router as seed_router
+from app.api.regulations import router as regulations_router
+from app.api.models import router as models_router
 
 router = APIRouter()
 
@@ -23,3 +24,4 @@ router.include_router(evidence_router, prefix="/evidence", tags=["Evidence"])
 router.include_router(assets_router, prefix="/assets", tags=["Assets"])
 router.include_router(seed_router, prefix="/seed", tags=["Seed Data"])
 router.include_router(regulations_router, prefix="/regulations", tags=["Regulations"])
+router.include_router(models_router,     prefix="/models",      tags=["3D Models"])
