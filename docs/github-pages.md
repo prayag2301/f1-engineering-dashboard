@@ -109,6 +109,10 @@ These settings prepare the handover; the empty-snapshot check still prevents
 deployment. The first push with a valid pin replaces the site through
 `actions/deploy-pages`.
 
+The branch allowance and `PAGES_DEPLOY_BRANCH=codex/github-pages-release` were
+configured after the first passing hosted build on 12 September 2026. The pin
+remains empty until the maintainer publishes both visual baselines locally.
+
 Verify the deployment URL, `/deployment.json` (commit identity), both models,
 direct team routes, and a 4K download. Then disable the old **Deploy static demo
 to GitHub Pages** workflow and remove `demo/static` from the environment's allowed

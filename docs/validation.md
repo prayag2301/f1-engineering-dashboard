@@ -29,7 +29,7 @@ The canonical scheduler also completed its first catch-up collection: it recogni
 
 The source tests cover duplicate stories, multiple teams/components, absent publication dates, unresolved events, conflicting evidence, blocked retrieval, feed dates, and failed collection. Workflow tests cover one Monday catch-up after downtime, Berlin daylight-saving boundaries, stale worker leases, retries, authorization, failed artifact validation, and annotation-only geometry reuse.
 
-Software-WebGL browser checks can time out under simultaneous CPU rendering and compilation. The test configuration allows additional startup time and provides an optional native Metal path on macOS; the measured performance result uses Metal. AMD64 geometry verification is configured in GitHub Actions; that hosted job has not been run from this workspace.
+Software-WebGL browser checks can time out under simultaneous CPU rendering and compilation. The test configuration allows additional startup time and provides an optional native Metal path on macOS; the measured performance result uses Metal. Hosted AMD64 verification now passed in [Application checks](https://github.com/prayag2301/f1-engineering-dashboard/actions/runs/34706933264): both baselines exported successfully and the revised front wing left all ten other assemblies unchanged. Binary GLB sizes differ slightly between ARM64 and AMD64 exports; triangle counts and validation invariants agree.
 
 ## GitHub Pages export
 
@@ -44,12 +44,23 @@ no API or credential requests, exported asset checks, populated comparison with
 synchronized cameras, rapid switching, mobile/keyboard access, and archive retry.
 Populated browser data is explicitly synthetic and exists only in intercepted
 test requests; it never changes the site build or local publication state.
+The patched static build also passed these checks with the actual 149,518-triangle
+Mercedes GLB substituted into the isolated browser fixture.
 The static JavaScript excludes the maintainer UI. Both static export and the
 standard standalone build are validated separately in CI.
+
+The first [Pages workflow](https://github.com/prayag2301/f1-engineering-dashboard/actions/runs/34706933287) passed its build and browser checks, uploaded a static artifact, and skipped deployment as intended. The new branch is allowed by the `github-pages` environment and selected by `PAGES_DEPLOY_BRANCH`.
 
 The deployed `demo/static` site remains the handover fallback until both reviewed
 baselines are pinned and the replacement workflow can deploy. See
 [the Pages guide](github-pages.md) for snapshot upload and rollback.
+
+Next.js and its lint configuration were updated from 14.2.15 to 14.2.35 for the
+[14.x RSC denial-of-service patch](https://nextjs.org/blog/security-update-2025-12-11).
+This is not a clean dependency audit: npm still reports advisories in the existing
+Next 14/tooling dependency tree. A supported-major framework and renderer upgrade
+remains separate work before exposing a Next.js server publicly. Pages serves
+exported files, and the Docker web service stays bound to 127.0.0.1.
 
 ## Geometry and provenance
 
