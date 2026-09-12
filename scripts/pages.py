@@ -14,7 +14,9 @@ import os
 from pathlib import Path
 import re
 import shutil
+import ssl
 import struct
+import sys
 import tarfile
 import tempfile
 from urllib.parse import quote, urlparse
@@ -59,10 +61,26 @@ def sha256(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+def open_url(url, timeout):
+    context = ssl.create_default_context()
+    # Python.org macOS installs can have an empty OpenSSL CA store until their
+    # certificate installer is run. Use the OS trust bundle in that case, while
+    # preserving explicit certificate overrides and full TLS verification.
+    if (
+        sys.platform == "darwin"
+        and not os.environ.get("SSL_CERT_FILE")
+        and not os.environ.get("SSL_CERT_DIR")
+        and context.cert_store_stats()["x509_ca"] == 0
+        and Path("/etc/ssl/cert.pem").is_file()
+    ):
+        context.load_verify_locations(cafile="/etc/ssl/cert.pem")
+    return urlopen(url, timeout=timeout, context=context)
+
+
 def download(url, destination, limit=MAX_ARCHIVE_BYTES):
     """No credentials or cookies, with bounded streaming and a timeout."""
     total = 0
-    with urlopen(url, timeout=60) as response, Path(destination).open("wb") as out:
+    with open_url(url, timeout=60) as response, Path(destination).open("wb") as out:
         while chunk := response.read(1024 * 1024):
             total += len(chunk)
             if total > limit:
@@ -71,7 +89,7 @@ def download(url, destination, limit=MAX_ARCHIVE_BYTES):
 
 
 def get_json(url):
-    with urlopen(url, timeout=30) as response:
+    with open_url(url, timeout=30) as response:
         payload = response.read(10 * 1024 * 1024 + 1)
     if len(payload) > 10 * 1024 * 1024:
         raise ValueError("Archive metadata is too large.")

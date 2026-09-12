@@ -1,6 +1,6 @@
 # Local implementation validation — 12 September 2026
 
-This records checks performed on the local Apple M1 Mac. It distinguishes executable checks from the maintainer's visual acceptance. No actual car configuration has been published.
+This records checks performed on the local Apple M1 Mac and in GitHub Actions. Initial implementation checks kept both actual car configurations unpublished. The maintainer subsequently completed visual review and published both baselines on 12 September 2026, as recorded below.
 
 ## Application and data
 
@@ -51,8 +51,8 @@ standard standalone build are validated separately in CI.
 
 The first [Pages workflow](https://github.com/prayag2301/f1-engineering-dashboard/actions/runs/34706933287) passed its build and browser checks, uploaded a static artifact, and skipped deployment as intended. The new branch is allowed by the `github-pages` environment and selected by `PAGES_DEPLOY_BRANCH`.
 
-The deployed `demo/static` site remains the handover fallback until both reviewed
-baselines are pinned and the replacement workflow can deploy. See
+The initial empty snapshot retained the `demo/static` deployment. Both reviewed
+baselines are now pinned for the replacement workflow. See
 [the Pages guide](github-pages.md) for snapshot upload and rollback.
 
 Next.js and its lint configuration were updated from 14.2.15 to 14.2.35 for the
@@ -75,9 +75,22 @@ Build outputs include the editable scene, exact builder/catalog/regulation snaps
 
 These are authored exterior estimates based on dated launch references. The later FIA submission establishes reported component changes; it has not been used to invent dimensions or silently change either launch car. Its publication date and observation dates remain unresolved in the inbox. The supplied reference set records FIA Section C issue 20 and a limited set of dimensional constraints; it is not a complete compliance check.
 
-## Visual acceptance remains with the maintainer
+## Initial visual review and subsequent publication
 
-The four draft views should be compared with dated front, side, rear, and three-quarter photographs in the review studio. All visual-acceptance checkboxes remain unchecked. Exact surface curvature, small aero details, suspension pickup positions, and hidden geometry remain approximations; sponsor and tyre graphics are omitted. Build validation does not certify a factory-accurate or photorealistic replica.
+At initial delivery, all visual-acceptance checkboxes were unchecked for the maintainer to compare front, side, rear, and three-quarter renders with dated photographs. On 12 September 2026, the maintainer completed those reviews and published Mercedes at 17:18:46 UTC and Ferrari at 17:19:41 UTC. The public API confirms both are published current releases, with all four reviewed views saved. Exact surface curvature, small aero details, suspension pickup positions, and hidden geometry remain approximations; sponsor and tyre graphics are omitted. Build validation does not certify a factory-accurate or photorealistic replica.
+
+The first deployable snapshot, `pages-2026-09-12-baselines`, exports those two
+releases and 18 verified public assets. It contains 112,231,683 unpacked bytes;
+the compressed bundle is 108,475,121 bytes, with SHA-256
+`cac8bae55ad8f53c29bd8af6445ad206064a92b037060bdeef39f43849966888`.
+Configuration dates remain January 2026; the September publication does not
+change the observations or claim later race geometry.
+
+The populated static export passed all four Pages tests and a separate check of
+both actual models: component selection, direct links, refreshes, mobile keyboard
+switching, and all 18 downloaded checksums. No runtime API calls or browser errors
+were observed. The local verification report and screenshots are saved under
+`data/releases/validation/pages-local-*`.
 
 The implementation supports further baseline modeling passes before first publication through **Build revised baseline**. For later releases, confirmed reports with insufficient shape evidence remain annotation-only. Supported geometry revisions preserve all unchanged assemblies; circuit-specific configurations and reversions retain their own evidence and history.
 

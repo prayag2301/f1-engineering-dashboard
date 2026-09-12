@@ -1,8 +1,11 @@
 # GitHub Pages deployment
 
-The replacement application lives on `codex/github-pages-release`. The existing
-site at https://prayag2301.github.io/f1-engineering-dashboard/ was deployed from
-`demo/static`. It stays live while the replacement is built and reviewed.
+The application lives on `codex/github-pages-release` and deploys to
+https://prayag2301.github.io/f1-engineering-dashboard/. The first reviewed
+snapshot, `pages-2026-09-12-baselines`, contains the Ferrari and Mercedes launch
+configurations published locally on 12 September 2026. The previous deployment
+from `demo/static` is retained as history; the handover procedure below prevents
+its workflow from replacing the reviewed archive after deployment.
 
 ## Runtime and local workflow
 
@@ -32,6 +35,8 @@ files with real subpath redirects and 404s. It does not emulate an API.
 An empty descriptor builds an honest empty archive that CI tests but refuses
 to deploy over the current site. Drafts and synthetic cars never enter the
 bundle. A populated descriptor downloads and verifies the exact pinned snapshot.
+On Python.org macOS installations with an empty certificate store, the downloader
+uses `/etc/ssl/cert.pem`; HTTPS certificate and hostname verification stay enabled.
 
 Preview a local bundle before uploading it:
 
@@ -110,8 +115,9 @@ deployment. The first push with a valid pin replaces the site through
 `actions/deploy-pages`.
 
 The branch allowance and `PAGES_DEPLOY_BRANCH=codex/github-pages-release` were
-configured after the first passing hosted build on 12 September 2026. The pin
-remains empty until the maintainer publishes both visual baselines locally.
+configured after the first passing hosted build on 12 September 2026. The first
+pin selects `pages-2026-09-12-baselines`: two reviewed releases, 18 public assets,
+and 112,231,683 bytes of unpacked archive content.
 
 Verify the deployment URL, `/deployment.json` (commit identity), both models,
 direct team routes, and a 4K download. Then disable the old **Deploy static demo

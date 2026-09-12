@@ -2,7 +2,7 @@
 
 An interactive archive of dated Ferrari SF-26 and Mercedes W17 exterior reconstructions, with evidence review, component history, and studio renders.
 
-The supplied configurations are **unpublished launch-reference drafts**: Ferrari, 23 January 2026; Mercedes, 22 January 2026. They are not claims about the latest race specification. Later articles enter an evidence inbox; a reviewer decides what can be modeled. Exact team CAD, internal geometry, sponsor artwork, and a complete season history are not supplied.
+The first published Pages snapshot contains **reviewed launch references**: Ferrari, 23 January 2026; Mercedes, 22 January 2026. Both were reviewed and published on 12 September 2026. These are not claims about the latest race specification. Later articles enter an evidence inbox; a reviewer decides what can be modeled. Exact team CAD, internal geometry, sponsor artwork, and a complete season history are not supplied. Fresh local installations still create unpublished drafts that require their own review.
 
 ## Run locally
 
