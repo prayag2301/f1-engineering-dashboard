@@ -13,6 +13,7 @@ from app.database import Base  # noqa: E402
 
 # Import all models so Alembic can see them in Base.metadata
 import app.models.models  # noqa: F401, E402
+import app.models.releases  # noqa: F401, E402
 
 config = context.config
 

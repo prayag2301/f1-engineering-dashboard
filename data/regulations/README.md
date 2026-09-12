@@ -1,12 +1,5 @@
-# Regulations Data
+# Historical regulation downloads
 
-Place the FIA Formula 1 Technical Regulations PDF in this directory.
+Files in this directory are retained for existing records and are not the active modeling constraint set. Their filenames and older issue dates must not be treated as the current rulebook.
 
-Expected usage:
-
-```bash
-python scripts/seed_regulations.py
-```
-
-If one or more PDF files exist here, the latest filename is used automatically.
-If no PDF exists, the parser falls back to the curated static Week 4 dataset.
+The active, partial reviewed registry is [../references/regulations-2026.json](../references/regulations-2026.json). New FIA documents enter the evidence review workflow before a maintainer changes that registry.

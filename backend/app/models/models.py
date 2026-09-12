@@ -12,12 +12,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID, JSON
 from sqlalchemy.orm import relationship
-try:
-    from app.database import Base
-    from app.models.enums import UpgradeCategory, ComponentZone, EventStatus, AssetType
-except ModuleNotFoundError:  # Docker image expects backend.* imports
-    from app.database import Base
-    from app.models.enums import UpgradeCategory, ComponentZone, EventStatus, AssetType
+from app.database import Base
+from app.models.enums import UpgradeCategory, ComponentZone, EventStatus, AssetType
 
 
 class Team(Base):
@@ -63,7 +59,7 @@ class Component(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String(200), nullable=False, index=True)
-    zone = Column(SAEnum(ComponentZone), nullable=False)
+    zone = Column(SAEnum(ComponentZone, values_callable=lambda enum: [e.value for e in enum]), nullable=False)
     description = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -81,7 +77,7 @@ class Upgrade(Base):
     race_id = Column(UUID(as_uuid=True), ForeignKey("races.id"), nullable=False)
     component_id = Column(UUID(as_uuid=True), ForeignKey("components.id"), nullable=False)
 
-    category = Column(SAEnum(UpgradeCategory), nullable=False, index=True)
+    category = Column(SAEnum(UpgradeCategory, values_callable=lambda enum: [e.value for e in enum]), nullable=False, index=True)
     description = Column(Text, nullable=False)
     technical_detail = Column(Text)
     expected_effect = Column(String(500))
@@ -140,7 +136,7 @@ class Event(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     race_id = Column(UUID(as_uuid=True), ForeignKey("races.id"), nullable=False)
-    status = Column(SAEnum(EventStatus), nullable=False, default=EventStatus.PENDING, index=True)
+    status = Column(SAEnum(EventStatus, values_callable=lambda enum: [e.value for e in enum]), nullable=False, default=EventStatus.PENDING, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -173,7 +169,7 @@ class Asset(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     upgrade_id = Column(UUID(as_uuid=True), ForeignKey("upgrades.id"), nullable=False)
-    asset_type = Column(SAEnum(AssetType), nullable=False)
+    asset_type = Column(SAEnum(AssetType, values_callable=lambda enum: [e.value for e in enum]), nullable=False)
     path = Column(String(500), nullable=False)
     metadata_ = Column("metadata", JSON, default=dict)
     created_at = Column(DateTime, default=datetime.utcnow)

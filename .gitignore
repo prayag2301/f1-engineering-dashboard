@@ -42,3 +42,13 @@ pgdata/
 # Build artifacts
 *.tsbuildinfo
 Instructions.md
+
+# Immutable release output and local validation artifacts
+data/releases/
+data/backups/
+frontend/test-results/
+frontend/playwright-report/
+*.blend1
+data/pages-export/
+frontend/public/archive/
+frontend/.pages-preview/

@@ -140,10 +140,14 @@ SAMPLE_EVIDENCE = [
 
 @router.post("/", status_code=201)
 def seed_database(db: Session = Depends(get_db)):
+    from app.config import get_settings
+    from fastapi import HTTPException
+    if not get_settings().ENABLE_DEMO_DATA:
+        raise HTTPException(403, "Demonstration data is disabled. Set ENABLE_DEMO_DATA=true explicitly to seed it.")
     """Populate database with initial F1 2025 data."""
 
     # Check if already seeded — if so, only backfill regulations if missing
-    if db.query(Team).first():
+    if db.query(Race).filter(Race.season == 2025).first():
         existing_regs = (
             db.query(RegulationConstraint)
             .filter(RegulationConstraint.season == 2026)
@@ -174,9 +178,11 @@ def seed_database(db: Session = Depends(get_db)):
     # Teams
     team_objs = {}
     for t in TEAMS:
-        team = Team(**t)
-        db.add(team)
-        db.flush()
+        team = db.query(Team).filter_by(name=t["name"]).first()
+        if team is None:
+            team = Team(**t)
+            db.add(team)
+            db.flush()
         team_objs[t["name"]] = team
 
     # Races

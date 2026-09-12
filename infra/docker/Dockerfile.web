@@ -1,13 +1,14 @@
-FROM node:20-alpine
-
+FROM node:20-alpine AS build
 WORKDIR /app
-
-# Install dependencies at build time.
-# node_modules is preserved via an anonymous volume in docker-compose,
-# so the host directory does not override it.
-COPY apps/web/package*.json ./
-RUN npm install
-
-EXPOSE 3000
-
-CMD ["npm", "run", "dev"]
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
+FROM node:20-alpine
+WORKDIR /app
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 HOSTNAME=0.0.0.0
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+COPY --from=build /app/public ./public
+CMD ["node", "server.js"]

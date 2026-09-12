@@ -77,10 +77,10 @@ def upgrade() -> None:
         sa.Column("name", sa.String(200), nullable=False),
         sa.Column(
             "zone",
-            sa.Enum(
+            postgresql.ENUM(
                 "Front Wing", "Rear Wing", "Floor", "Floor Edge", "Sidepod", "Diffuser",
                 "Bargeboard", "Engine Cover", "Brake Duct", "Suspension Arm", "Halo", "Nose", "Other",
-                name="componentzone",
+                name="componentzone", create_type=False,
             ),
             nullable=False,
         ),
@@ -98,9 +98,9 @@ def upgrade() -> None:
         sa.Column("component_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("components.id"), nullable=False),
         sa.Column(
             "category",
-            sa.Enum(
+            postgresql.ENUM(
                 "Aero", "Mechanical", "Cooling", "Floor", "Suspension", "Power Unit", "Other",
-                name="upgradecategory",
+                name="upgradecategory", create_type=False,
             ),
             nullable=False,
         ),
@@ -143,9 +143,9 @@ def upgrade() -> None:
         sa.Column("race_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("races.id"), nullable=False),
         sa.Column(
             "status",
-            sa.Enum(
+            postgresql.ENUM(
                 "pending", "ingesting", "annotating", "reconstructing", "published",
-                name="eventstatus",
+                name="eventstatus", create_type=False,
             ),
             nullable=False,
         ),
@@ -174,7 +174,7 @@ def upgrade() -> None:
         sa.Column("upgrade_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("upgrades.id"), nullable=False),
         sa.Column(
             "asset_type",
-            sa.Enum("glb", "ply", "splat", "image", "video", "heatmap", name="assettype"),
+            postgresql.ENUM("glb", "ply", "splat", "image", "video", "heatmap", name="assettype", create_type=False),
             nullable=False,
         ),
         sa.Column("path", sa.String(500), nullable=False),
@@ -231,7 +231,7 @@ def downgrade() -> None:
     op.drop_index("ix_teams_name", table_name="teams")
     op.drop_table("teams")
 
-    sa.Enum(name="componentzone").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="assettype").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="eventstatus").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="upgradecategory").drop(op.get_bind(), checkfirst=True)
+    postgresql.ENUM(name="componentzone").drop(op.get_bind(), checkfirst=True)
+    postgresql.ENUM(name="assettype").drop(op.get_bind(), checkfirst=True)
+    postgresql.ENUM(name="eventstatus").drop(op.get_bind(), checkfirst=True)
+    postgresql.ENUM(name="upgradecategory").drop(op.get_bind(), checkfirst=True)

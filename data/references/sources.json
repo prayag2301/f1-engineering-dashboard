@@ -1,0 +1,38 @@
+{
+  "sources": [
+    {
+      "kind": "index",
+      "url": "https://www.fia.com/documents/championships/fia-formula-one-world-championship-14/season/season-2026-2072",
+      "link_pattern": "car.presentation",
+      "limit": 4
+    },
+    {
+      "kind": "index",
+      "url": "https://www.ferrari.com/en-EN/formula1/news",
+      "link_pattern": "(/formula1/articles/|sf-26|upgrad)",
+      "limit": 8
+    },
+    {
+      "kind": "index",
+      "url": "https://www.mercedesamgf1.com/news",
+      "link_pattern": "(upgrad|technical|w17)",
+      "limit": 5
+    },
+    {
+      "kind": "index",
+      "url": "https://www.formula1.com/en/latest",
+      "link_pattern": "/article/.*(technical|tech-tuesday|upgrad)",
+      "limit": 5
+    },
+    {
+      "kind": "feed",
+      "url": "https://www.motorsportweek.com/feed/",
+      "limit": 8
+    },
+    {
+      "kind": "feed",
+      "url": "https://www.the-race.com/rss/",
+      "limit": 8
+    }
+  ]
+}

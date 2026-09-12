@@ -1,0 +1,82 @@
+{
+  "enums": {
+    "componentzone": {
+      "FRONT_WING": "Front Wing",
+      "REAR_WING": "Rear Wing",
+      "FLOOR": "Floor",
+      "FLOOR_EDGE": "Floor Edge",
+      "SIDEPOD": "Sidepod",
+      "DIFFUSER": "Diffuser",
+      "BARGEBOARD": "Bargeboard",
+      "ENGINE_COVER": "Engine Cover",
+      "BRAKE_DUCT": "Brake Duct",
+      "SUSPENSION_ARM": "Suspension Arm",
+      "HALO": "Halo",
+      "NOSE": "Nose",
+      "OTHER": "Other"
+    },
+    "upgradecategory": {
+      "AERO": "Aero",
+      "MECHANICAL": "Mechanical",
+      "COOLING": "Cooling",
+      "FLOOR": "Floor",
+      "SUSPENSION": "Suspension",
+      "POWER_UNIT": "Power Unit",
+      "OTHER": "Other"
+    },
+    "eventstatus": {
+      "PENDING": "pending",
+      "INGESTING": "ingesting",
+      "ANNOTATING": "annotating",
+      "RECONSTRUCTING": "reconstructing",
+      "PUBLISHED": "published"
+    },
+    "assettype": {
+      "GLB": "glb",
+      "PLY": "ply",
+      "SPLAT": "splat",
+      "IMAGE": "image",
+      "VIDEO": "video",
+      "HEATMAP": "heatmap"
+    }
+  },
+  "tables": [
+    {
+      "name": "source_documents",
+      "table": "\nCREATE TABLE source_documents (\n\tid UUID NOT NULL, \n\turl TEXT NOT NULL, \n\tcanonical_url TEXT NOT NULL, \n\tcontent_hash VARCHAR(64) NOT NULL, \n\ttitle TEXT NOT NULL, \n\tpublisher VARCHAR(200) NOT NULL, \n\tsource_type VARCHAR(40) NOT NULL, \n\tpublished_at TIMESTAMP WITH TIME ZONE, \n\tretrieved_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tevent_name VARCHAR(200), \n\ttext TEXT NOT NULL, \n\tpages JSON NOT NULL, \n\timage_urls JSON NOT NULL, \n\trights TEXT NOT NULL, \n\tPRIMARY KEY (id), \n\tUNIQUE (canonical_url, content_hash)\n)\n\n",
+      "indexes": []
+    },
+    {
+      "name": "upgrade_candidates",
+      "table": "\nCREATE TABLE upgrade_candidates (\n\tid UUID NOT NULL, \n\tsource_id UUID NOT NULL, \n\tteam_key VARCHAR(40), \n\tseason INTEGER NOT NULL, \n\tcomponent VARCHAR(60), \n\tevent_name VARCHAR(200), \n\tobserved_at TIMESTAMP WITH TIME ZONE, \n\tsummary TEXT NOT NULL, \n\tsupporting_passage TEXT NOT NULL, \n\tpage INTEGER, \n\tevidence_status VARCHAR(30) NOT NULL, \n\trepresentation VARCHAR(30) NOT NULL, \n\tstatus VARCHAR(30) NOT NULL, \n\treview_notes TEXT NOT NULL, \n\treviewed_at TIMESTAMP WITH TIME ZONE, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tlegacy_upgrade_id UUID, \n\tPRIMARY KEY (id), \n\tCHECK (status IN ('draft','approved','rejected')), \n\tCHECK (representation IN ('annotation_only','modeled')), \n\tCHECK (evidence_status IN ('unverified','reported','confirmed','conflicting')), \n\tFOREIGN KEY(source_id) REFERENCES source_documents (id), \n\tFOREIGN KEY(legacy_upgrade_id) REFERENCES upgrades (id)\n)\n\n",
+      "indexes": []
+    },
+    {
+      "name": "component_revisions",
+      "table": "\nCREATE TABLE component_revisions (\n\tid UUID NOT NULL, \n\tteam_key VARCHAR(40) NOT NULL, \n\tseason INTEGER NOT NULL, \n\tcomponent VARCHAR(60) NOT NULL, \n\tparameters JSON NOT NULL, \n\tsource_ids JSON NOT NULL, \n\tuncertainty TEXT NOT NULL, \n\trevision_hash VARCHAR(64) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tUNIQUE (team_key, season, component, revision_hash)\n)\n\n",
+      "indexes": []
+    },
+    {
+      "name": "car_versions",
+      "table": "\nCREATE TABLE car_versions (\n\tid UUID NOT NULL, \n\tteam_key VARCHAR(40) NOT NULL, \n\tseason INTEGER NOT NULL, \n\tlabel VARCHAR(200) NOT NULL, \n\tconfiguration_event VARCHAR(200) NOT NULL, \n\tconfiguration_kind VARCHAR(30) DEFAULT 'evolution' NOT NULL, \n\treverts_to_id UUID, \n\tas_of TIMESTAMP WITH TIME ZONE NOT NULL, \n\tevidence_cutoff TIMESTAMP WITH TIME ZONE NOT NULL, \n\tparent_id UUID, \n\tstatus VARCHAR(30) NOT NULL, \n\tcomponent_revisions JSON NOT NULL, \n\tcandidate_ids JSON NOT NULL, \n\tmanifest JSON NOT NULL, \n\tvisual_review JSON NOT NULL, \n\tnotes TEXT NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tpublished_at TIMESTAMP WITH TIME ZONE, \n\tPRIMARY KEY (id), \n\tCHECK (status IN ('draft','building','ready','published','failed')), \n\tFOREIGN KEY(reverts_to_id) REFERENCES car_versions (id), \n\tFOREIGN KEY(parent_id) REFERENCES car_versions (id)\n)\n\n",
+      "indexes": [
+        "CREATE INDEX ix_car_versions_team_key ON car_versions (team_key)"
+      ]
+    },
+    {
+      "name": "release_pointers",
+      "table": "\nCREATE TABLE release_pointers (\n\tteam_key VARCHAR(40) NOT NULL, \n\tseason INTEGER NOT NULL, \n\tversion_id UUID NOT NULL, \n\tupdated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (team_key, season), \n\tFOREIGN KEY(version_id) REFERENCES car_versions (id)\n)\n\n",
+      "indexes": []
+    },
+    {
+      "name": "build_jobs",
+      "table": "\nCREATE TABLE build_jobs (\n\tid UUID NOT NULL, \n\tversion_id UUID, \n\tkind VARCHAR(30) NOT NULL, \n\tstatus VARCHAR(30) NOT NULL, \n\tschedule_key VARCHAR(100), \n\tparameters JSON NOT NULL, \n\tresult JSON NOT NULL, \n\terror TEXT, \n\tattempts INTEGER NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tstarted_at TIMESTAMP WITH TIME ZONE, \n\theartbeat_at TIMESTAMP WITH TIME ZONE, \n\tfinished_at TIMESTAMP WITH TIME ZONE, \n\tPRIMARY KEY (id), \n\tCHECK (status IN ('queued','running','succeeded','failed')), \n\tFOREIGN KEY(version_id) REFERENCES car_versions (id), \n\tUNIQUE (schedule_key)\n)\n\n",
+      "indexes": []
+    },
+    {
+      "name": "review_audit",
+      "table": "\nCREATE TABLE review_audit (\n\tid UUID NOT NULL, \n\taction VARCHAR(40) NOT NULL, \n\ttarget_id VARCHAR(60) NOT NULL, \n\tdetail JSON NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id)\n)\n\n",
+      "indexes": []
+    }
+  ]
+}

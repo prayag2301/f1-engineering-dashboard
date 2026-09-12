@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "generator_version": "2026.1",
+  "components": {
+    "chassis": {
+      "label": "Chassis & cockpit",
+      "anchor": [
+        0,
+        0.5,
+        -0.3
+      ],
+      "parameters": {}
+    },
+    "nose": {
+      "label": "Nose",
+      "anchor": [
+        0,
+        0.42,
+        -1.85
+      ],
+      "parameters": {
+        "tip_width": [
+          0.09,
+          0.2
+        ],
+        "shoulder_height": [
+          0.44,
+          0.62
+        ]
+      }
+    },
+    "front_wing": {
+      "label": "Front wing",
+      "anchor": [
+        0,
+        0.18,
+        -2.35
+      ],
+      "parameters": {
+        "chord": [
+          0.18,
+          0.4
+        ],
+        "sweep": [
+          -0.05,
+          0.2
+        ],
+        "camber": [
+          0.015,
+          0.075
+        ]
+      }
+    },
+    "sidepods": {
+      "label": "Sidepods & cooling inlets",
+      "anchor": [
+        0.62,
+        0.48,
+        0.15
+      ],
+      "parameters": {
+        "width": [
+          0.24,
+          0.42
+        ],
+        "inlet_height": [
+          0.12,
+          0.27
+        ],
+        "undercut": [
+          0.04,
+          0.18
+        ]
+      }
+    },
+    "engine_cover": {
+      "label": "Engine cover & airbox",
+      "anchor": [
+        0,
+        0.83,
+        0.65
+      ],
+      "parameters": {
+        "spine_height": [
+          0.77,
+          1.02
+        ],
+        "tail_width": [
+          0.06,
+          0.15
+        ]
+      }
+    },
+    "floor": {
+      "label": "Floor",
+      "anchor": [
+        0.68,
+        0.1,
+        0.5
+      ],
+      "parameters": {
+        "edge_width": [
+          0.65,
+          0.83
+        ]
+      }
+    },
+    "diffuser": {
+      "label": "Diffuser",
+      "anchor": [
+        0,
+        0.22,
+        2.05
+      ],
+      "parameters": {
+        "exit_height": [
+          0.16,
+          0.32
+        ]
+      }
+    },
+    "rear_wing": {
+      "label": "Rear wing",
+      "anchor": [
+        0,
+        0.91,
+        2.06
+      ],
+      "parameters": {
+        "chord": [
+          0.2,
+          0.4
+        ],
+        "camber": [
+          0.02,
+          0.09
+        ]
+      }
+    },
+    "suspension": {
+      "label": "Suspension & brake ducts",
+      "anchor": [
+        0.55,
+        0.35,
+        -1.7
+      ],
+      "parameters": {}
+    },
+    "wheels": {
+      "label": "Wheels & tyres",
+      "anchor": [
+        0.81,
+        0.352,
+        -1.7
+      ],
+      "parameters": {}
+    },
+    "halo": {
+      "label": "Halo",
+      "anchor": [
+        0,
+        0.82,
+        -0.3
+      ],
+      "parameters": {}
+    }
+  },
+  "teams": {
+    "ferrari": {
+      "name": "Scuderia Ferrari",
+      "car_name": "SF-26",
+      "accent": "#e52d3a",
+      "baseline_date": "2026-01-23T12:00:00Z",
+      "event": "Maranello launch / Fiorano shakedown",
+      "source_url": "https://www.formula1.com/en/latest/article/gallery-check-out-every-angle-of-ferraris-2026-f1-car.7HdOPtJJwN5VHJ8XAWVtuS",
+      "publisher": "Formula 1 / Scuderia Ferrari",
+      "title": "Ferrari SF-26 official launch gallery",
+      "reference_images": [
+        "https://media.formula1.com/image/upload/c_fit,w_1600,h_900/q_auto/v1740000001/fom-website/2026/Ferrari/F678_still_f03_16_9_v10.webp",
+        "https://media.formula1.com/image/upload/c_fit,w_1600,h_900/q_auto/v1740000001/fom-website/2026/Ferrari/F678_still_f15_16_9_v10.webp",
+        "https://media.formula1.com/image/upload/c_fit,w_1600,h_900/q_auto/v1740000001/fom-website/2026/Ferrari/F678_still_f08_16_9_v10.webp"
+      ],
+      "notes": "Original exterior reconstruction from launch views. Broad inlet mouths, red sidepods and nose, white upper cockpit/engine cover, and narrow rear bodywork are visible. Unseen internal surfaces and exact section dimensions are estimated. Sponsor artwork is not included.",
+      "parameters": {
+        "nose": {
+          "tip_width": 0.14,
+          "shoulder_height": 0.56
+        },
+        "front_wing": {
+          "chord": 0.31,
+          "sweep": 0.12,
+          "camber": 0.046
+        },
+        "sidepods": {
+          "width": 0.36,
+          "inlet_height": 0.22,
+          "undercut": 0.12
+        },
+        "engine_cover": {
+          "spine_height": 0.97,
+          "tail_width": 0.09
+        },
+        "floor": {
+          "edge_width": 0.79
+        },
+        "diffuser": {
+          "exit_height": 0.25
+        },
+        "rear_wing": {
+          "chord": 0.31,
+          "camber": 0.052
+        }
+      }
+    },
+    "mercedes": {
+      "name": "Mercedes-AMG PETRONAS",
+      "car_name": "W17",
+      "accent": "#45d6c6",
+      "baseline_date": "2026-01-22T12:00:00Z",
+      "event": "W17 launch presentation",
+      "source_url": "https://www.mercedesamgf1.com/news/mercedes-amg-f1-2026-challenger-w17-revealed",
+      "publisher": "Mercedes-AMG PETRONAS F1 Team",
+      "title": "Mercedes W17 official launch",
+      "reference_images": [
+        "https://images.ctfassets.net/1fvlg6xqnm65/5mPoJIJroXGsBxhRL0tYrQ/5bcb87e98a87414fe2fc900bc68382ba/Mercedes-AMG_F1_W17_E_PERFORMANCE_-_GR_6.jpg?w=1600"
+      ],
+      "notes": "Original exterior reconstruction from the W17 launch. Silver forward bodywork, black rear bodywork, and a low turquoise flow line follow the official livery description. Fine inlet sections and hidden surfaces remain estimates. Sponsor artwork is not included.",
+      "parameters": {
+        "nose": {
+          "tip_width": 0.115,
+          "shoulder_height": 0.53
+        },
+        "front_wing": {
+          "chord": 0.285,
+          "sweep": 0.085,
+          "camber": 0.038
+        },
+        "sidepods": {
+          "width": 0.315,
+          "inlet_height": 0.17,
+          "undercut": 0.15
+        },
+        "engine_cover": {
+          "spine_height": 0.94,
+          "tail_width": 0.105
+        },
+        "floor": {
+          "edge_width": 0.765
+        },
+        "diffuser": {
+          "exit_height": 0.235
+        },
+        "rear_wing": {
+          "chord": 0.285,
+          "camber": 0.044
+        }
+      }
+    }
+  }
+}

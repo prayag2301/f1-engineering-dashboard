@@ -4,7 +4,17 @@
   "private": true,
   "scripts": {
     "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && uvicorn app.main:app --reload --port 8000",
-    "build:frontend": "cd frontend && npm run build"
+    "dev:backend": "cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000",
+    "build:frontend": "cd frontend && npm run build",
+    "typecheck": "npm --prefix frontend run typecheck",
+    "test:api": "cd backend && .venv/bin/python -m pytest",
+    "test:e2e": "npm --prefix frontend run test:e2e",
+    "setup": "python3 scripts/configure.py",
+    "up": "docker compose up -d --build",
+    "down": "docker compose down",
+    "build:pages": "node scripts/build_pages.mjs",
+    "preview:pages": "python3 scripts/serve_pages.py",
+    "test:pages": "npm --prefix frontend run test:pages",
+    "export:pages": "python3 scripts/pages.py export"
   }
 }

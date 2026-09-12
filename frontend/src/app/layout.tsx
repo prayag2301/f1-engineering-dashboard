@@ -1,11 +1,14 @@
-import "@/styles/globals.css";
+import "@/styles/studio.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "F1 Engineering Dashboard",
+  icons: {
+    icon: `${process.env.NEXT_PUBLIC_STATIC_ARCHIVE === "true" ? process.env.NEXT_PUBLIC_BASE_PATH || "" : ""}/icon.svg`,
+  },
+  title: "Form & Flow — F1 Engineering Observatory",
   description:
-    "The most technically insightful open-source F1 engineering platform. Pure engineering — no drama.",
+    "Explore dated F1 car reconstructions, compare component changes, and inspect the public evidence behind each release.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

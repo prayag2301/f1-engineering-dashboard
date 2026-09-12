@@ -171,7 +171,7 @@ class TestIngestUpgradeItems:
         items = [make_item() for _ in range(4)]
         side_effects = [True, False, True, False]
         with patch(
-            "backend.ingestion.upgrade_ingestion._is_duplicate",
+            "app.ingestion.upgrade_ingestion._is_duplicate",
             side_effect=side_effects,
         ):
             outcome = ingest_upgrade_items(db, items, skip_duplicates=True)
