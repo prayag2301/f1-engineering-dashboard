@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generator_version": "2026.3",
+  "generator_version": "2026.4",
   "components": {
     "chassis": {
       "label": "Chassis & cockpit",
@@ -182,6 +182,9 @@
       ],
       "notes": "Original exterior reconstruction from launch views. Broad inlet mouths, red sidepods and nose, white upper cockpit/engine cover, and narrow rear bodywork are visible. Unseen internal surfaces and exact section dimensions are estimated. Sponsor artwork is not included.",
       "component_notes": {
+        "front_wing": "SF-26 January launch exterior: broad swept upper flaps, separate left/right elements around the nose, a rising mid-span mainplane and a dropped outboard junction. The endplates and feet are curved laminate skins. Front and overhead launch views establish the visible outline; section thickness, slot clearance and bracket dimensions are estimates. September livery imagery is a cross-check, not evidence that this launch wing raced at Monza.",
+        "floor": "SF-26 January launch exterior: a swept front floor board, a curved lower turning surface and a thin raised edge lip replace the flat panel and round tube. The upper perimeter follows the launch top and rear-quarter views. Hidden underside, tunnel sections, small fences and exact curvature are unresolved. The FIA-reported September 4 single-element floor-board revision is separately recorded as annotation-only and is not applied to this January configuration.",
+        "rear_wing": "SF-26 January launch exterior: a deeper spoon-shaped mainplane, individually contoured slotted flaps and swept lower endplate supports follow the front and rear-quarter launch views. Pylons are thin blade surfaces. Exact profiles, actuator details and deflection are estimates; this does not reconstruct a Monza low-drag wing.",
         "chassis": "SF-26 launch reconstruction: the dark inner cockpit tub now remains visible within the painted survival-cell opening. This corrects the previously obscured seat; it does not establish a real-world chassis upgrade. Hidden cockpit details and dimensions remain estimates.",
         "sidepods": "SF-26 launch reconstruction: broad forward-facing mouths, full upper shoulders and a later inward taper. The model separates the recessed inlet from the undercut body surface. Photograph comparison supports these exterior features; section dimensions and internal ducts remain estimates.",
         "engine_cover": "SF-26 launch reconstruction: triangular airbox opening above broader white shoulders and a long dorsal fin. Small shoulder cooling reliefs are illustrative; their count, depth and hidden cooling layout are not established by the gallery.",
@@ -234,6 +237,9 @@
       ],
       "notes": "Original exterior reconstruction from the W17 launch. Silver forward bodywork, black rear bodywork, and a low turquoise flow line follow the official livery description. Fine inlet sections and hidden surfaces remain estimates. Sponsor artwork is not included.",
       "component_notes": {
+        "front_wing": "W17 January presentation exterior: narrower swept upper flaps, a distinct outer mainplane trough and rolled outer foot, with a scalloped endplate upper rail. Each element has its own spanwise height and chord profile. Launch overhead and three-quarter views support the outline; September Madrid photos corroborate the general arrangement but do not establish identical part identity. Airfoil sections and slot clearances remain estimates.",
+        "floor": "W17 January presentation exterior: a swept floor board, raised forward shoulder and a shaped edge lip with a different height progression from Ferrari. These are visible upper-surface estimates from the launch overhead and three-quarter views. Concealed underside, precise edge-wing sections and small supports are not established. Madrid race imagery is insufficient to reconstruct a complete later floor revision.",
+        "rear_wing": "W17 January presentation exterior: a shallower mainplane bowl, more uniform upper-flap height and straighter lower endplate sweep than the Ferrari reconstruction. Each slotted element is a separate closed surface. Hidden mechanisms and exact sections remain estimates. The Madrid central-winglet span reduction in the September 11 FIA submission is recorded separately, not backdated into this launch model.",
         "chassis": "W17 launch reconstruction: the dark inner cockpit tub now remains visible within the survival-cell opening. This corrects the previously obscured seat; it does not establish a real-world chassis upgrade. Hidden cockpit details and dimensions remain estimates.",
         "sidepods": "W17 presentation-render reconstruction: shallow high inlet slots, undercut shoulders and a relatively flat upper deck with shallow channels and a raised rear body profile. These contours follow the January 22 official renders, not a verified on-track configuration. Section dimensions, channel depth and concealed radiator geometry remain estimates.",
         "engine_cover": "W17 presentation-render reconstruction: a rounded airbox opening with a central divider, a narrow dark spine and a higher, flat-sided dorsal fin over the raised rear deck. The official launch renders establish this visible outline; on-track correspondence, hidden surfaces and exact dimensions are unconfirmed.",

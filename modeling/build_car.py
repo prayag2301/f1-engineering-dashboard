@@ -322,6 +322,446 @@ def wing(name, halfspan, z0, y0, chord, camber, sweep, mat):
     return mesh(name, verts, faces, mat, 1)
 
 
+def station_sample(rows, value):
+    """Shape-preserving cubic interpolation of editable silhouette stations.
+
+    Each row starts with its coordinate; remaining columns are independent
+    dimensions. Harmonic tangents avoid overshooting small gaps or thin lips.
+    These are visual estimates, not measured factory sections.
+    """
+    xs = np.array([r[0] for r in rows])
+    ys = np.array([r[1:] for r in rows], dtype=float)
+    slopes = np.diff(ys, axis=0) / np.diff(xs)[:, None]
+    tangents = np.zeros_like(ys)
+    tangents[0], tangents[-1] = slopes[0], slopes[-1]
+    for i in range(1, len(rows) - 1):
+        for j in range(ys.shape[1]):
+            a, b = slopes[i - 1, j], slopes[i, j]
+            if a * b > 0:
+                tangents[i, j] = 2 * a * b / (a + b)
+    k = min(max(int(np.searchsorted(xs, value)) - 1, 0), len(xs) - 2)
+    h = xs[k + 1] - xs[k]
+    t = min(1, max(0, (value - xs[k]) / h))
+    return (
+        (2 * t**3 - 3 * t**2 + 1) * ys[k]
+        + (t**3 - 2 * t * t + t) * h * tangents[k]
+        + (-2 * t**3 + 3 * t * t) * ys[k + 1]
+        + (t**3 - t * t) * h * tangents[k + 1]
+    )
+
+
+def sectional_wing(name, stations, mat, *, split=False):
+    """Closed airfoil skin: x, leading Z/Y, chord, trailing rise, camber, thickness.
+
+    Planform, spanwise droop and twist are authored separately for each element.
+    Upper front flaps terminate at the nose instead of passing through it.
+    """
+    for side in (-1, 1) if split else (0,):
+        verts, faces = [], []
+        spans, sections = (36 if split else 72), 32
+        for i in range(spans + 1):
+            if side:
+                x = side * (
+                    stations[0][0] + (stations[-1][0] - stations[0][0]) * i / spans
+                )
+            else:
+                x = stations[-1][0] * (2 * i / spans - 1)
+            z, y, chord, rise, camber, thickness = station_sample(stations, abs(x))
+            for j in range(sections):
+                theta = 2 * PI * j / sections
+                t = (1 - math.cos(theta)) / 2
+                skin = thickness * math.sin(theta) * (1 - 0.72 * t)
+                verts.append(
+                    (x, y + rise * t + camber * math.sin(PI * t) + skin, z + chord * t)
+                )
+        for i in range(spans):
+            for j in range(sections):
+                a, b = i * sections + j, i * sections + (j + 1) % sections
+                faces.append((a, b, b + sections, a + sections))
+        faces += [
+            tuple(reversed(range(sections))),
+            tuple(spans * sections + j for j in range(sections)),
+        ]
+        # Mirrored half surfaces need their winding reversed as well.
+        if side == -1:
+            faces = [tuple(reversed(f)) for f in faces]
+        mesh(
+            name + ("_left" if side == -1 else "_right" if side else ""),
+            verts,
+            faces,
+            mat,
+        )
+
+
+def ruled_skin(name, rows, mat, thickness=0.005):
+    """Curved thin shell between two 3D rails, with rounded solid edges."""
+    verts, faces = [], []
+    for i in range(49):
+        a = station_sample(rows, rows[0][0] + (rows[-1][0] - rows[0][0]) * i / 48)
+        for j in range(5):
+            t = j / 4
+            verts.append(tuple((1 - t) * a[:3] + t * a[3:]))
+    for i in range(48):
+        for j in range(4):
+            a = i * 5 + j
+            faces.append((a, a + 1, a + 6, a + 5))
+    obj = mesh(name, verts, faces, mat)
+    mod = obj.modifiers.new("Composite skin", "SOLIDIFY")
+    mod.thickness = thickness
+    mod = obj.modifiers.new("Rounded laminate edges", "BEVEL")
+    mod.width, mod.segments = thickness * 0.4, 2
+    return obj
+
+
+def build_front_wing(team, p, carbon, paint):
+    # See docs/aero-reconstruction.md: launch orthographic views establish
+    # planform; September imagery is a cross-check, not a launch upgrade claim.
+    ferrari = team == "ferrari"
+    if ferrari:
+        main = [
+            [0, -2.555, 0.095, 0.20, 0.034, 0.018, 0.007],
+            [0.16, -2.55, 0.098, 0.21, 0.038, 0.020, 0.007],
+            [0.43, -2.505, 0.125, 0.21, 0.038, 0.019, 0.007],
+            [0.69, -2.43, 0.143, 0.195, 0.025, 0.016, 0.006],
+            [0.80, -2.41, 0.090, 0.19, 0.018, 0.012, 0.005],
+            [0.90, -2.40, 0.114, 0.17, 0.009, 0.009, 0.004],
+        ]
+        flap = [
+            [0.135, -2.365, 0.147, 0.165, 0.058, 0.022, 0.006],
+            [0.35, -2.34, 0.168, 0.174, 0.068, 0.024, 0.006],
+            [0.61, -2.275, 0.187, 0.16, 0.072, 0.025, 0.006],
+            [0.765, -2.255, 0.17, 0.112, 0.055, 0.018, 0.005],
+            [0.80, -2.25, 0.158, 0.095, 0.040, 0.014, 0.004],
+        ]
+        upper = [
+            [0.14, -2.225, 0.213, 0.13, 0.064, 0.022, 0.005],
+            [0.34, -2.19, 0.246, 0.148, 0.075, 0.027, 0.005],
+            [0.59, -2.135, 0.265, 0.14, 0.076, 0.025, 0.005],
+            [0.76, -2.16, 0.227, 0.097, 0.050, 0.018, 0.004],
+            [0.80, -2.17, 0.205, 0.075, 0.038, 0.012, 0.004],
+        ]
+        end = [
+            [0, 0.812, 0.102, -2.415, 0.802, 0.155, -2.415],
+            [0.18, 0.815, 0.095, -2.36, 0.799, 0.252, -2.36],
+            [0.48, 0.821, 0.105, -2.25, 0.806, 0.325, -2.25],
+            [0.78, 0.824, 0.12, -2.12, 0.812, 0.323, -2.12],
+            [1, 0.829, 0.12, -2.025, 0.824, 0.296, -2.025],
+        ]
+    else:
+        main = [
+            [0, -2.55, 0.092, 0.195, 0.027, 0.017, 0.007],
+            [0.15, -2.54, 0.097, 0.20, 0.033, 0.018, 0.007],
+            [0.42, -2.48, 0.12, 0.19, 0.033, 0.017, 0.006],
+            [0.67, -2.405, 0.118, 0.175, 0.029, 0.016, 0.006],
+            [0.79, -2.395, 0.078, 0.19, 0.023, 0.015, 0.005],
+            [0.865, -2.38, 0.136, 0.175, 0.012, 0.013, 0.004],
+            [0.90, -2.37, 0.105, 0.16, 0.009, 0.009, 0.004],
+        ]
+        flap = [
+            [0.125, -2.363, 0.14, 0.16, 0.054, 0.022, 0.006],
+            [0.32, -2.326, 0.153, 0.15, 0.065, 0.020, 0.006],
+            [0.55, -2.27, 0.163, 0.132, 0.070, 0.020, 0.005],
+            [0.74, -2.25, 0.156, 0.108, 0.046, 0.018, 0.005],
+            [0.80, -2.24, 0.148, 0.086, 0.032, 0.012, 0.004],
+        ]
+        upper = [
+            [0.13, -2.225, 0.204, 0.137, 0.075, 0.023, 0.005],
+            [0.34, -2.194, 0.227, 0.124, 0.072, 0.022, 0.005],
+            [0.54, -2.16, 0.236, 0.114, 0.062, 0.022, 0.005],
+            [0.73, -2.17, 0.20, 0.086, 0.037, 0.013, 0.004],
+            [0.80, -2.17, 0.183, 0.067, 0.023, 0.011, 0.004],
+        ]
+        end = [
+            [0, 0.806, 0.082, -2.40, 0.802, 0.147, -2.40],
+            [0.2, 0.81, 0.09, -2.345, 0.795, 0.265, -2.345],
+            [0.47, 0.816, 0.106, -2.25, 0.797, 0.30, -2.25],
+            [0.68, 0.822, 0.122, -2.15, 0.804, 0.287, -2.15],
+            [1, 0.83, 0.125, -2.02, 0.819, 0.313, -2.02],
+        ]
+    chord_scale = p["chord"] / (0.31 if ferrari else 0.285)
+    camber_scale = p["camber"] / (0.046 if ferrari else 0.038)
+    sweep_delta = p["sweep"] - (0.12 if ferrari else 0.085)
+    for name, rows in (("mainplane", main), ("slot_flap", flap), ("upper_flap", upper)):
+        adjusted = [
+            [
+                x,
+                z + sweep_delta * (x / 0.9) ** 2,
+                y,
+                c * chord_scale,
+                rise,
+                camber * camber_scale,
+                thick,
+            ]
+            for x, z, y, c, rise, camber, thick in rows
+        ]
+        sectional_wing(name, adjusted, carbon, split=name != "mainplane")
+    for side in (-1, 1):
+        ruled_skin(
+            "endplate",
+            [[t, side * x, y, z, side * a, b, c] for t, x, y, z, a, b, c in end],
+            carbon,
+        )
+        # Outboard foot is a swept laminate surface, not a cylindrical tip roll.
+        ruled_skin(
+            "outboard_foot",
+            [
+                [0, side * 0.822, 0.10, -2.39, side * 0.90, 0.12, -2.38],
+                [
+                    0.35,
+                    side * 0.83,
+                    0.10,
+                    -2.27,
+                    side * 0.905,
+                    0.127 if ferrari else 0.148,
+                    -2.26,
+                ],
+                [0.72, side * 0.834, 0.12, -2.12, side * 0.90, 0.135, -2.10],
+                [1, side * 0.836, 0.12, -2.02, side * 0.888, 0.137, -2.005],
+            ],
+            carbon,
+            0.004,
+        )
+        # Visible slot separators; spacing and mounting sections are estimated.
+        for x in (0.21, 0.71):
+            for a, b in ((flap, upper),):
+                az, ay, ac, ar, *_ = station_sample(a, x)
+                bz, by, *_ = station_sample(b, x)
+                ruled_skin(
+                    "slot_separator",
+                    [
+                        [
+                            0,
+                            side * (x - 0.002),
+                            ay + ar,
+                            az + ac,
+                            side * (x + 0.002),
+                            ay + ar,
+                            az + ac,
+                        ],
+                        [
+                            1,
+                            side * (x - 0.002),
+                            by + 0.01,
+                            bz + 0.018,
+                            side * (x + 0.002),
+                            by + 0.01,
+                            bz + 0.018,
+                        ],
+                    ],
+                    carbon,
+                    0.003,
+                )
+
+
+def build_floor(team, p, carbon):
+    ferrari = team == "ferrari"
+    w = p["edge_width"]
+    # z, width, edge height. The central/hidden underside remains approximate.
+    outline = (
+        [
+            [-0.96, 0.37, 0.09],
+            [-0.87, 0.67, 0.135],
+            [-0.67, w, 0.16],
+            [-0.30, w, 0.123],
+            [0.15, w - 0.012, 0.103],
+            [0.70, w - 0.045, 0.11],
+            [1.12, 0.66, 0.13],
+            [1.45, 0.57, 0.10],
+            [2, 0.51, 0.09],
+        ]
+        if ferrari
+        else [
+            [-0.96, 0.37, 0.09],
+            [-0.88, 0.70, 0.145],
+            [-0.63, w, 0.175],
+            [-0.25, w - 0.009, 0.14],
+            [0.20, w - 0.026, 0.12],
+            [0.68, w - 0.04, 0.14],
+            [1.08, 0.68, 0.152],
+            [1.46, 0.56, 0.105],
+            [2, 0.51, 0.09],
+        ]
+    )
+    verts, faces = [], []
+    for i in range(81):
+        z = -0.96 + 2.96 * i / 80
+        width, height = station_sample(outline, z)
+        for j in range(25):
+            u = 2 * j / 24 - 1
+            verts.append((u * width, 0.085 + (height - 0.085) * abs(u) ** 3, z))
+    for i in range(80):
+        for j in range(24):
+            a = i * 25 + j
+            faces.append((a, a + 1, a + 26, a + 25))
+    obj = mesh("contoured_upper_surface", verts, faces, carbon)
+    mod = obj.modifiers.new("Floor laminate", "SOLIDIFY")
+    mod.thickness = 0.009
+    for side in (-1, 1):
+        lip = []
+        for i, z in enumerate((-0.46, -0.26, 0.04, 0.38, 0.72, 1.02, 1.20)):
+            width, height = station_sample(outline, z)
+            lift = (
+                (0.022, 0.034, 0.025, 0.022, 0.029, 0.022, 0.008)[i]
+                if ferrari
+                else (0.025, 0.042, 0.025, 0.038, 0.043, 0.028, 0.008)[i]
+            )
+            lip.append(
+                [
+                    z,
+                    side * (width - 0.033),
+                    height + 0.003,
+                    z,
+                    side * (width + 0.008),
+                    height + lift,
+                    z,
+                ]
+            )
+        ruled_skin("sculpted_edge_lip", lip, carbon, 0.004)
+        # S-curved board with swept upper rail, independently authored per team.
+        board = (
+            [
+                [0, 0.65, 0.11, -0.88, 0.62, 0.32, -0.84],
+                [0.2, 0.72, 0.135, -0.82, 0.66, 0.43, -0.76],
+                [0.55, 0.77, 0.155, -0.70, 0.73, 0.42, -0.65],
+                [1, 0.775, 0.145, -0.51, 0.78, 0.27, -0.50],
+            ]
+            if ferrari
+            else [
+                [0, 0.67, 0.12, -0.89, 0.64, 0.31, -0.88],
+                [0.2, 0.73, 0.15, -0.82, 0.685, 0.41, -0.79],
+                [0.55, 0.76, 0.168, -0.67, 0.745, 0.365, -0.66],
+                [1, 0.76, 0.15, -0.47, 0.78, 0.23, -0.46],
+            ]
+        )
+        ruled_skin(
+            "swept_floor_board",
+            [[t, side * x, y, z, side * a, b, c] for t, x, y, z, a, b, c in board],
+            carbon,
+            0.005,
+        )
+        ruled_skin(
+            "board_lower_turning_surface",
+            [
+                [0, side * 0.53, 0.135, -0.86, side * 0.66, 0.15, -0.89],
+                [
+                    0.45,
+                    side * 0.60,
+                    0.175,
+                    -0.70,
+                    side * 0.755,
+                    0.205 if ferrari else 0.23,
+                    -0.70,
+                ],
+                [1, side * 0.65, 0.13, -0.52, side * 0.77, 0.16, -0.49],
+            ],
+            carbon,
+            0.004,
+        )
+
+
+def build_rear_wing(team, p, carbon):
+    ferrari = team == "ferrari"
+    profiles = (
+        [
+            [
+                [0, 1.84, 0.79, 0.235, 0.048, 0.023, 0.008],
+                [0.22, 1.845, 0.803, 0.23, 0.05, 0.025, 0.008],
+                [0.42, 1.84, 0.85, 0.22, 0.038, 0.02, 0.007],
+                [0.505, 1.83, 0.866, 0.21, 0.028, 0.018, 0.006],
+            ],
+            [
+                [0, 2.04, 0.843, 0.13, 0.047, 0.02, 0.006],
+                [0.25, 2.042, 0.857, 0.13, 0.045, 0.02, 0.006],
+                [0.43, 2.03, 0.896, 0.12, 0.033, 0.017, 0.005],
+                [0.505, 2.022, 0.90, 0.108, 0.026, 0.014, 0.004],
+            ],
+            [
+                [0, 2.155, 0.902, 0.125, 0.055, 0.02, 0.005],
+                [0.24, 2.15, 0.914, 0.125, 0.052, 0.02, 0.005],
+                [0.43, 2.13, 0.932, 0.125, 0.039, 0.016, 0.004],
+                [0.505, 2.112, 0.933, 0.12, 0.03, 0.014, 0.004],
+            ],
+        ]
+        if ferrari
+        else [
+            [
+                [0, 1.85, 0.817, 0.215, 0.03, 0.019, 0.008],
+                [0.27, 1.852, 0.82, 0.21, 0.032, 0.019, 0.008],
+                [0.44, 1.848, 0.842, 0.20, 0.022, 0.018, 0.007],
+                [0.505, 1.84, 0.852, 0.195, 0.018, 0.015, 0.006],
+            ],
+            [
+                [0, 2.042, 0.854, 0.115, 0.035, 0.017, 0.006],
+                [0.27, 2.04, 0.858, 0.115, 0.034, 0.017, 0.006],
+                [0.44, 2.033, 0.873, 0.11, 0.028, 0.015, 0.005],
+                [0.505, 2.025, 0.879, 0.105, 0.024, 0.012, 0.004],
+            ],
+            [
+                [0, 2.142, 0.903, 0.13, 0.034, 0.019, 0.005],
+                [0.27, 2.14, 0.905, 0.13, 0.033, 0.019, 0.005],
+                [0.44, 2.13, 0.916, 0.128, 0.029, 0.016, 0.004],
+                [0.505, 2.12, 0.92, 0.123, 0.025, 0.014, 0.004],
+            ],
+        ]
+    )
+    for name, rows in zip(("spoon_mainplane", "slot_flap", "upper_flap"), profiles):
+        sectional_wing(
+            name,
+            [
+                [
+                    x,
+                    z,
+                    y,
+                    c * p["chord"] / (0.31 if ferrari else 0.285),
+                    r,
+                    k * p["camber"] / (0.052 if ferrari else 0.044),
+                    t,
+                ]
+                for x, z, y, c, r, k, t in rows
+            ],
+            carbon,
+        )
+    for side in (-1, 1):
+        ruled_skin(
+            "curved_endplate",
+            [
+                [0, side * 0.35, 0.29, 1.84, side * 0.385, 0.32, 1.96],
+                [
+                    0.3,
+                    side * (0.425 if ferrari else 0.40),
+                    0.50,
+                    1.86,
+                    side * 0.46,
+                    0.53,
+                    2.17,
+                ],
+                [0.58, side * 0.497, 0.70, 1.85, side * 0.514, 0.72, 2.32],
+                [0.78, side * 0.51, 0.86, 1.83, side * 0.515, 0.865, 2.31],
+                [
+                    1,
+                    side * 0.507,
+                    0.978 if ferrari else 0.96,
+                    1.835,
+                    side * 0.515,
+                    0.98 if ferrari else 0.96,
+                    2.28,
+                ],
+            ],
+            carbon,
+            0.007,
+        )
+        ruled_skin(
+            "pylon",
+            [
+                [0, side * 0.12, 0.30, 1.69, side * 0.12, 0.30, 1.79],
+                [0.5, side * 0.125, 0.57, 1.79, side * 0.125, 0.57, 1.90],
+                [1, side * 0.13, 0.83, 1.96, side * 0.13, 0.83, 2.05],
+            ],
+            carbon,
+            0.012,
+        )
+
+
 def tyre(name, x, z, width, radius, mat):
     profile = [
         (-0.5, 0.69),
@@ -542,45 +982,7 @@ def build_car(team, params):
 
     COMPONENT = "front_wing"
     p = params[COMPONENT]
-    for i in range(3):
-        wing(
-            ("mainplane", "flap_1", "flap_2")[i],
-            0.875 - i * 0.022,
-            -2.57 + i * 0.155,
-            0.10 + i * 0.056,
-            p["chord"] * (1 - i * 0.16),
-            p["camber"],
-            p["sweep"],
-            carbon,
-        )
-    for side in (-1, 1):
-        # Curved endplates follow the wing's outboard contour.
-        obj = mesh(
-            "endplate",
-            [
-                (side * 0.878, 0.065, -2.40),
-                (side * 0.89, 0.08, -2.10),
-                (side * 0.884, 0.30, -2.01),
-                (side * 0.875, 0.29, -2.34),
-            ],
-            [(0, 1, 2, 3)],
-            red,
-        )
-        mod = obj.modifiers.new("Endplate thickness", "SOLIDIFY")
-        mod.thickness = 0.009
-        mod = obj.modifiers.new("Edge radii", "BEVEL")
-        mod.width = 0.018
-        mod.segments = 4
-        tube(
-            "tip_roll",
-            [
-                (side * 0.84, 0.07, -2.42),
-                (side * 0.885, 0.1, -2.3),
-                (side * 0.89, 0.095, -2.06),
-            ],
-            0.015,
-            carbon,
-        )
+    build_front_wing(team, p, carbon, red)
 
     COMPONENT = "sidepods"
     p = params[COMPONENT]
@@ -808,50 +1210,7 @@ def build_car(team, params):
 
     COMPONENT = "floor"
     p = params[COMPONENT]
-    zvals = [-0.96, -0.88, -0.55, 0.10, 0.75, 1.22, 1.75, 2.0]
-    widths = [
-        0.37,
-        0.58,
-        p["edge_width"],
-        p["edge_width"],
-        p["edge_width"] * 0.93,
-        0.63,
-        0.54,
-        0.51,
-    ]
-    verts = [(side * w, 0.085, z) for side in (-1, 1) for w, z in zip(widths, zvals)]
-    faces = [(i, i + 1, i + 9, i + 8) for i in range(7)]
-    obj = mesh("main_surface", verts, faces, carbon)
-    mod = obj.modifiers.new("Floor thickness", "SOLIDIFY")
-    mod.thickness = 0.015
-    mod = obj.modifiers.new("Floor edge bevel", "BEVEL")
-    mod.width = 0.008
-    mod.segments = 3
-    for side in (-1, 1):
-        tube(
-            "edge_wing",
-            [
-                (side * p["edge_width"], 0.095, -0.38),
-                (side * (p["edge_width"] + 0.005), 0.12, 0.02),
-                (side * p["edge_width"] * 0.97, 0.13, 0.53),
-                (side * 0.63, 0.14, 1.23),
-            ],
-            0.012,
-            carbon,
-        )
-        obj = mesh(
-            "forward_deflector",
-            [
-                (side * 0.68, 0.09, -0.87),
-                (side * 0.79, 0.10, -0.65),
-                (side * 0.74, 0.43, -0.59),
-                (side * 0.65, 0.44, -0.79),
-            ],
-            [(0, 1, 2, 3)],
-            carbon,
-        )
-        mod = obj.modifiers.new("Deflector thickness", "SOLIDIFY")
-        mod.thickness = 0.008
+    build_floor(team, p, carbon)
     rounded_box(
         "plank",
         (0, 0.055, 0.50),
@@ -898,46 +1257,8 @@ def build_car(team, params):
 
     COMPONENT = "rear_wing"
     p = params[COMPONENT]
-    for i in range(3):
-        wing(
-            ("mainplane", "flap_1", "flap_2")[i],
-            0.505,
-            1.86 + i * 0.135,
-            0.80 + i * 0.075,
-            p["chord"] * (1 - i * 0.16),
-            p["camber"],
-            -0.055,
-            carbon,
-        )
+    build_rear_wing(team, p, carbon)
     for side in (-1, 1):
-        obj = mesh(
-            "endplate",
-            [
-                (side * 0.51, 0.90, 1.83),
-                (side * 0.515, 0.92, 2.29),
-                (side * 0.515, 0.73, 2.34),
-                (side * 0.46, 0.53, 2.12),
-                (side * 0.35, 0.28, 1.84),
-                (side * 0.42, 0.39, 1.84),
-            ],
-            [(0, 1, 2, 3, 4, 5)],
-            carbon,
-        )
-        mod = obj.modifiers.new("Endplate skin", "SOLIDIFY")
-        mod.thickness = 0.012
-        mod = obj.modifiers.new("Curved edges", "BEVEL")
-        mod.width = 0.035
-        mod.segments = 5
-        tube(
-            "mount",
-            [
-                (side * 0.12, 0.30, 1.7),
-                (side * 0.13, 0.58, 1.82),
-                (side * 0.13, 0.82, 2.0),
-            ],
-            0.019,
-            carbon,
-        )
         rounded_box(
             "led_strip", (side * 0.513, 0.80, 2.32), (0.015, 0.145, 0.012), lens, 0.005
         )
@@ -1205,7 +1526,7 @@ def main():
             {
                 "component_hashes": hashes,
                 "shape_hashes": shape_hashes,
-                "generator_version": "2026.3",
+                "generator_version": "2026.4",
             },
             indent=2,
         )

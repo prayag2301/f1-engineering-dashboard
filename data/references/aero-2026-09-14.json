@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "reviewed_sources_on": "2026-09-14",
+  "geometry_scope": "January launch exterior reconstruction; September claims remain separate review drafts",
+  "rights": "Reference only; external images and PDFs are not redistributed.",
+  "documents": [
+    {
+      "url": "https://www.fia.com/system/files/decision-document/2026_italian_grand_prix_-_car_presentation_submissions.pdf",
+      "publisher": "FIA / team car-presentation submissions",
+      "title": "2026 Italian Grand Prix — car presentation submissions, document 10",
+      "published_at": "2026-09-04T00:00:00Z",
+      "date_precision": "day; document shows 09:54 without a timezone",
+      "event_name": "2026 Italian Grand Prix / Monza",
+      "candidates": [
+        {
+          "team_key": "ferrari",
+          "component": "floor",
+          "page": 8,
+          "observed_at": "2026-09-04T00:00:00+02:00",
+          "summary": "Ferrari reported a revised front floor-board arrangement with a single vertical element at Monza.",
+          "supporting_passage": "Front floor board elements optimisation, single vertical element",
+          "evidence_status": "confirmed",
+          "representation": "annotation_only",
+          "status": "draft",
+          "review_notes": "FIA submission establishes the declared change. Its illustration is a generic location diagram. Exact contour, section, attachment, full underside and Madrid carry-over are unresolved. Do not apply this September claim to the January reconstruction."
+        },
+        {
+          "team_key": "mercedes",
+          "component": "rear_wing",
+          "page": 4,
+          "observed_at": "2026-09-04T00:00:00+02:00",
+          "summary": "Mercedes reported removing rear-wing winglet devices for Monza's circuit-specific drag range.",
+          "supporting_passage": "Various winglet devices removed from rear wing.",
+          "evidence_status": "confirmed",
+          "representation": "annotation_only",
+          "status": "draft",
+          "review_notes": "A circuit-specific declaration, not evidence of permanent removal. The generic drawing does not identify all removed surfaces. Keep annotation-only until before/after photographs establish the devices and their geometry."
+        }
+      ]
+    },
+    {
+      "url": "https://www.fia.com/system/files/decision-document/2026_spanish_grand_prix_-_car_presentation_submissions.pdf",
+      "publisher": "FIA / team car-presentation submissions",
+      "title": "2026 Spanish Grand Prix — car presentation submissions, document 11",
+      "published_at": "2026-09-11T00:00:00Z",
+      "date_precision": "day; document shows 11:00 without a timezone",
+      "event_name": "2026 Spanish Grand Prix / Madrid",
+      "candidates": [
+        {
+          "team_key": "mercedes",
+          "component": "rear_wing",
+          "page": 4,
+          "observed_at": "2026-09-11T00:00:00+02:00",
+          "summary": "Mercedes reported reducing the span of the central winglet above the rear-wing flap for Madrid.",
+          "supporting_passage": "Rear wing central winglet span reduced",
+          "evidence_status": "confirmed",
+          "representation": "annotation_only",
+          "status": "draft",
+          "review_notes": "The FIA declaration confirms a local circuit-specific change. Neither exact span nor section is provided; the location illustration is generic. The Madrid team gallery does not provide enough rear detail to reconstruct the change reliably. Ferrari's listed Madrid change is rear suspension, not a new wing/floor claim."
+        }
+      ]
+    }
+  ],
+  "photographic_cross_checks": [
+    {
+      "url": "https://www.mercedesamgf1.com/news/in-pictures-the-best-images-from-madrid-2026",
+      "published_on": "2026-09-10",
+      "gallery_updated_at": "2026-09-13T16:12:40.370Z",
+      "images_inspected": ["M627356", "M629056", "M629032"],
+      "scope": "Front-wing outline and visible upper floor only; gallery update time is not exposure time."
+    },
+    {
+      "url": "https://www.formula1.com/en/latest/article/gallery-ferrari-reveal-schumacher-inspired-livery-for-home-grand-prix-at-monza.5burkVG8etBZzPdZrIN7bX",
+      "published_at": "2026-09-01T08:53:00Z",
+      "images_inspected": ["ferrari-monza-livery-2026-1", "ferrari-monza-livery-2026-2", "ferrari-monza-livery-2026-3", "ferrari-monza-livery-2026-4"],
+      "scope": "Presentation imagery showing visible wing and floor outlines; does not establish the raced Monza configuration."
+    }
+  ]
+}

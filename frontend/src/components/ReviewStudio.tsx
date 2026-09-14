@@ -362,6 +362,7 @@ function DraftReview({
   );
   const [rollbackReason, setRollbackReason] = useState("");
   const [neutral, setNeutral] = useState(false);
+  const [isolate, setIsolate] = useState(false);
   const [detail, setDetail] = useState("");
   const [compareOther, setCompareOther] = useState(false);
   const [preset, setPreset] = useState<ViewName>("three_quarter");
@@ -370,7 +371,7 @@ function DraftReview({
   const canCompare = comparisons.some(
     (v) =>
       v.team_key !== version.team_key &&
-      ["ready", "published"].includes(v.status) &&
+      ["building", "ready", "published"].includes(v.status) &&
       v.manifest.assets.glb,
   );
   return (
@@ -389,6 +390,13 @@ function DraftReview({
         {version.manifest.reconstruction_notice} This configuration is dated{" "}
         {dateLabel(version.as_of)}.
       </div>
+      {version.status === "building" && version.manifest.assets.glb && (
+        <p className="notice">
+          Geometry preview: the mesh passed validation; studio renders are still
+          building. Approval and publication remain locked until every required
+          artifact is complete.
+        </p>
+      )}
       {version.manifest.assets.glb ? (
         <>
           {compareOther ? (
@@ -402,7 +410,7 @@ function DraftReview({
               focus={!!detail}
               bus={bus}
               neutral={neutral}
-              isolate={false}
+              isolate={isolate}
             />
           ) : (
             <CarViewer
@@ -415,6 +423,7 @@ function DraftReview({
               activeComponent={detail || null}
               onSelectComponent={setDetail}
               focus={!!detail}
+              isolate={isolate}
             />
           )}
           <div className="shape-tools">
@@ -445,6 +454,15 @@ function DraftReview({
                 </option>
               ))}
             </select>
+            <label>
+              <input
+                type="checkbox"
+                checked={isolate}
+                disabled={!detail}
+                onChange={(e) => setIsolate(e.target.checked)}
+              />{" "}
+              Isolate draft component
+            </label>
             <select
               aria-label="Draft camera view"
               value={preset}

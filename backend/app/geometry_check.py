@@ -56,6 +56,30 @@ def main():
                 raise RuntimeError(result.stdout[-4000:])
             validation = validate_geometry(out / "car.glb")
             scene = trimesh.load(out / "car.glb", force="scene")
+            # Catch inside-out airfoils, accidentally bridged nose gaps and a
+            # regression to the old flat floor / cylindrical edge construction.
+            for node in scene.graph.nodes_geometry:
+                transform, geometry = scene.graph[node]
+                surface = scene.geometry[geometry]
+                vertices = trimesh.transformations.transform_points(
+                    surface.vertices, transform
+                )
+                if node.startswith(
+                    ("front_wing.upper_flap", "rear_wing.spoon_mainplane")
+                ):
+                    assert surface.is_watertight and surface.volume > 0, node
+                if node.startswith("front_wing.upper_flap_left"):
+                    assert vertices[:, 0].max() < -0.10, "Flap crosses the nose gap"
+                if node.startswith("front_wing.upper_flap_right"):
+                    assert vertices[:, 0].min() > 0.10, "Flap crosses the nose gap"
+                if node.startswith("floor.contoured_upper_surface"):
+                    assert (
+                        np.ptp(vertices[:, 1]) > 0.065
+                    ), "Floor lost its upper contour"
+            assert not any(
+                node.startswith(("floor.edge_wing", "front_wing.tip_roll"))
+                for node in scene.graph.nodes_geometry
+            ), "Obsolete tubular aero geometry returned"
             points = []
             for node in scene.graph.nodes_geometry:
                 if node.startswith(
@@ -88,13 +112,20 @@ def main():
         }
         assert changed == {"front_wing"}, f"Unexpected geometry changes: {changed}"
         print("PASS: one revised front wing; all ten other assemblies are identical.")
-        for component in ("sidepods", "engine_cover", "nose"):
+        for component in (
+            "sidepods",
+            "engine_cover",
+            "nose",
+            "front_wing",
+            "floor",
+            "rear_wing",
+        ):
             assert (
                 shapes["ferrari"][component] != shapes["mercedes"][component]
             ), component
         assert shapes["ferrari"]["suspension"] == shapes["mercedes"]["suspension"]
         print(
-            "PASS: sidepods, engine cover and nose differ independently of their materials; common suspension is retained."
+            "PASS: body, front wing, rear wing and floor differ independently of their materials; common suspension is retained."
         )
 
 

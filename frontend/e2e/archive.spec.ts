@@ -77,18 +77,18 @@ async function archiveFixture(page: Page) {
   return version;
 }
 
-test("private constructor comparison uses draft assets and keeps the selected counterpart on refresh", async ({
+test("private constructor comparison can inspect building geometry without unlocking publication", async ({
   page,
 }) => {
   const fixture = await archiveFixture(page);
   const ferrari = {
     ...fixture("ferrari", 2),
-    status: "ready",
+    status: "building",
     is_current: false,
   };
   const mercedes = {
     ...fixture("mercedes", 2),
-    status: "ready",
+    status: "building",
     is_current: false,
   };
   let reads = 0;
@@ -108,6 +108,12 @@ test("private constructor comparison uses draft assets and keeps the selected co
     });
   });
   await page.goto("/review");
+  await expect(
+    page.getByText(/Geometry preview: the mesh passed validation/),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Publish this release/ }),
+  ).toHaveCount(0);
   await page
     .getByRole("button", { name: "Compare other constructor", exact: true })
     .click();
@@ -132,6 +138,20 @@ test("private constructor comparison uses draft assets and keeps the selected co
   await expect(canvases.first()).toHaveAttribute(
     "data-camera-position",
     /8\.0000/,
+  );
+  await expect
+    .poll(
+      async () =>
+        (await canvases.first().getAttribute("data-camera-position")) ===
+        (await canvases.nth(1).getAttribute("data-camera-position")),
+    )
+    .toBe(true);
+  await page.getByLabel("Draft component detail").selectOption("front_wing");
+  await page.getByLabel("Isolate draft component").check();
+  await page.getByLabel("Draft camera view").selectOption("front");
+  await expect(canvases.first()).toHaveAttribute(
+    "data-camera-position",
+    /^0\.0000,/,
   );
   await expect
     .poll(

@@ -508,6 +508,9 @@ export default function ReleaseExplorer({
           >
             <span>LOOK CLOSER</span>
             {[
+              ["front_wing", "Front-wing contours"],
+              ["floor", "Floor edge & boards"],
+              ["rear_wing", "Rear-wing profiles"],
               ["sidepods", "Inlets & undercut"],
               ["engine_cover", "Airbox & spine"],
               ["nose", "Nose profile"],

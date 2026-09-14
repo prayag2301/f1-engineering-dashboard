@@ -423,6 +423,71 @@ def artifact_path(version, filename):
     return path
 
 
+def build_preview(db, version):
+    """Private geometry inspection while Cycles finishes; never a ready release.
+
+    The exporter writes geometry.json after closing the GLB. Validate both the
+    mesh and inherited component hashes before making even a private preview
+    available. Only the current running attempt can supply these files.
+    """
+    if version.status != "building":
+        return None
+    job = (
+        db.query(BuildJob)
+        .filter_by(version_id=version.id, kind="build", status="running")
+        .order_by(BuildJob.started_at.desc())
+        .first()
+    )
+    if not job:
+        return None
+    stage = get_settings().RELEASE_ROOT / ".staging" / f"{job.id}-{job.attempts}"
+    from app.services.validation import validate_geometry, validate_component_history
+
+    try:
+        geometry = json.loads((stage / "geometry.json").read_text())
+        if geometry["generator_version"] != version.manifest["generator_version"]:
+            return None
+        validation = validate_geometry(stage / "car.glb", stage / "regulations.json")
+        parent = db.get(CarVersion, version.parent_id) if version.parent_id else None
+        if parent:
+            validate_component_history(
+                {**version.manifest, "component_hashes": geometry["component_hashes"]},
+                parent.manifest,
+            )
+    except (OSError, ValueError, KeyError):
+        return None  # Export is incomplete or invalid. Publication gates still apply.
+    files = {"glb": "car.glb"}
+    from PIL import Image
+
+    for view in VIEWS:
+        name = f"preview_{view}.png"
+        try:
+            with Image.open(stage / name) as picture:
+                picture.verify()
+            files[f"preview_{view}"] = name
+        except (OSError, SyntaxError):
+            pass
+    assets = {
+        key: {
+            "filename": name,
+            "url": f"/api/v1/review/versions/{version.id}/preview/{job.id}/{job.attempts}/{name}",
+        }
+        for key, name in files.items()
+    }
+    return {
+        "stage": stage,
+        "job_id": str(job.id),
+        "attempt": job.attempts,
+        "manifest": {
+            **version.manifest,
+            "assets": assets,
+            "component_hashes": geometry["component_hashes"],
+            "build_preview": True,
+            "geometry_validation": validation,
+        },
+    }
+
+
 def publish(db, version):
     if version.status != "ready":
         raise HTTPException(409, "Build and validate the draft before publishing.")
@@ -480,7 +545,7 @@ def reconstruct_launch(db, parent):
             configuration_event=parent.configuration_event,
             as_of=parent.as_of,
             evidence_cutoff=now(),
-            notes="Reconstruction correction of the original launch configuration: separate team inlet, body-ramp, airbox and nose contours, plus a visible cockpit inner tub. This does not establish a new racing upgrade. Exact dimensions and hidden surfaces remain estimates.",
+            notes="Reconstruction correction of the original launch configuration: individually contoured front and rear wings, curved floor boards and edge lips, plus the previously reconstructed body, inlets and cockpit. This does not establish a new racing upgrade or apply September parts to a January car. Exact dimensions and hidden surfaces remain estimates.",
             revisions=[
                 dict(
                     component=name,

@@ -35,6 +35,7 @@ from app.services.releases import (
     create_version,
     queue_build,
     artifact_path,
+    build_preview,
     publish,
     audit,
     now,
@@ -189,9 +190,17 @@ def latest_model(team: str, season: int = 2026, db: Session = Depends(get_db)):
 @admin.get("/dashboard")
 def dashboard(db: Session = Depends(get_db)):
     current = {(p.team_key, p.season): p.version_id for p in db.query(ReleasePointer)}
+
+    def reviewed_version(version):
+        value = version_public(version, current.get((version.team_key, version.season)))
+        preview = build_preview(db, version)
+        if preview:
+            value["manifest"] = preview["manifest"]
+        return value
+
     return {
         "versions": [
-            version_public(v, current.get((v.team_key, v.season)))
+            reviewed_version(v)
             for v in db.query(CarVersion)
             .order_by(CarVersion.created_at.desc())
             .limit(100)
@@ -231,6 +240,30 @@ def draft_detail(version_id: UUID, db: Session = Depends(get_db)):
     version = get_version(db, version_id)
     pointer = db.get(ReleasePointer, (version.team_key, version.season))
     return version_public(version, pointer.version_id if pointer else None)
+
+
+@admin.get("/versions/{version_id}/preview/{job_id}/{attempt}/{filename}")
+def draft_preview_asset(
+    version_id: UUID,
+    job_id: UUID,
+    attempt: int,
+    filename: str,
+    db: Session = Depends(get_db),
+):
+    preview = build_preview(db, get_version(db, version_id))
+    if (
+        not preview
+        or preview["job_id"] != str(job_id)
+        or preview["attempt"] != attempt
+        or filename
+        not in {a["filename"] for a in preview["manifest"]["assets"].values()}
+    ):
+        raise HTTPException(404, "Draft preview is not available for this attempt.")
+    return FileResponse(
+        preview["stage"] / filename,
+        media_type="model/gltf-binary" if filename == "car.glb" else "image/png",
+        headers={"Cache-Control": "private, no-store"},
+    )
 
 
 @admin.post("/sources", status_code=201)

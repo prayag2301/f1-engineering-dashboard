@@ -156,7 +156,15 @@ def test_launch_correction_preserves_other_revisions_and_rejects_later_event(
         for key, value in version.component_revisions.items()
         if value != parent.component_revisions[key]
     }
-    assert revised == {"chassis", "nose", "sidepods", "engine_cover"}
+    assert revised == {
+        "chassis",
+        "nose",
+        "sidepods",
+        "engine_cover",
+        "front_wing",
+        "floor",
+        "rear_wing",
+    }
     assert version.configuration_kind == "reconstruction"
     assert version.candidate_ids == []
     version.status = "published"

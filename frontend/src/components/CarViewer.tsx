@@ -25,6 +25,11 @@ export const CAMERA_PRESETS: Record<ViewName, CameraPose> = {
   side: { position: [8, 1.15, 0], target: [0, 0.35, 0] },
   rear: { position: [0, 1.25, 8], target: [0, 0.35, 0] },
 };
+const AERO_FRAMING: Record<string, CameraPose> = {
+  front_wing: { target: [0, 0.18, -2.25], position: [1.7, 1.1, -5.45] },
+  floor: { target: [0, 0.18, 0.35], position: [3.6, 2.6, -4.15] },
+  rear_wing: { target: [0, 0.66, 2.05], position: [1.6, 1.55, 4.6] },
+};
 export interface CameraBus {
   listeners: Set<(pose: CameraPose, sender: string) => void>;
   pose: CameraPose;
@@ -177,12 +182,14 @@ function CameraRig({
   preset,
   resetIndex,
   focus,
+  focusComponent,
   bus,
   id,
 }: {
   preset: ViewName;
   resetIndex: number;
   focus?: [number, number, number] | null;
+  focusComponent?: string | null;
   bus?: CameraBus;
   id: string;
 }) {
@@ -220,15 +227,29 @@ function CameraRig({
     return () => orbit?.stopListenToKeyEvents();
   }, [gl]);
   useEffect(() => {
-    const target = focus ?? CAMERA_PRESETS[preset].target;
-    const position: [number, number, number] = focus
-      ? [
+    // Aero assemblies span much more of the car than a nose/inlet detail.
+    // Frame the complete assembly instead of clipping it at the old close-up distance.
+    const aero = focus ? AERO_FRAMING[focusComponent ?? ""] : undefined;
+    const target = aero?.target ?? focus ?? CAMERA_PRESETS[preset].target;
+    let position: [number, number, number] = focus
+      ? (aero?.position ?? [
           focus[0] + 1.45,
           focus[1] + 0.65,
           focus[2] + (focus[2] > 1 ? 1.65 : -1.65),
-        ]
+        ])
       : CAMERA_PRESETS[preset].position;
-    const viewKey = `${preset}:${resetIndex}:${focus?.join(",") ?? "complete"}`;
+    if (aero && preset !== "three_quarter") {
+      const distance = new THREE.Vector3(...aero.position).distanceTo(
+        new THREE.Vector3(...aero.target),
+      );
+      position = new THREE.Vector3(...CAMERA_PRESETS[preset].position)
+        .sub(new THREE.Vector3(...CAMERA_PRESETS[preset].target))
+        .normalize()
+        .multiplyScalar(distance)
+        .add(new THREE.Vector3(...target))
+        .toArray() as [number, number, number];
+    }
+    const viewKey = `${preset}:${resetIndex}:${focusComponent ?? ""}:${focus?.join(",") ?? "complete"}`;
     const pose = bus?.viewKey === viewKey ? bus.pose : { position, target };
     if (bus) {
       bus.viewKey = viewKey;
@@ -240,7 +261,7 @@ function CameraRig({
     controls.current?.update();
     applying.current = false;
     invalidate();
-  }, [camera, preset, resetIndex, focus, bus, invalidate]);
+  }, [camera, preset, resetIndex, focus, focusComponent, bus, invalidate]);
   useEffect(() => {
     if (!bus) return;
     const receive = (pose: CameraPose, sender: string) => {
@@ -461,6 +482,7 @@ function ViewerInstance({
               preset={preset}
               resetIndex={resetIndex}
               focus={focusTarget}
+              focusComponent={focus ? activeComponent : null}
               bus={cameraBus}
               id={syncId}
             />
