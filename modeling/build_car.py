@@ -14,7 +14,6 @@ from pathlib import Path
 import sys
 
 import bpy
-import bmesh
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 import numpy as np
@@ -244,7 +243,7 @@ def intake(name, outline, depth, rim_mat, dark_mat):
     tube(name + "_rim", outline, 0.008, rim_mat, cyclic=True)
     center = sum((Vector(p) for p in outline), Vector()) / len(outline)
     back = [
-        (center.x + (x - center.x) * 0.85, center.y + (y - center.y) * 0.85, z + depth)
+        (center.x + (x - center.x) * 0.70, center.y + (y - center.y) * 0.70, z + depth)
         for x, y, z in outline
     ]
     n = len(outline)
@@ -260,32 +259,39 @@ def intake(name, outline, depth, rim_mat, dark_mat):
     return obj
 
 
-def cut_opening(surface, outline, depth):
-    """Keep the body envelope out of the recessed intake's visible throat."""
+def front_boundary(surface, z):
+    """Use the evaluated body edge for the inlet: no disconnected guessed rim."""
+    bpy.context.view_layer.update()
+    evaluated = surface.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    data = evaluated.to_mesh()
+    points = [
+        (v.co.x, v.co.z, -v.co.y) for v in data.vertices if abs(-v.co.y - z) < 0.00001
+    ]
+    evaluated.to_mesh_clear()
+    if len(points) < 8:
+        raise ValueError("Could not resolve the sidepod opening boundary.")
+    cx = sum(p[0] for p in points) / len(points)
+    cy = sum(p[1] for p in points) / len(points)
+    return sorted(points, key=lambda p: math.atan2(p[1] - cy, p[0] - cx))
+
+
+def intake_cowl(outline, mat):
+    """Continuous outer fairing around the open airbox throat."""
+    cx = sum(p[0] for p in outline) / len(outline)
+    cy = sum(p[1] for p in outline) / len(outline)
+    verts, faces = [], []
     n = len(outline)
-    front = [(x, y, z - 0.04) for x, y, z in outline]
-    rear = [(x, y, z + depth + 0.03) for x, y, z in outline]
-    cutter = mesh(
-        "temporary_intake_cut",
-        front + rear,
-        [tuple(range(n)), tuple(range(n, 2 * n))]
-        + [(j, (j + 1) % n, (j + 1) % n + n, j + n) for j in range(n)],
-        None,
-    )
-    bm = bmesh.new()
-    bm.from_mesh(cutter.data)
-    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-    bm.to_mesh(cutter.data)
-    bm.free()
-    bpy.context.view_layer.objects.active = surface
-    for modifier in list(surface.modifiers):
-        bpy.ops.object.modifier_apply(modifier=modifier.name)
-    cut = surface.modifiers.new("Recessed airbox opening", "BOOLEAN")
-    cut.operation = "DIFFERENCE"
-    cut.object = cutter
-    bpy.ops.object.modifier_apply(modifier=cut.name)
-    CAR_OBJECTS.remove(cutter)
-    bpy.data.objects.remove(cutter, do_unlink=True)
+    for dz, scale in ((0, 1.06), (0.025, 1.08), (0.19, 1.13), (0.28, 1.14)):
+        verts.extend(
+            (cx + (x - cx) * scale, cy + (y - cy) * scale, z + dz)
+            for x, y, z in outline
+        )
+    for i in range(3):
+        faces.extend(
+            (i * n + j, i * n + (j + 1) % n, (i + 1) * n + (j + 1) % n, (i + 1) * n + j)
+            for j in range(n)
+        )
+    return mesh("airbox_outer_cowl", verts, faces, mat, 2)
 
 
 def wing(name, halfspan, z0, y0, chord, camber, sweep, mat):
@@ -612,6 +618,9 @@ def build_car(team, params):
                 ox + width_delta,
                 roof,
                 belly
+                - (p["inlet_height"] - (0.22 if ferrari else 0.17))
+                * (1 if ferrari else 0.39)
+                * (1 if z < -0.4 else 0)
                 + (p["undercut"] - (0.12 if ferrari else 0.15))
                 * (1 if -0.3 < z < 0.6 else 0),
             )
@@ -625,21 +634,11 @@ def build_car(team, params):
         )
         # The slot's small height on W17 is supported visually; the actual
         # dimensions, internal radiator faces and duct routing remain unknown.
-        opening_height = p["inlet_height"] * (1 if ferrari else 0.39)
-        top, outer = 0.59, (0.728 if ferrari else 0.70) + width_delta
-        outline = [
-            (side * 0.345, top - 0.01, -0.514),
-            (side * 0.42, top, -0.518),
-            (side * (outer - 0.035), top - 0.004, -0.510),
-            (side * outer, top - opening_height * 0.32, -0.493),
-            (side * (outer - 0.025), top - opening_height * 0.88, -0.486),
-            (side * 0.38, top - opening_height, -0.511),
-            (side * 0.34, top - opening_height * 0.74, -0.518),
-        ]
+        outline = front_boundary(shell, stations[0][0])
         intake(
             ("forward_inlet" if ferrari else "slit_inlet") + "_" + str(side),
             outline,
-            0.20,
+            0.11,
             red if ferrari else carbon,
             black,
         )
@@ -686,12 +685,12 @@ def build_car(team, params):
         ],
         red if ferrari else white,
     )
-    spine = loft(
+    loft(
         "upper_spine",
         (
             [
-                (0.27, 0.10, 0.76, 0.155),
-                (0.34, 0.13, 0.77, p["spine_height"] - 0.77),
+                (0.40, 0.10, 0.76, 0.155),
+                (0.43, 0.13, 0.77, p["spine_height"] - 0.77),
                 (0.53, 0.23, 0.66, 0.255),
                 (0.81, 0.25, 0.59, 0.23),
                 (1.12, 0.17, 0.51, 0.20),
@@ -700,8 +699,8 @@ def build_car(team, params):
             ]
             if ferrari
             else [
-                (0.24, 0.115, 0.815, 0.11),
-                (0.36, 0.145, 0.80, p["spine_height"] - 0.80),
+                (0.36, 0.115, 0.815, 0.11),
+                (0.39, 0.145, 0.80, p["spine_height"] - 0.80),
                 (0.58, 0.17, 0.72, 0.19),
                 (0.88, 0.155, 0.61, 0.205),
                 (1.20, 0.12, 0.49, 0.16),
@@ -736,7 +735,7 @@ def build_car(team, params):
             (-0.07, 0.756, 0.14),
         ]
     )
-    cut_opening(spine, mouth, 0.16)
+    intake_cowl(mouth, carbon)
     intake("airbox", mouth, 0.16, carbon if ferrari else accent, black)
     if not ferrari:
         rod("airbox_divider", (0, 0.757, 0.14), (0, 0.91, 0.14), 0.005, carbon)
