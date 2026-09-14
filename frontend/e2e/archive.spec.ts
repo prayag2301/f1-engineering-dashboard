@@ -112,6 +112,14 @@ test("private constructor comparison uses draft assets and keeps the selected co
     .getByRole("button", { name: "Compare other constructor", exact: true })
     .click();
   await expect(page.locator(".constructor-pane canvas")).toHaveCount(2);
+  const stages = page.locator(".constructor-pane .car-stage");
+  await expect
+    .poll(async () => {
+      const first = await stages.first().boundingBox();
+      const second = await stages.nth(1).boundingBox();
+      return Math.abs((first?.y ?? -1) - (second?.y ?? -2));
+    })
+    .toBeLessThan(1);
   await expect(page.locator(".constructor-pane").nth(1)).toContainText(
     "Unpublished draft",
   );

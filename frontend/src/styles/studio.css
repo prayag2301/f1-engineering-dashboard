@@ -350,6 +350,12 @@ small {
 }
 .constructor-pane {
   min-width: 0;
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 3;
+}
+.team-comparison .comparison-grid {
+  grid-template-rows: auto auto auto;
 }
 .constructor-label {
   padding: 16px;
