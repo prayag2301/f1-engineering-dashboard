@@ -5,7 +5,7 @@ from uuid import UUID
 from app.database import SessionLocal
 from app.models.releases import BuildJob, CarVersion
 from app.api.releases import dispatch
-from app.services.releases import queue_build, audit
+from app.services.releases import queue_build, audit, reconstruct_launch
 
 
 def main():
@@ -17,6 +17,11 @@ def main():
     sub.add_parser("jobs", help="List recent build and collection jobs")
     build = sub.add_parser("build", help="Queue a draft build; never publish")
     build.add_argument("version_id", type=UUID)
+    correction = sub.add_parser(
+        "correct-launch",
+        help="Build a draft correction of an existing published launch reference; never publish",
+    )
+    correction.add_argument("parent_id", type=UUID)
     args = parser.parse_args()
     with SessionLocal() as db:
         if args.command == "jobs":
@@ -32,6 +37,10 @@ def main():
             db.add(job)
             db.flush()
             audit(db, "manual_collection", job.id)
+        elif args.command == "correct-launch":
+            version = reconstruct_launch(db, db.get(CarVersion, args.parent_id))
+            job = queue_build(db, version)
+            print(f"Draft reconstruction {version.id}; four-view review required.")
         else:
             version = db.get(CarVersion, args.version_id)
             if not version:

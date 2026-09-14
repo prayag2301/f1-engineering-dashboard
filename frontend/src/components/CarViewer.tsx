@@ -56,12 +56,16 @@ function Model({
   highlighted,
   onSelect,
   onLoaded,
+  neutral,
+  isolate,
 }: {
   url: string;
   active?: string | null;
   highlighted: string[];
   onSelect?: (component: string) => void;
   onLoaded: () => void;
+  neutral: boolean;
+  isolate: boolean;
 }) {
   const { scene } = useGLTF(url);
   const { invalidate } = useThree();
@@ -74,6 +78,24 @@ function Model({
       object.material = Array.isArray(object.material)
         ? object.material.map((m) => m.clone())
         : object.material.clone();
+      if (neutral) {
+        const originals = Array.isArray(object.material)
+          ? object.material
+          : [object.material];
+        const clay = originals.map((m) => {
+          const dark = /rubber|intake|cockpit|inset/i.test(
+            m.name + " " + object.name,
+          );
+          m.dispose();
+          return new THREE.MeshStandardMaterial({
+            color: dark ? "#252a30" : "#b4bdc6",
+            roughness: 0.62,
+            metalness: 0,
+            side: THREE.DoubleSide,
+          });
+        });
+        object.material = Array.isArray(object.material) ? clay : clay[0];
+      }
       if (
         /flow_line|turquoise_nose_line|upper_turquoise_sweep/.test(object.name)
       ) {
@@ -88,11 +110,16 @@ function Model({
       }
     });
     return clone;
-  }, [scene]);
+  }, [scene, neutral]);
   useEffect(() => {
     model.traverse((object) => {
       if (!(object instanceof THREE.Mesh)) return;
       const component = object.userData.component ?? object.name.split(".")[0];
+      const paint = /flow_line|turquoise_nose_line|upper_turquoise_sweep/.test(
+        object.name,
+      );
+      object.visible =
+        !(neutral && paint) && (!isolate || !active || component === active);
       const materials = Array.isArray(object.material)
         ? object.material
         : [object.material];
@@ -109,7 +136,7 @@ function Model({
       });
     });
     invalidate();
-  }, [model, active, highlighted, invalidate]);
+  }, [model, active, highlighted, neutral, isolate, invalidate]);
   useEffect(() => {
     onLoaded();
     return () =>
@@ -183,7 +210,11 @@ function CameraRig({
   useEffect(() => {
     const target = focus ?? CAMERA_PRESETS[preset].target;
     const position: [number, number, number] = focus
-      ? [focus[0] + 2.4, focus[1] + 1.2, focus[2] + (focus[2] > 1 ? 2.8 : -2.8)]
+      ? [
+          focus[0] + 1.45,
+          focus[1] + 0.65,
+          focus[2] + (focus[2] > 1 ? 1.65 : -1.65),
+        ]
       : CAMERA_PRESETS[preset].position;
     const viewKey = `${preset}:${resetIndex}:${focus?.join(",") ?? "complete"}`;
     const pose = bus?.viewKey === viewKey ? bus.pose : { position, target };
@@ -254,6 +285,8 @@ export interface CarViewerProps {
   cameraBus?: CameraBus;
   syncId?: string;
   height?: string;
+  neutral?: boolean;
+  isolate?: boolean;
 }
 
 export default function CarViewer(props: CarViewerProps) {
@@ -272,6 +305,8 @@ function ViewerInstance({
   cameraBus,
   syncId = "car",
   height = "620px",
+  neutral = false,
+  isolate = false,
 }: CarViewerProps) {
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -300,6 +335,8 @@ function ViewerInstance({
   return (
     <div
       className="car-stage"
+      data-material-mode={neutral ? "shape" : "livery"}
+      data-isolated-component={isolate ? (activeComponent ?? "") : ""}
       style={{ height }}
       aria-label={
         version
@@ -387,6 +424,8 @@ function ViewerInstance({
                 highlighted={highlighted}
                 onSelect={onSelectComponent}
                 onLoaded={onLoaded}
+                neutral={neutral}
+                isolate={isolate}
               />
             </Suspense>
             <mesh
@@ -401,15 +440,17 @@ function ViewerInstance({
                 metalness={0.15}
               />
             </mesh>
-            <ContactShadows
-              position={[0, -0.003, 0]}
-              opacity={0.65}
-              scale={12}
-              blur={2.5}
-              far={1.5}
-              frames={1}
-              resolution={512}
-            />
+            {!isolate && (
+              <ContactShadows
+                position={[0, -0.003, 0]}
+                opacity={0.65}
+                scale={12}
+                blur={2.5}
+                far={1.5}
+                frames={1}
+                resolution={512}
+              />
+            )}
             <CameraRig
               preset={preset}
               resetIndex={resetIndex}

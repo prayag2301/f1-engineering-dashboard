@@ -12,6 +12,7 @@ import {
 } from "@/lib/releases";
 import { readCatalog, readVersions, staticArchive } from "@/lib/archive";
 import { createCameraBus } from "./CarViewer";
+import TeamComparison from "./TeamComparison";
 
 const CarViewer = dynamic(() => import("./CarViewer"), {
   ssr: false,
@@ -41,6 +42,9 @@ export default function ReleaseExplorer({
   const [selected, setSelected] = useState("");
   const [before, setBefore] = useState("");
   const [compare, setCompare] = useState(initialCompare);
+  const [compareTeams, setCompareTeams] = useState(false);
+  const [neutral, setNeutral] = useState(false);
+  const [isolate, setIsolate] = useState(false);
   const [preset, setPreset] = useState<ViewName>("three_quarter");
   const [resetIndex, setResetIndex] = useState(0);
   const [active, setActive] = useState<string | null>(null);
@@ -282,25 +286,52 @@ export default function ReleaseExplorer({
             className={compare ? "selected" : ""}
             aria-pressed={compare}
             disabled={versions.length < 2}
-            onClick={() => setCompare((v) => !v)}
+            onClick={() => {
+              setCompare((v) => !v);
+              setCompareTeams(false);
+            }}
           >
             Compare releases
+          </button>
+          <button
+            aria-pressed={compareTeams}
+            className={compareTeams ? "selected" : ""}
+            disabled={!version}
+            onClick={() => {
+              setCompareTeams((v) => !v);
+              setCompare(false);
+            }}
+          >
+            Compare teams
           </button>
           <button
             className={highlight ? "selected" : ""}
             aria-pressed={highlight}
             onClick={() => setHighlight((v) => !v)}
-            disabled={!version}
+            disabled={!version || compareTeams}
           >
             Highlight changes
           </button>
         </div>
       </div>
       <div
-        className={`explorer-body ${compare && versions.length > 1 ? "is-comparing" : ""}`}
+        className={`explorer-body ${compareTeams || (compare && versions.length > 1) ? "is-comparing" : ""}`}
       >
         <div className="viewer-column">
-          {compare && versions.length > 1 ? (
+          {compareTeams ? (
+            <TeamComparison
+              key={team}
+              version={version}
+              preset={preset}
+              resetIndex={resetIndex}
+              active={active}
+              onSelect={setActive}
+              focus={focus}
+              bus={bus}
+              neutral={neutral}
+              isolate={isolate}
+            />
+          ) : compare && versions.length > 1 ? (
             <div>
               <div className="comparison-mode">
                 <button
@@ -347,6 +378,8 @@ export default function ReleaseExplorer({
                   </label>
                   <CarViewer
                     version={previous}
+                    neutral={neutral}
+                    isolate={isolate}
                     preset={preset}
                     resetIndex={resetIndex}
                     activeComponent={active}
@@ -380,6 +413,8 @@ export default function ReleaseExplorer({
                   </label>
                   <CarViewer
                     version={version}
+                    neutral={neutral}
+                    isolate={isolate}
                     preset={preset}
                     resetIndex={resetIndex}
                     activeComponent={active}
@@ -400,6 +435,8 @@ export default function ReleaseExplorer({
           ) : (
             <CarViewer
               version={version}
+              neutral={neutral}
+              isolate={isolate}
               cameraBus={bus}
               syncId="single"
               preset={preset}
@@ -436,6 +473,57 @@ export default function ReleaseExplorer({
               />{" "}
               Focus selection
             </label>
+          </div>
+          <div
+            className="shape-tools"
+            role="group"
+            aria-label="Surface inspection"
+          >
+            <button
+              aria-pressed={neutral}
+              className={neutral ? "selected" : ""}
+              onClick={() => setNeutral((v) => !v)}
+            >
+              {neutral ? "Neutral surfaces" : "Show neutral surfaces"}
+            </button>
+            <label>
+              <input
+                type="checkbox"
+                checked={isolate}
+                disabled={!active}
+                onChange={(e) => setIsolate(e.target.checked)}
+              />{" "}
+              Isolate component
+            </label>
+            <span>
+              {neutral
+                ? "Shared matte finish reveals the modeled contours."
+                : "Compare shapes with the livery removed."}
+            </span>
+          </div>
+          <div
+            className="detail-shortcuts"
+            role="group"
+            aria-label="Inspect details"
+          >
+            <span>LOOK CLOSER</span>
+            {[
+              ["sidepods", "Inlets & undercut"],
+              ["engine_cover", "Airbox & spine"],
+              ["nose", "Nose profile"],
+            ].map(([key, label]) => (
+              <button
+                key={key}
+                aria-pressed={active === key && focus}
+                onClick={() => {
+                  setActive(key);
+                  setFocus(true);
+                  setResetIndex((i) => i + 1);
+                }}
+              >
+                {label} ↗
+              </button>
+            ))}
           </div>
           <div className="timeline">
             <div className="section-label timeline-heading">
@@ -545,6 +633,13 @@ export default function ReleaseExplorer({
                 Configuration observed {dateLabel(version.as_of)}. Evidence
                 cutoff {dateLabel(version.evidence_cutoff)}.
               </p>
+              {version.configuration_kind === "reconstruction" && (
+                <p className="notice">
+                  Reconstruction correction: improved modeling of this same
+                  dated configuration. This release does not establish a new
+                  racing upgrade.
+                </p>
+              )}
               {component && (
                 <p className="uncertainty">{component.uncertainty}</p>
               )}

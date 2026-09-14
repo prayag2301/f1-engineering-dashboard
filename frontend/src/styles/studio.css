@@ -317,6 +317,71 @@ small {
 .viewer-column {
   min-width: 0;
 }
+.shape-tools,
+.detail-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+.shape-tools label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.shape-tools span,
+.detail-shortcuts > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.detail-shortcuts button {
+  font-size: 12px;
+}
+.comparison-intro {
+  padding: 18px 20px 4px;
+}
+.comparison-intro p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.constructor-pane {
+  min-width: 0;
+}
+.constructor-label {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 82px;
+}
+.constructor-label strong {
+  font-size: 14px;
+}
+.constructor-label span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.constructor-label select {
+  width: 100%;
+}
+.compared-detail {
+  padding: 16px;
+  font-size: 12px;
+  line-height: 1.65;
+  border-top: 1px solid var(--line);
+}
+.compared-detail p {
+  color: var(--muted);
+}
+.compared-detail a,
+.compared-detail small {
+  display: block;
+  margin-top: 8px;
+}
 .car-stage {
   height: 620px;
   position: relative;

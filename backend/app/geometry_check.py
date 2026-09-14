@@ -14,6 +14,7 @@ def main():
     with tempfile.TemporaryDirectory(prefix="f1-geometry-") as temporary:
         root = Path(temporary)
         hashes = {}
+        shapes = {}
         for name, team, change in (
             ("ferrari", "ferrari", False),
             ("mercedes", "mercedes", False),
@@ -55,6 +56,9 @@ def main():
             hashes[name] = json.loads((out / "geometry.json").read_text())[
                 "component_hashes"
             ]
+            shapes[name] = json.loads((out / "geometry.json").read_text())[
+                "shape_hashes"
+            ]
             print(name, json.dumps(validation), flush=True)
         changed = {
             key
@@ -63,6 +67,14 @@ def main():
         }
         assert changed == {"front_wing"}, f"Unexpected geometry changes: {changed}"
         print("PASS: one revised front wing; all ten other assemblies are identical.")
+        for component in ("sidepods", "engine_cover", "nose"):
+            assert (
+                shapes["ferrari"][component] != shapes["mercedes"][component]
+            ), component
+        assert shapes["ferrari"]["suspension"] == shapes["mercedes"]["suspension"]
+        print(
+            "PASS: sidepods, engine cover and nose differ independently of their materials; common suspension is retained."
+        )
 
 
 if __name__ == "__main__":

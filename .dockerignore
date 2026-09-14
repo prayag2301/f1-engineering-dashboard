@@ -16,4 +16,5 @@ data/backups
 **/test-results
 **/playwright-report
 data/pages-export
+data/references/2026-launch
 frontend/public/archive

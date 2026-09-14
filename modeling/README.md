@@ -16,6 +16,10 @@ Curved body sections use superellipse lofts and subdivision; the cockpit is a Bo
 
 Ferrari follows the SF-26 launch's red nose/sidepods and white upper bodywork, with a triangular airbox outline. Mercedes uses silver forward paint, exposed dark bodywork, turquoise lines, a squarer airbox, and different nose, inlet, floor, and wing parameters. Wheel graphics and sponsor logos are omitted.
 
+Generator `2026.2` revises four assemblies against the same launch galleries: chassis, nose, sidepods and engine cover. Sidepods now use asymmetric section stations with separate shoulders and undercuts. Ferrari has a broad forward opening and a fuller shoulder; Mercedes has a shallow high slot and an earlier descending ramp. Airbox rims connect to recessed ducts cut into the body envelope, with separate team outlines and a Mercedes divider. Engine shoulders, spine and fin use separate station layouts. A dark inner cockpit tub corrects the previously obscured seat. Exact station dimensions are authored estimates, and the Ferrari cooling-relief count is illustrative. The seven other assemblies retain their prior construction.
+
+The geometry check compares material-independent shape hashes for those three assemblies. This proves that the team differences are in the mesh, but does not replace reference review or certify factory dimensions. Suspension remains a shared estimated assembly; this revision does not assert that the real teams use identical suspension geometry.
+
 The source gallery must be checked in **front, side, rear, and three-quarter** views before accepting a baseline. The included image links are starting references, not a completed visual approval. Where a gallery does not establish a surface, document that uncertainty rather than certifying it.
 
 ## Local editing
@@ -29,11 +33,25 @@ blender --background --python-exit-code 1 --python build_car.py -- \
 
 `--geometry-only` skips PNGs. `--preview-only` makes four 1080p previews. A complete job additionally makes four 4K PNGs and stores SHA-256 checksums for all outputs.
 
+Docker jobs always default to CPU. A native macOS Blender installation can use `--device METAL` for local review renders; it fails explicitly if no Metal device is available. This option does not change model geometry or enable GPU passthrough in Docker. Final publication still runs the normal artifact and historical-component checks in the release workflow.
+
 Before the first publication, edit the baseline parameters in `catalog.json` and the relevant assembly in `build_car.py`, rebuild the API and worker images, then choose **Build revised baseline** in the review studio. This creates a new draft and retains the previous renders for comparison.
 
 For later parameter-supported changes, use the maintainer release form. More substantial topology changes require editing the relevant builder assembly, bumping the generator version in both the catalog and geometry metadata, adding an explicit reviewed revision, and rerunning the geometry smoke test. The worker rejects changed geometry in any assembly the release declares unchanged.
 
 An earlier published configuration can be restored without deleting history. Annotation-only releases copy the parent's exact scene, GLB, and render bytes and retain their own evidence/spec snapshot.
+
+To improve a published model of the *same* observed car, choose **Improve an existing reconstruction** in the release form. The API requires the original observed date and event, explicit component revisions, references, and correction notes. It rejects upgrade candidates in this mode. New files remain drafts until all four views are reviewed and publication is explicitly requested. Historical originals and current public assets are retained. Use the component notes in `catalog.json` as starting descriptions of these corrections.
+
+The viewer's **Compare teams** mode synchronizes cameras across two independently dated releases. **Show neutral surfaces** removes livery ribbons and uses a shared matte finish; **Isolate component** and the three close-up shortcuts expose details. Each comparison pane links its own frozen component evidence. These controls also work with the previously published geometry; deploying the viewer does not publish pending reconstruction corrections.
+
+For the catalog's prepared launch corrections, after rebuilding the API/worker images:
+
+```sh
+docker compose exec api python -m app.cli correct-launch PUBLISHED_LAUNCH_VERSION_UUID
+```
+
+This creates and queues an authenticated local draft with four explicit revisions and the original references. It rejects later race configurations and releases already using the current generator. It neither records a visual approval nor publishes. Review the output at `http://127.0.0.1:3000/review` before publication and a new Pages export.
 
 ## Original assets
 

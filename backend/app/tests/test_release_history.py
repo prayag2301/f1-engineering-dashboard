@@ -10,6 +10,7 @@ from app.schemas.releases import VersionInput, SourceImport
 from app.services.releases import (
     bootstrap_baseline,
     create_version,
+    reconstruct_launch,
     publish,
     queue_build,
     now,
@@ -94,6 +95,76 @@ def test_annotation_only_copies_complete_configuration(db, monkeypatch):
     assert version.manifest["changes"][0]["representation"] == "annotation_only"
     claim.summary = "A later correction"
     assert version.manifest["changes"][0]["summary"] != "A later correction"
+
+
+def test_reconstruction_corrects_model_without_claiming_a_car_upgrade(db, monkeypatch):
+    parent = approved_parent(db, monkeypatch)
+    original = json.loads(json.dumps(parent.manifest))
+    item = parent.manifest["components"]["sidepods"]
+    payload = next_payload(
+        parent,
+        configuration_kind="reconstruction",
+        as_of=parent.as_of,
+        configuration_event=parent.configuration_event,
+        notes="Correct the inlet outline against the original launch gallery.",
+        revisions=[
+            dict(
+                component="sidepods",
+                parameters=item["parameters"],
+                source_ids=item["source_ids"],
+                uncertainty="Revised shoulder contour; dimensions remain visual estimates.",
+            )
+        ],
+    )
+    version = create_version(db, payload)
+    assert version.manifest["reconstruction_correction"]
+    assert version.manifest["changes"] == []
+    assert version.status == "draft" and not version.visual_review
+    assert (
+        version.component_revisions["sidepods"]
+        != parent.component_revisions["sidepods"]
+    )
+    assert version.component_revisions["wheels"] == parent.component_revisions["wheels"]
+    assert parent.manifest == original
+    for changes in (
+        {"as_of": "2026-05-01T00:00:00Z"},
+        {"configuration_event": "A different event"},
+        {"candidate_ids": [candidate(db).id]},
+        {"revisions": []},
+        {"notes": ""},
+        {"parent_id": None},
+    ):
+        with pytest.raises(HTTPException):
+            create_version(db, VersionInput(**{**payload.model_dump(), **changes}))
+
+
+def test_launch_correction_preserves_other_revisions_and_rejects_later_event(
+    db, monkeypatch
+):
+    from app.services.catalog import catalog
+
+    current_catalog = catalog()
+    old_catalog = json.loads(json.dumps(current_catalog))
+    old_catalog["generator_version"] = "2026.1"
+    old_catalog["teams"]["ferrari"]["component_notes"] = {}
+    monkeypatch.setattr("app.services.releases.catalog", lambda: old_catalog)
+    parent = approved_parent(db, monkeypatch)
+    monkeypatch.setattr("app.services.releases.catalog", lambda: current_catalog)
+    version = reconstruct_launch(db, parent)
+    revised = {
+        key
+        for key, value in version.component_revisions.items()
+        if value != parent.component_revisions[key]
+    }
+    assert revised == {"chassis", "nose", "sidepods", "engine_cover"}
+    assert version.configuration_kind == "reconstruction"
+    assert version.candidate_ids == []
+    version.status = "published"
+    with pytest.raises(HTTPException, match="already uses"):
+        reconstruct_launch(db, version)
+    parent.as_of = datetime(2026, 8, 1, tzinfo=timezone.utc)
+    with pytest.raises(HTTPException, match="later race"):
+        reconstruct_launch(db, parent)
 
 
 def test_only_supported_component_revision_changes(db, monkeypatch):

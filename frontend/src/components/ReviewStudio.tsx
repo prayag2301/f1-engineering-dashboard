@@ -356,6 +356,8 @@ function DraftReview({
     ).join("\n"),
   );
   const [rollbackReason, setRollbackReason] = useState("");
+  const [neutral, setNeutral] = useState(false);
+  const [detail, setDetail] = useState("");
   return (
     <section className="draft-review">
       <div className="draft-title">
@@ -373,7 +375,42 @@ function DraftReview({
         {dateLabel(version.as_of)}.
       </div>
       {version.manifest.assets.glb ? (
-        <CarViewer version={version} height="480px" />
+        <>
+          <CarViewer
+            version={version}
+            height="480px"
+            neutral={neutral}
+            activeComponent={detail || null}
+            onSelectComponent={setDetail}
+            focus={!!detail}
+          />
+          <div className="shape-tools">
+            <button
+              type="button"
+              aria-pressed={neutral}
+              onClick={() => setNeutral((v) => !v)}
+            >
+              Neutral surfaces
+            </button>
+            <select
+              aria-label="Draft component detail"
+              value={detail}
+              onChange={(e) => setDetail(e.target.value)}
+            >
+              <option value="">Complete car</option>
+              {Object.entries(version.manifest.components).map(([key, c]) => (
+                <option value={key} key={key}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          {detail && (
+            <p className="uncertainty">
+              {version.manifest.components[detail]?.uncertainty}
+            </p>
+          )}
+        </>
       ) : (
         <div className="empty-card">
           <h3>
@@ -893,6 +930,7 @@ function NewReleaseForm({
   onCreated: (id: string) => void;
 }) {
   const [kind, setKind] = useState("evolution");
+  const [corrections, setCorrections] = useState<string[]>([]);
   const [reversion, setReversion] = useState("");
   const [team, setTeam] = useState<TeamKey>("ferrari");
   const [parentId, setParentId] = useState("");
@@ -914,13 +952,16 @@ function NewReleaseForm({
     (c) => c.team_key === team && c.status === "approved",
   );
   const chosen = candidates.filter((c) => ids.includes(c.id));
-  const modeled = Array.from(
-    new Set(
-      chosen
-        .filter((c) => c.representation === "modeled")
-        .map((c) => c.component!),
-    ),
-  );
+  const modeled =
+    kind === "reconstruction"
+      ? corrections
+      : Array.from(
+          new Set(
+            chosen
+              .filter((c) => c.representation === "modeled")
+              .map((c) => c.component!),
+          ),
+        );
   async function submit(e: FormEvent) {
     e.preventDefault();
     await action(async () => {
@@ -928,12 +969,16 @@ function NewReleaseForm({
         team_key: team,
         parent_id: parent?.id,
         label,
-        configuration_event: event,
+        configuration_event:
+          kind === "reconstruction" ? parent?.configuration_event : event,
         configuration_kind: kind,
         ...(kind === "reversion" ? { reverts_to_id: reversion } : {}),
-        as_of: new Date(date + "Z").toISOString(),
+        as_of:
+          kind === "reconstruction"
+            ? parent?.as_of
+            : new Date(date + "Z").toISOString(),
         evidence_cutoff: new Date(cutoff + "Z").toISOString(),
-        candidate_ids: ids,
+        candidate_ids: kind === "reconstruction" ? [] : ids,
         notes,
         revisions: (kind === "reversion" ? [] : modeled).map((component) => ({
           component,
@@ -941,13 +986,16 @@ function NewReleaseForm({
             parameters[component] ??
             parent?.manifest.components[component].parameters ??
             {},
-          source_ids: Array.from(
-            new Set(
-              chosen
-                .filter((c) => c.component === component)
-                .map((c) => c.source_id),
-            ),
-          ),
+          source_ids:
+            kind === "reconstruction"
+              ? parent?.manifest.components[component].source_ids
+              : Array.from(
+                  new Set(
+                    chosen
+                      .filter((c) => c.component === component)
+                      .map((c) => c.source_id),
+                  ),
+                ),
           uncertainty: uncertainty[component] ?? "",
         })),
       });
@@ -1009,6 +1057,9 @@ function NewReleaseForm({
               Return to a previous configuration
             </option>
             <option value="no_change">No new modeled change</option>
+            <option value="reconstruction">
+              Improve an existing reconstruction
+            </option>
           </select>
         </label>
         {kind === "reversion" && (
@@ -1043,7 +1094,12 @@ function NewReleaseForm({
           <input
             required
             minLength={3}
-            value={event}
+            disabled={kind === "reconstruction"}
+            value={
+              kind === "reconstruction"
+                ? (parent?.configuration_event ?? "")
+                : event
+            }
             onChange={(e) => setEvent(e.target.value)}
           />
         </label>
@@ -1052,7 +1108,12 @@ function NewReleaseForm({
           <input
             type="datetime-local"
             required
-            value={date}
+            disabled={kind === "reconstruction"}
+            value={
+              kind === "reconstruction"
+                ? localDate(parent?.as_of ?? new Date().toISOString())
+                : date
+            }
             onChange={(e) => setDate(e.target.value)}
           />
         </label>
@@ -1066,8 +1127,37 @@ function NewReleaseForm({
           />
         </label>
       </div>
-      <div className="section-label">APPROVED CLAIMS</div>
-      {candidates.length === 0 ? (
+      <div className="section-label">
+        {kind === "reconstruction"
+          ? "ASSEMBLIES TO CORRECT"
+          : "APPROVED CLAIMS"}
+      </div>
+      {kind === "reconstruction" ? (
+        <>
+          <p className="notice">
+            Correct the model of the same dated car using its existing
+            references. This is labeled as a reconstruction correction and does
+            not claim a new racing upgrade. Every changed assembly still needs a
+            visual review.
+          </p>
+          {Object.entries(catalog.components).map(([key, value]) => (
+            <label className="candidate-check" key={key}>
+              <input
+                type="checkbox"
+                checked={corrections.includes(key)}
+                onChange={(e) =>
+                  setCorrections(
+                    e.target.checked
+                      ? [...corrections, key]
+                      : corrections.filter((c) => c !== key),
+                  )
+                }
+              />
+              <span>{value.label}</span>
+            </label>
+          ))}
+        </>
+      ) : candidates.length === 0 ? (
         <p className="muted">
           No approved claims. You can create a release that records no new
           modeled change.
@@ -1159,7 +1249,12 @@ function NewReleaseForm({
         ))}
       <label>
         Release notes
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <textarea
+          required={kind === "reconstruction"}
+          minLength={kind === "reconstruction" ? 20 : undefined}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
       </label>
       <button className="button primary" disabled={busy || !parent}>
         Create draft configuration

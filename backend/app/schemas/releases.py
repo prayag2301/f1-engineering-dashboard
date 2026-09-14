@@ -62,7 +62,12 @@ class VersionInput(Input):
     label: str = Field(min_length=3, max_length=200)
     configuration_event: str = Field(min_length=3, max_length=200)
     configuration_kind: Literal[
-        "baseline", "evolution", "circuit_specific", "reversion", "no_change"
+        "baseline",
+        "evolution",
+        "circuit_specific",
+        "reversion",
+        "no_change",
+        "reconstruction",
     ] = "evolution"
     reverts_to_id: UUID | None = None
     as_of: datetime

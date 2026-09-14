@@ -201,6 +201,19 @@ def create_version(db: Session, payload: VersionInput):
         )
     if payload.configuration_kind == "no_change" and payload.revisions:
         raise HTTPException(422, "A no-change release cannot revise geometry.")
+    reconstruction = payload.configuration_kind == "reconstruction"
+    if reconstruction and (
+        not parent
+        or payload.as_of != aware(parent.as_of)
+        or payload.configuration_event != parent.configuration_event
+        or payload.candidate_ids
+        or not payload.revisions
+        or len(payload.notes.strip()) < 20
+    ):
+        raise HTTPException(
+            422,
+            "A reconstruction correction requires a published parent, the same observed date and event, explicit revisions and explanatory notes, without upgrade claims.",
+        )
     records = []
     source_ids = set()
     changed = set()
@@ -248,12 +261,16 @@ def create_version(db: Session, payload: VersionInput):
                     "Component evidence was published or first retrieved after the cutoff.",
                 )
             source_ids.add(str(source_id))
-        if parent and not any(
-            c.component == item.component
-            and c.representation == "modeled"
-            and c.evidence_status == "confirmed"
-            and c.source_id in item.source_ids
-            for c in records
+        if (
+            parent
+            and not reconstruction
+            and not any(
+                c.component == item.component
+                and c.representation == "modeled"
+                and c.evidence_status == "confirmed"
+                and c.source_id in item.source_ids
+                for c in records
+            )
         ):
             raise HTTPException(
                 422,
@@ -347,6 +364,7 @@ def create_version(db: Session, payload: VersionInput):
         manifest={
             "schema_version": 1,
             "generator_version": catalog()["generator_version"],
+            "reconstruction_correction": reconstruction,
             "units": "metres",
             "up_axis": "Y",
             "forward_axis": "-Z",
@@ -437,6 +455,45 @@ def publish(db, version):
     audit(db, "publish", version.id)
 
 
+def reconstruct_launch(db, parent):
+    """Queueable modeling correction; never reinterpret a later race as a launch."""
+    if not parent or parent.status != "published":
+        raise HTTPException(422, "Select a published launch reference to correct.")
+    info = catalog()["teams"][parent.team_key]
+    launch_date = datetime.fromisoformat(info["baseline_date"].replace("Z", "+00:00"))
+    if parent.season != 2026 or aware(parent.as_of) != launch_date:
+        raise HTTPException(
+            422, "The launch reconstruction cannot replace a later race configuration."
+        )
+    if parent.manifest.get("generator_version") == catalog()["generator_version"]:
+        raise HTTPException(
+            422,
+            "This release already uses the current launch reconstruction. Use explicit component revisions for further corrections.",
+        )
+    return create_version(
+        db,
+        VersionInput(
+            team_key=parent.team_key,
+            parent_id=parent.id,
+            label=f"{info['car_name']} · launch reconstruction {catalog()['generator_version']}",
+            configuration_kind="reconstruction",
+            configuration_event=parent.configuration_event,
+            as_of=parent.as_of,
+            evidence_cutoff=now(),
+            notes="Reconstruction correction of the original launch configuration: separate team inlet, body-ramp, airbox and nose contours, plus a visible cockpit inner tub. This does not establish a new racing upgrade. Exact dimensions and hidden surfaces remain estimates.",
+            revisions=[
+                dict(
+                    component=name,
+                    parameters=parent.manifest["components"][name]["parameters"],
+                    source_ids=parent.manifest["components"][name]["source_ids"],
+                    uncertainty=note,
+                )
+                for name, note in info["component_notes"].items()
+            ],
+        ),
+    )
+
+
 def bootstrap_baseline(db, team, *, force_new=False):
     """Create an honestly dated draft, never an automatically published car."""
     info = catalog()["teams"][team]
@@ -482,8 +539,11 @@ def bootstrap_baseline(db, team, *, force_new=False):
                 "component": name,
                 "parameters": info["parameters"].get(name, {}),
                 "source_ids": [source.id],
-                "uncertainty": "Visible exterior proportions reconstructed from launch photographs; exact dimensions and hidden surfaces are estimated. "
-                + info["notes"],
+                "uncertainty": info.get("component_notes", {}).get(
+                    name,
+                    "Visible exterior proportions reconstructed from launch photographs; exact dimensions and hidden surfaces are estimated. "
+                    + info["notes"],
+                ),
             }
             for name in catalog()["components"]
         ],

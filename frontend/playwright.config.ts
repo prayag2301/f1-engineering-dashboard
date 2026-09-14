@@ -22,7 +22,9 @@ export default defineConfig({
             "--use-angle=metal",
             "--enable-webgl",
             "--ignore-gpu-blocklist",
-            "--window-position=-2000,-2000",
+            // Keep native Metal windows on-screen: macOS can suspend completely
+            // off-screen renderers before even the archive request completes.
+            "--window-position=40,40",
             "--disable-backgrounding-occluded-windows",
             "--disable-renderer-backgrounding",
           ]

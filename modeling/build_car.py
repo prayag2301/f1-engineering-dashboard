@@ -14,6 +14,7 @@ from pathlib import Path
 import sys
 
 import bpy
+import bmesh
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 import numpy as np
@@ -207,6 +208,86 @@ def rounded_box(name, position, dimensions, mat, bevel=0.02):
     return obj
 
 
+def pod_surface(name, sections, side, mat):
+    """Asymmetric sections: z, inner x, outer x, roof y, belly y.
+
+    The shoulder stays wide while the belly tucks inward. Unlike a symmetric
+    ellipse this creates a real overhang and undercut in the side silhouette.
+    Section stations are authored estimates from the dated launch photographs.
+    """
+    verts, faces = [], []
+    for z, inner, outer, roof, belly in sections:
+        w, h = outer - inner, roof - belly
+        outline = [
+            (inner, roof - h * 0.12),
+            (inner + w * 0.25, roof),
+            (outer - w * 0.16, roof),
+            (outer, roof - h * 0.12),
+            (outer, roof - h * 0.34),
+            (outer - w * 0.08, belly + h * 0.22),
+            (outer - w * 0.28, belly),
+            (inner + w * 0.12, belly),
+            (inner, belly + h * 0.18),
+        ]
+        verts.extend((side * x, y, z) for x, y in outline)
+    n = 9
+    for i in range(len(sections) - 1):
+        for j in range(n):
+            a, b = i * n + j, i * n + (j + 1) % n
+            face = (a, b, b + n, a + n)
+            faces.append(tuple(reversed(face)) if side > 0 else face)
+    return mesh(name, verts, faces, mat, 2)
+
+
+def intake(name, outline, depth, rim_mat, dark_mat):
+    """Open rim, recessed walls and back face; no solid plug at the mouth."""
+    tube(name + "_rim", outline, 0.008, rim_mat, cyclic=True)
+    center = sum((Vector(p) for p in outline), Vector()) / len(outline)
+    back = [
+        (center.x + (x - center.x) * 0.85, center.y + (y - center.y) * 0.85, z + depth)
+        for x, y, z in outline
+    ]
+    n = len(outline)
+    obj = mesh(
+        name + "_duct",
+        outline + back,
+        [(j, (j + 1) % n, (j + 1) % n + n, j + n) for j in range(n)]
+        + [tuple(range(n, n * 2))],
+        dark_mat,
+    )
+    # Duct walls are visible from the opening as well as around the throat.
+    obj.data.materials[0].use_backface_culling = False
+    return obj
+
+
+def cut_opening(surface, outline, depth):
+    """Keep the body envelope out of the recessed intake's visible throat."""
+    n = len(outline)
+    front = [(x, y, z - 0.04) for x, y, z in outline]
+    rear = [(x, y, z + depth + 0.03) for x, y, z in outline]
+    cutter = mesh(
+        "temporary_intake_cut",
+        front + rear,
+        [tuple(range(n)), tuple(range(n, 2 * n))]
+        + [(j, (j + 1) % n, (j + 1) % n + n, j + n) for j in range(n)],
+        None,
+    )
+    bm = bmesh.new()
+    bm.from_mesh(cutter.data)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.to_mesh(cutter.data)
+    bm.free()
+    bpy.context.view_layer.objects.active = surface
+    for modifier in list(surface.modifiers):
+        bpy.ops.object.modifier_apply(modifier=modifier.name)
+    cut = surface.modifiers.new("Recessed airbox opening", "BOOLEAN")
+    cut.operation = "DIFFERENCE"
+    cut.object = cutter
+    bpy.ops.object.modifier_apply(modifier=cut.name)
+    CAR_OBJECTS.remove(cutter)
+    bpy.data.objects.remove(cutter, do_unlink=True)
+
+
 def wing(name, halfspan, z0, y0, chord, camber, sweep, mat):
     verts, faces = [], []
     spans, sections = 40, 24
@@ -356,6 +437,23 @@ def build_car(team, params):
     bpy.context.view_layer.objects.active = body
     bpy.ops.object.modifier_apply(modifier=boolean.name)
     bpy.data.objects.remove(cutter, do_unlink=True)
+    # A visible dark inner tub follows the aperture. The old seat was below the
+    # Boolean bowl, so the cockpit read as a solid painted plate in the viewer.
+    verts, faces = [], []
+    for width, length, y in (
+        (0.235, 0.44, 0.585),
+        (0.19, 0.35, 0.43),
+        (0.13, 0.27, 0.405),
+    ):
+        for j in range(48):
+            angle = j * 2 * PI / 48
+            verts.append((width * math.cos(angle), y, -0.12 + length * math.sin(angle)))
+    for i in range(2):
+        for j in range(48):
+            a, b = i * 48 + j, i * 48 + (j + 1) % 48
+            faces.append((a, b, b + 48, a + 48))
+    faces.append(tuple(range(96, 144)))
+    mesh("cockpit_inner_tub", verts, faces, black, 1)
     loft(
         "seat",
         [
@@ -400,8 +498,8 @@ def build_car(team, params):
         [
             (-2.37, p["tip_width"] * 0.48, 0.265, 0.045),
             (-2.34, p["tip_width"] * 0.5, 0.28, 0.065),
-            (-2.12, 0.09, 0.32, 0.075),
-            (-1.65, 0.125, 0.38, 0.10),
+            (-2.12, 0.095 if ferrari else 0.075, 0.32, 0.065),
+            (-1.65, 0.145 if ferrari else 0.105, 0.38, 0.085),
             (-1.19, 0.195, p["shoulder_height"] - 0.13, 0.13),
             (-0.86, 0.25, 0.42, 0.17),
             (-0.8, 0.255, 0.42, 0.17),
@@ -480,179 +578,209 @@ def build_car(team, params):
     COMPONENT = "sidepods"
     p = params[COMPONENT]
     for side in (-1, 1):
-        cx = side * (0.36 + p["width"] * 0.45)
-        half = p["width"] * 0.5
-        # Open leading rim, separate dark duct with depth; no painted black rectangle.
-        shell = loft(
-            "shell_" + str(side),
+        # Separate station layouts, not a common body scaled about the origin.
+        # SF-26: broad forward opening, full shoulder and later coke-bottle taper.
+        # W17: shallow high slot, pronounced overhang and earlier descending ramp.
+        width_delta = p["width"] - (0.36 if ferrari else 0.315)
+        stations = (
             [
-                (-0.48, half, 0.47, p["inlet_height"] * 0.57),
-                (-0.43, half * 1.06, 0.47, p["inlet_height"] * 0.61),
-                (-0.25, half * 1.10, 0.44, 0.15),
-                (0.15, half * 1.06, 0.38, 0.18),
-                (0.63, half * 0.95, 0.30, 0.135, side * 0.45),
-                (1.12, half * 0.72, 0.24, 0.095, side * 0.32),
-                (1.43, half * 0.45, 0.23, 0.065, side * 0.22),
-                (1.58, half * 0.22, 0.23, 0.05, side * 0.15),
-            ],
+                (-0.50, 0.32, 0.74, 0.605, 0.355),
+                (-0.47, 0.32, 0.75, 0.605, 0.35),
+                (-0.26, 0.32, 0.775, 0.595, 0.265),
+                (0.16, 0.30, 0.77, 0.565, 0.225),
+                (0.58, 0.27, 0.69, 0.50, 0.205),
+                (0.98, 0.23, 0.56, 0.41, 0.19),
+                (1.34, 0.17, 0.36, 0.325, 0.185),
+                (1.63, 0.105, 0.20, 0.285, 0.19),
+            ]
+            if ferrari
+            else [
+                (-0.51, 0.32, 0.715, 0.605, 0.525),
+                (-0.48, 0.32, 0.725, 0.606, 0.52),
+                (-0.25, 0.31, 0.73, 0.575, 0.29),
+                (0.08, 0.285, 0.68, 0.50, 0.23),
+                (0.43, 0.25, 0.57, 0.395, 0.195),
+                (0.84, 0.21, 0.43, 0.31, 0.18),
+                (1.25, 0.15, 0.295, 0.285, 0.18),
+                (1.62, 0.10, 0.185, 0.275, 0.19),
+            ]
+        )
+        stations = [
+            (
+                z,
+                ix,
+                ox + width_delta,
+                roof,
+                belly
+                + (p["undercut"] - (0.12 if ferrari else 0.15))
+                * (1 if -0.3 < z < 0.6 else 0),
+            )
+            for z, ix, ox, roof, belly in stations
+        ]
+        shell = pod_surface(
+            ("broad_shoulder" if ferrari else "descending_ramp") + "_" + str(side),
+            stations,
+            side,
             red if ferrari else white,
-            offset=cx,
-            exponent=0.6,
-            cap=False,
         )
-        loft(
-            "inlet_duct_" + str(side),
-            [
-                (-0.46, half * 0.92, 0.47, p["inlet_height"] * 0.49),
-                (-0.31, half * 0.86, 0.455, p["inlet_height"] * 0.44),
-                (-0.18, half * 0.65, 0.42, p["inlet_height"] * 0.32),
-            ],
+        # The slot's small height on W17 is supported visually; the actual
+        # dimensions, internal radiator faces and duct routing remain unknown.
+        opening_height = p["inlet_height"] * (1 if ferrari else 0.39)
+        top, outer = 0.59, (0.728 if ferrari else 0.70) + width_delta
+        outline = [
+            (side * 0.345, top - 0.01, -0.514),
+            (side * 0.42, top, -0.518),
+            (side * (outer - 0.035), top - 0.004, -0.510),
+            (side * outer, top - opening_height * 0.32, -0.493),
+            (side * (outer - 0.025), top - opening_height * 0.88, -0.486),
+            (side * 0.38, top - opening_height, -0.511),
+            (side * 0.34, top - opening_height * 0.74, -0.518),
+        ]
+        intake(
+            ("forward_inlet" if ferrari else "slit_inlet") + "_" + str(side),
+            outline,
+            0.20,
+            red if ferrari else carbon,
             black,
-            offset=cx,
-            exponent=0.55,
-            cap=False,
-            subdivisions=1,
-        )
-        loft(
-            "inlet_shadow_" + str(side),
-            [
-                (-0.22, half * 0.73, 0.43, p["inlet_height"] * 0.36),
-                (-0.18, half * 0.65, 0.42, p["inlet_height"] * 0.32),
-            ],
-            black,
-            offset=cx,
-            subdivisions=1,
-        )
-        tube(
-            "inlet_lip",
-            [
-                (cx - half * 0.83, 0.51, -0.491),
-                (cx - half * 0.7, 0.47 + p["inlet_height"] * 0.5, -0.495),
-                (cx + half * 0.7, 0.47 + p["inlet_height"] * 0.5, -0.495),
-                (cx + half * 0.93, 0.50, -0.488),
-            ],
-            0.013,
-            red,
-        )
-        paint_ribbon(
-            "lower_flow_line",
-            [
-                (side * 0.70, 0.365, -0.18),
-                (side * 0.70, 0.285, 0.20),
-                (side * 0.65, 0.205, 0.7),
-                (side * 0.51, 0.20, 1.15),
-            ],
-            0.012,
-            accent,
-            shell,
         )
         if not ferrari:
+            # Project the original turquoise band onto the new ramp.
             paint_ribbon(
                 "upper_turquoise_sweep",
                 [
-                    (cx + side * half * 0.85, 0.55, -0.48),
-                    (side * 0.69, 0.52, -0.24),
-                    (side * 0.65, 0.48, 0.15),
-                    (side * 0.56, 0.405, 0.55),
-                    (side * 0.41, 0.335, 0.95),
+                    (side * 0.70, 0.585, -0.48),
+                    (side * 0.70, 0.53, -0.22),
+                    (side * 0.64, 0.445, 0.15),
+                    (side * 0.52, 0.345, 0.55),
+                    (side * 0.37, 0.285, 1.02),
                 ],
-                0.032,
+                0.035,
                 accent,
                 shell,
             )
-        # Undercut guide / lower boundary controlled independently of the inlet.
-        tube(
-            "undercut",
+        # A body-attached lower edge, not a freestanding tube under the inlet.
+        paint_ribbon(
+            "lower_flow_line",
             [
-                (side * 0.43, 0.24, -0.34),
-                (side * (0.60 - p["undercut"]), 0.18, 0.15),
-                (side * 0.40, 0.15, 0.78),
+                (side * 0.70, 0.31, -0.22),
+                (side * 0.64, 0.235, 0.18),
+                (side * 0.51, 0.205, 0.7),
+                (side * 0.32, 0.205, 1.3),
             ],
-            0.024,
-            carbon,
+            0.009 if ferrari else 0.014,
+            accent,
+            shell,
         )
-        for j in range(7):
-            z = 0.04 + j * 0.075
-            rounded_box(
-                "cooling_louvre",
-                (side * 0.39, 0.565 - j * 0.019, z),
-                (0.105, 0.007, 0.018),
-                carbon,
-                0.006,
-            )
 
     COMPONENT = "engine_cover"
     p = params[COMPONENT]
     loft(
         "engine_body",
         [
-            (0.22, 0.21, 0.45, 0.15),
-            (0.34, 0.225, 0.47, 0.18),
-            (0.62, 0.22, 0.46, 0.20),
-            (1.10, 0.17, 0.37, 0.17),
-            (1.56, p["tail_width"], 0.30, 0.13),
+            (0.22, 0.24, 0.46, 0.17),
+            (0.34, 0.26, 0.47, 0.19),
+            (0.66, 0.245 if ferrari else 0.205, 0.45, 0.205),
+            (1.10, 0.19 if ferrari else 0.155, 0.375, 0.175),
+            (1.56, p["tail_width"], 0.305, 0.13),
             (1.87, 0.06, 0.29, 0.065),
         ],
         red if ferrari else white,
     )
-    loft(
+    spine = loft(
         "upper_spine",
-        [
-            (0.30, 0.065, 0.80, 0.14),
-            (0.34, 0.085, 0.81, p["spine_height"] - 0.81),
-            (0.47, 0.09, 0.80, 0.15),
-            (0.83, 0.06, 0.67, 0.16),
-            (1.27, 0.035, 0.52, 0.12),
-            (1.65, 0.023, 0.4, 0.07),
-        ],
+        (
+            [
+                (0.27, 0.10, 0.76, 0.155),
+                (0.34, 0.13, 0.77, p["spine_height"] - 0.77),
+                (0.53, 0.23, 0.66, 0.255),
+                (0.81, 0.25, 0.59, 0.23),
+                (1.12, 0.17, 0.51, 0.20),
+                (1.49, 0.09, 0.40, 0.115),
+                (1.68, 0.035, 0.34, 0.065),
+            ]
+            if ferrari
+            else [
+                (0.24, 0.115, 0.815, 0.11),
+                (0.36, 0.145, 0.80, p["spine_height"] - 0.80),
+                (0.58, 0.17, 0.72, 0.19),
+                (0.88, 0.155, 0.61, 0.205),
+                (1.20, 0.12, 0.49, 0.16),
+                (1.56, 0.052, 0.37, 0.09),
+                (1.70, 0.029, 0.335, 0.06),
+            ]
+        ),
         white,
-        exponent=0.7,
+        exponent=1.35 if ferrari else 0.82,
     )
-    # Airbox mouth with a curved roll structure and recessed throat.
     mouth = (
         [
-            (-0.11, 0.73, 0.20),
-            (-0.095, 0.91, 0.22),
-            (0, p["spine_height"], 0.24),
-            (0.095, 0.91, 0.22),
-            (0.11, 0.73, 0.20),
-            (0, 0.72, 0.20),
+            (-0.09, 0.755, 0.18),
+            (-0.072, 0.87, 0.18),
+            (-0.04, 0.922, 0.18),
+            (0, 0.932, 0.18),
+            (0.04, 0.922, 0.18),
+            (0.072, 0.87, 0.18),
+            (0.09, 0.755, 0.18),
+            (0, 0.745, 0.18),
         ]
         if ferrari
         else [
-            (-0.10, 0.75, 0.20),
-            (-0.105, 0.88, 0.20),
-            (-0.07, 0.915, 0.20),
-            (0.07, 0.915, 0.20),
-            (0.105, 0.88, 0.20),
-            (0.10, 0.75, 0.20),
-            (0.07, 0.73, 0.20),
-            (-0.07, 0.73, 0.20),
+            (-0.105, 0.79, 0.14),
+            (-0.108, 0.86, 0.14),
+            (-0.07, 0.905, 0.14),
+            (0, 0.915, 0.14),
+            (0.07, 0.905, 0.14),
+            (0.108, 0.86, 0.14),
+            (0.105, 0.79, 0.14),
+            (0.07, 0.756, 0.14),
+            (-0.07, 0.756, 0.14),
         ]
     )
-    tube("airbox_rim", mouth, 0.015, carbon if ferrari else accent, cyclic=True)
-    loft(
-        "airbox_throat",
-        [(0.18, 0.084, 0.82, 0.09), (0.35, 0.069, 0.81, 0.07)],
-        black,
-        subdivisions=1,
-    )
+    cut_opening(spine, mouth, 0.16)
+    intake("airbox", mouth, 0.16, carbon if ferrari else accent, black)
+    if not ferrari:
+        rod("airbox_divider", (0, 0.757, 0.14), (0, 0.91, 0.14), 0.005, carbon)
     rod("camera_support", (0, p["spine_height"], 0.40), (0, 1.04, 0.40), 0.012, carbon)
     rounded_box("onboard_camera", (0, 1.055, 0.40), (0.23, 0.038, 0.065), carbon, 0.014)
     fin = mesh(
         "dorsal_fin",
-        [
-            (0, 0.85, 0.42),
-            (0, 0.79, 0.85),
-            (0, 0.53, 1.57),
-            (0, 0.37, 1.6),
-            (0, 0.48, 0.8),
-        ],
-        [(0, 1, 2, 3, 4)],
+        (
+            [
+                (0, 0.925, 0.45),
+                (0, 0.855, 0.82),
+                (0, 0.69, 1.26),
+                (0, 0.50, 1.64),
+                (0, 0.345, 1.68),
+                (0, 0.52, 0.8),
+            ]
+            if ferrari
+            else [
+                (0, 0.92, 0.43),
+                (0, 0.81, 0.80),
+                (0, 0.60, 1.19),
+                (0, 0.425, 1.56),
+                (0, 0.34, 1.66),
+                (0, 0.51, 0.8),
+            ]
+        ),
+        [(0, 1, 2, 3, 4, 5)],
         white,
     )
-    mod = fin.modifiers.new("Fin thickness", "SOLIDIFY")
-    mod.thickness = 0.009
+    fin.modifiers.new("Fin thickness", "SOLIDIFY").thickness = 0.009
+    # Small cooling reliefs on the Ferrari's white shoulder are visible in the
+    # rear launch image. Count/depth are illustrative, not an inferred radiator.
+    if ferrari:
+        for side in (-1, 1):
+            for j in range(6):
+                tube(
+                    "shoulder_cooling_relief",
+                    [
+                        (side * 0.208, 0.628 - j * 0.015, 0.62 + j * 0.055),
+                        (side * 0.25, 0.592 - j * 0.013, 0.64 + j * 0.055),
+                    ],
+                    0.0035,
+                    carbon,
+                )
     rod("exhaust", (0, 0.34, 1.55), (0, 0.37, 2.04), 0.039, alloy, 32)
 
     COMPONENT = "halo"
@@ -982,6 +1110,12 @@ def main():
     parser.add_argument("--preview-only", action="store_true")
     parser.add_argument("--geometry-only", action="store_true")
     parser.add_argument("--samples", type=int, default=64)
+    parser.add_argument(
+        "--device",
+        choices=("CPU", "METAL"),
+        default="CPU",
+        help="CPU for Docker; optional Metal for native macOS review renders",
+    )
     args = parser.parse_args(sys.argv[sys.argv.index("--") + 1 :])
     spec = json.loads(Path(args.input).read_text())
     out = Path(args.output)
@@ -1003,6 +1137,7 @@ def main():
     )
     # Component mesh hashes are independent of GLB serialization and other components.
     hashes = {}
+    shape_hashes = {}
     material_hashes = {}
     for mat in bpy.data.materials:
         if not mat.use_nodes:
@@ -1034,6 +1169,7 @@ def main():
     deps = bpy.context.evaluated_depsgraph_get()
     for component in sorted({o["component"] for o in CAR_OBJECTS}):
         h = hashlib.sha256()
+        shape = hashlib.sha256()
         for obj in sorted(
             (o for o in CAR_OBJECTS if o["component"] == component),
             key=lambda o: o.name,
@@ -1051,19 +1187,42 @@ def main():
                 for polygon in data.polygons
             )
             h.update(json.dumps(polygons, separators=(",", ":")).encode())
+            # Exclude materials to verify that constructor differences survive
+            # the viewer's neutral finish and are not merely different paint.
+            if not any(
+                tag in obj.name
+                for tag in ("flow_line", "turquoise_nose_line", "upper_turquoise_sweep")
+            ):
+                shape.update(json.dumps(polygons, separators=(",", ":")).encode())
             for mat in data.materials:
                 h.update(material_hashes.get(mat.name, mat.name).encode())
             evaluated.to_mesh_clear()
         hashes[component] = h.hexdigest()
+        shape_hashes[component] = shape.hexdigest()
     (out / "geometry.json").write_text(
         json.dumps(
-            {"component_hashes": hashes, "generator_version": "2026.1"}, indent=2
+            {
+                "component_hashes": hashes,
+                "shape_hashes": shape_hashes,
+                "generator_version": "2026.2",
+            },
+            indent=2,
         )
     )
     camera = studio()
     scene = bpy.context.scene
     scene.render.engine = "CYCLES"
     scene.cycles.device = "CPU"
+    if args.device == "METAL":
+        preferences = bpy.context.preferences.addons["cycles"].preferences
+        preferences.compute_device_type = "METAL"
+        preferences.refresh_devices()
+        devices = [d for d in preferences.devices if d.type == "METAL"]
+        if not devices:
+            raise RuntimeError("No Metal device available; use --device CPU.")
+        for device in preferences.devices:
+            device.use = device.type == "METAL"
+        scene.cycles.device = "GPU"
     scene.cycles.samples = args.samples
     import _cycles
 

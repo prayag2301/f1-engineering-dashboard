@@ -58,11 +58,22 @@ test("all public routes load directly under the repository path without an API",
   await expect(
     page.getByRole("tab", { name: /Scuderia Ferrari/ }),
   ).toBeVisible();
-  await expect(page.locator(".timeline-item.is-only")).toHaveCount(1);
-  await expect(page.locator(".timeline-note")).toContainText(
-    "First published release",
-  );
-  await expect(page.locator(".timeline-controls")).toHaveCount(0);
+  const archive = await (
+    await request.get(`${prefix}/archive/index.json`)
+  ).json();
+  const releaseCount = archive.versions.ferrari.length;
+  await expect(page.locator(".timeline-item")).toHaveCount(releaseCount);
+  if (releaseCount === 1) {
+    await expect(page.locator(".timeline-item.is-only")).toHaveCount(1);
+    await expect(page.locator(".timeline-note")).toContainText(
+      "First published release",
+    );
+    await expect(page.locator(".timeline-controls")).toHaveCount(0);
+  } else {
+    await expect(page.locator(".timeline-controls")).toHaveCount(
+      releaseCount > 1 ? 1 : 0,
+    );
+  }
 });
 
 test("the exported snapshot exposes only local published assets with matching checksums", async ({
@@ -233,6 +244,81 @@ test("static releases support selection, synchronized comparison and rapid team 
   await expect(
     page.getByRole("tab", { name: /Scuderia Ferrari/ }),
   ).toHaveAttribute("aria-selected", "true");
+});
+
+test("constructor comparison exposes shapes, matches detail cameras and stays usable on mobile", async ({
+  page,
+}) => {
+  await page.goto(`${prefix}/`);
+  await expect(page.locator(".stage-caption")).toBeVisible({ timeout: 45000 });
+  await page
+    .getByRole("button", { name: "Compare teams", exact: true })
+    .click();
+  await expect(page.locator(".team-comparison .stage-caption")).toHaveCount(2);
+  await expect(page.locator(".constructor-label").first()).toContainText(
+    "Ferrari",
+  );
+  await expect(page.locator(".constructor-label").nth(1)).toContainText(
+    "Mercedes",
+  );
+  await page
+    .getByRole("button", { name: "Show neutral surfaces", exact: true })
+    .click();
+  for (const stage of await page.locator(".car-stage").all())
+    await expect(stage).toHaveAttribute("data-material-mode", "shape");
+  await page.getByRole("button", { name: "Inlets & undercut" }).click();
+  await expect(page.getByLabel("Component", { exact: true })).toHaveValue(
+    "sidepods",
+  );
+  await page.getByLabel("Isolate component", { exact: true }).check();
+  for (const stage of await page.locator(".car-stage").all())
+    await expect(stage).toHaveAttribute("data-isolated-component", "sidepods");
+  const cameras = page.locator("canvas");
+  await expect
+    .poll(
+      async () =>
+        (await cameras.first().getAttribute("data-camera-position")) ===
+        (await cameras.nth(1).getAttribute("data-camera-position")),
+    )
+    .toBe(true);
+  await cameras.first().focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect
+    .poll(
+      async () =>
+        (await cameras.first().getAttribute("data-camera-position")) ===
+        (await cameras.nth(1).getAttribute("data-camera-position")),
+    )
+    .toBe(true);
+  await expect(
+    page.getByRole("link", { name: "View Ferrari reference" }),
+  ).toHaveAttribute("href", /^https:\/\//);
+  await expect(
+    page.getByRole("link", { name: "View Mercedes reference" }),
+  ).toHaveAttribute("href", /^https:\/\//);
+  await page.getByRole("button", { name: "Airbox & spine" }).click();
+  await expect(page.getByLabel("Component", { exact: true })).toHaveValue(
+    "engine_cover",
+  );
+  await page
+    .getByRole("button", { name: "Neutral surfaces", exact: true })
+    .click();
+  for (const stage of await page.locator(".car-stage").all())
+    await expect(stage).toHaveAttribute("data-material-mode", "livery");
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.getByRole("tab", { name: /Mercedes-AMG/ }).click();
+  await expect(
+    page.locator(".constructor-pane").first().locator(".car-stage"),
+  ).toHaveAttribute("aria-label", /^mercedes /);
+  await expect(
+    page.locator(".constructor-pane").nth(1).locator(".car-stage"),
+  ).toHaveAttribute("aria-label", /^ferrari /);
+  await expect(page.locator(".team-comparison .stage-caption")).toHaveCount(2);
 });
 
 test("a failed archive request can be retried without a backend", async ({
