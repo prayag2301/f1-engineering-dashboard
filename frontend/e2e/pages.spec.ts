@@ -58,6 +58,11 @@ test("all public routes load directly under the repository path without an API",
   await expect(
     page.getByRole("tab", { name: /Scuderia Ferrari/ }),
   ).toBeVisible();
+  await expect(page.locator(".timeline-item.is-only")).toHaveCount(1);
+  await expect(page.locator(".timeline-note")).toContainText(
+    "First published release",
+  );
+  await expect(page.locator(".timeline-controls")).toHaveCount(0);
 });
 
 test("the exported snapshot exposes only local published assets with matching checksums", async ({
@@ -213,6 +218,16 @@ test("static releases support selection, synchronized comparison and rapid team 
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await expect(page.locator(".timeline-controls")).toBeVisible();
+  const timeline = page.locator(".timeline-items");
+  await page.getByRole("button", { name: "Scroll to later releases" }).click();
+  await expect
+    .poll(() => timeline.evaluate((node) => node.scrollLeft))
+    .toBeGreaterThan(0);
+  const history = page.locator(".timeline-item");
+  await history.first().focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(history.nth(1)).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("tab", { name: /Mercedes-AMG/ }).focus();
   await page.keyboard.press("Home");
   await expect(

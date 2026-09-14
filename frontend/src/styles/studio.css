@@ -456,9 +456,43 @@ small {
 }
 .timeline-items {
   display: flex;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   gap: 5px;
   padding: 4px 0;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.timeline-items::-webkit-scrollbar {
+  display: none;
+}
+.timeline-heading__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.timeline-heading__title b {
+  color: #dae2e5;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+.timeline-controls {
+  display: flex;
+  gap: 6px;
+}
+.timeline-controls button {
+  display: grid;
+  width: 30px;
+  height: 26px;
+  padding: 0;
+  place-items: center;
+  background: transparent;
+  border-color: #3b4853;
+}
+.timeline-controls button:disabled {
+  opacity: 0.28;
 }
 .timeline-item {
   display: flex;
@@ -475,6 +509,7 @@ small {
   position: relative;
   background: transparent;
   text-align: left;
+  scroll-snap-align: start;
 }
 .timeline-item:hover:not(:disabled) {
   background: transparent;
@@ -503,6 +538,26 @@ small {
 .timeline-item > span:last-child {
   font-size: 10px;
   color: var(--muted);
+}
+.timeline-items.is-single {
+  overflow: visible;
+}
+.timeline-item.is-only {
+  width: min(100%, 360px);
+  max-width: 360px;
+  min-width: 0;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid #303b45;
+  border-left: 2px solid var(--team-accent);
+  border-radius: 4px;
+}
+.timeline-item.is-only .timeline-node {
+  display: none;
+}
+.timeline-note {
+  margin: 10px 0 0;
+  font-size: 10px !important;
 }
 .timeline > p {
   color: var(--muted);
@@ -1320,8 +1375,23 @@ select,
 textarea {
   font-family: inherit;
 }
-.archive-about { max-width: 780px; margin: 3rem auto 5rem; line-height: 1.8; }
-.archive-about h1 { font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.1; }
-.archive-about h2 { margin-top: 2rem; }
-.archive-about p { color: #b6c1cc; }
-.archive-about .toolbar-controls { margin-top: 2rem; flex-wrap: wrap; gap: 1.5rem; }
+.archive-about {
+  max-width: 780px;
+  margin: 3rem auto 5rem;
+  line-height: 1.8;
+}
+.archive-about h1 {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  line-height: 1.1;
+}
+.archive-about h2 {
+  margin-top: 2rem;
+}
+.archive-about p {
+  color: #b6c1cc;
+}
+.archive-about .toolbar-controls {
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}

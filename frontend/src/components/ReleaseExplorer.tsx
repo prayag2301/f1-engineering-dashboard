@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
@@ -51,6 +51,11 @@ export default function ReleaseExplorer({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const [timelineEdges, setTimelineEdges] = useState({
+    start: true,
+    end: true,
+  });
   // Each constructor starts with an independent orbit history.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const bus = useMemo(() => createCameraBus(), [team]);
@@ -114,6 +119,69 @@ export default function ReleaseExplorer({
         component.source_ids.includes(s.id) ||
         changes.some((c) => c.source_id === s.id),
     ) ?? [];
+  const chronological = useMemo(() => [...versions].reverse(), [versions]);
+  const updateTimelineEdges = useCallback(() => {
+    const element = timelineRef.current;
+    if (!element) return;
+    setTimelineEdges({
+      start: element.scrollLeft <= 2,
+      end: element.scrollLeft + element.clientWidth >= element.scrollWidth - 2,
+    });
+  }, []);
+  useEffect(() => {
+    const frame = requestAnimationFrame(updateTimelineEdges);
+    window.addEventListener("resize", updateTimelineEdges);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", updateTimelineEdges);
+    };
+  }, [chronological, updateTimelineEdges]);
+  const selectTimelineVersion = (id: string) => {
+    setSelected(id);
+    setActive(null);
+  };
+  const moveTimelineFocus = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const next =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? chronological.length - 1
+          : Math.max(
+              0,
+              Math.min(
+                chronological.length - 1,
+                index + (event.key === "ArrowLeft" ? -1 : 1),
+              ),
+            );
+    const buttons =
+      timelineRef.current?.querySelectorAll<HTMLButtonElement>(
+        ".timeline-item",
+      );
+    buttons?.[next]?.focus();
+    buttons?.[next]?.scrollIntoView({ behavior: "smooth", inline: "nearest" });
+    selectTimelineVersion(chronological[next].id);
+  };
+  const scrollTimeline = (direction: -1 | 1) => {
+    const element = timelineRef.current;
+    if (!element) return;
+    element.scrollBy({
+      left: direction * Math.max(190, element.clientWidth * 0.75),
+      behavior: "smooth",
+    });
+  };
+  const timelineContent = (entry: CarVersion) => (
+    <>
+      <span className="timeline-node" />
+      <small>{dateLabel(entry.as_of)}</small>
+      <strong>{entry.label}</strong>
+      <span>{entry.configuration_event}</span>
+    </>
+  );
   return (
     <div
       className="release-explorer"
@@ -370,9 +438,34 @@ export default function ReleaseExplorer({
             </label>
           </div>
           <div className="timeline">
-            <div className="section-label">
-              RELEASE HISTORY{" "}
-              <span>{versions.length.toString().padStart(2, "0")}</span>
+            <div className="section-label timeline-heading">
+              <span className="timeline-heading__title">
+                RELEASE HISTORY
+                <b>{versions.length.toString().padStart(2, "0")}</b>
+              </span>
+              {versions.length > 1 && (
+                <span
+                  className="timeline-controls"
+                  aria-label="Release history navigation"
+                >
+                  <button
+                    type="button"
+                    aria-label="Scroll to earlier releases"
+                    disabled={timelineEdges.start}
+                    onClick={() => scrollTimeline(-1)}
+                  >
+                    ←
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Scroll to later releases"
+                    disabled={timelineEdges.end}
+                    onClick={() => scrollTimeline(1)}
+                  >
+                    →
+                  </button>
+                </span>
+              )}
             </div>
             {versions.length === 0 ? (
               <p>
@@ -380,28 +473,45 @@ export default function ReleaseExplorer({
                 drafts until approved.
               </p>
             ) : (
-              <div className="timeline-items">
-                {[...versions].reverse().map((v) => (
-                  <button
-                    className={
-                      v.id === selected
-                        ? "timeline-item active"
-                        : "timeline-item"
-                    }
-                    key={v.id}
-                    aria-pressed={v.id === selected}
-                    onClick={() => {
-                      setSelected(v.id);
-                      setActive(null);
-                    }}
-                  >
-                    <span className="timeline-node" />
-                    <small>{dateLabel(v.as_of)}</small>
-                    <strong>{v.label}</strong>
-                    <span>{v.configuration_event}</span>
-                  </button>
-                ))}
-              </div>
+              <>
+                <div
+                  className={`timeline-items${versions.length === 1 ? " is-single" : ""}`}
+                  ref={timelineRef}
+                  onScroll={updateTimelineEdges}
+                >
+                  {chronological.map((v, index) =>
+                    versions.length === 1 ? (
+                      <article
+                        className="timeline-item active is-only"
+                        key={v.id}
+                      >
+                        {timelineContent(v)}
+                      </article>
+                    ) : (
+                      <button
+                        className={
+                          v.id === selected
+                            ? "timeline-item active"
+                            : "timeline-item"
+                        }
+                        key={v.id}
+                        aria-pressed={v.id === selected}
+                        tabIndex={v.id === selected ? 0 : -1}
+                        onKeyDown={(event) => moveTimelineFocus(event, index)}
+                        onClick={() => selectTimelineVersion(v.id)}
+                      >
+                        {timelineContent(v)}
+                      </button>
+                    ),
+                  )}
+                </div>
+                {versions.length === 1 && (
+                  <p className="timeline-note">
+                    First published release. Later configurations will extend
+                    this history.
+                  </p>
+                )}
+              </>
             )}
           </div>
         </div>
