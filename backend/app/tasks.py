@@ -220,6 +220,7 @@ def build_version(job_id, version_id, attempt):
     (stage / "spec.json").write_text(json.dumps(spec, indent=2))
     if can_reuse:
         # An annotation-only release reuses identical geometry, camera, and materials.
+        manifest["generator_version"] = parent_manifest["generator_version"]
         for asset in parent_manifest["assets"].values():
             source = root / str(parent_id) / asset["filename"]
             if sha256(source) != asset["sha256"]:
@@ -227,6 +228,10 @@ def build_version(job_id, version_id, attempt):
             if asset["filename"] != "spec.json":
                 shutil.copy2(source, stage / asset["filename"])
     else:
+        if manifest.get("generator_version") != catalog()["generator_version"]:
+            raise ValueError(
+                "This draft targets a different modeling generator. Create a new draft with the current references instead of rebuilding it with different source code."
+            )
         shutil.copy2(settings.MODELING_ROOT / "build_car.py", stage / "build_car.py")
         shutil.copy2(settings.MODELING_ROOT / "catalog.json", stage / "catalog.json")
         shutil.copy2(

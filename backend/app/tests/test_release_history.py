@@ -390,7 +390,12 @@ def test_annotation_build_reuses_every_parent_render_without_blender(
         key: {"filename": name, "sha256": sha256(folder / name)}
         for key, name in names.items()
     }
-    parent.manifest = {**parent.manifest, "assets": assets, "component_hashes": hashes}
+    parent.manifest = {
+        **parent.manifest,
+        "assets": assets,
+        "component_hashes": hashes,
+        "generator_version": "earlier-frozen-generator",
+    }
     db.commit()
     version = create_version(db, next_payload(parent))
     job = queue_build(db, version)
@@ -408,6 +413,10 @@ def test_annotation_build_reuses_every_parent_render_without_blender(
         result["reused_geometry"] and db.get(CarVersion, version.id).status == "ready"
     )
     process.assert_not_called()
+    assert (
+        db.get(CarVersion, version.id).manifest["generator_version"]
+        == "earlier-frozen-generator"
+    )
     output = settings.RELEASE_ROOT / str(version.id)
     for key, name in names.items():
         if key != "spec":
@@ -415,6 +424,23 @@ def test_annotation_build_reuses_every_parent_render_without_blender(
     assert json.loads((output / "spec.json").read_text())["version_id"] == str(
         version.id
     )
+
+
+def test_stale_draft_cannot_silently_use_a_new_generator(db, monkeypatch):
+    from sqlalchemy.orm import sessionmaker
+
+    version = bootstrap_baseline(db, "ferrari")
+    version.manifest = {**version.manifest, "generator_version": "obsolete-generator"}
+    job = queue_build(db, version)
+    job.status = "running"
+    job.attempts = 1
+    db.commit()
+    monkeypatch.setattr(tasks, "SessionLocal", sessionmaker(bind=db.bind))
+    process = Mock()
+    monkeypatch.setattr(tasks.subprocess, "Popen", process)
+    with pytest.raises(ValueError, match="different modeling generator"):
+        tasks.build_version(job.id, version.id, 1)
+    process.assert_not_called()
 
 
 def test_failed_worker_and_manual_retry_preserve_current_release(

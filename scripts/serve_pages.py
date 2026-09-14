@@ -37,7 +37,12 @@ def main():
             self.send_error(404)
             return None
 
-    server = ThreadingHTTPServer(
+    class PreviewServer(ThreadingHTTPServer):
+        # A Next.js page requests many chunks concurrently. The default backlog
+        # of five can reset connections on macOS before a handler accepts them.
+        request_queue_size = 128
+
+    server = PreviewServer(
         ("127.0.0.1", args.port), partial(Handler, directory=str(root))
     )
     print(f"Static preview: http://127.0.0.1:{args.port}{prefix}/", flush=True)

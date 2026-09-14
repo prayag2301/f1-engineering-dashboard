@@ -74,7 +74,73 @@ async function archiveFixture(page: Page) {
       body: route.request().url().endsWith(".glb") ? fixtureGLB() : pixel,
     }),
   );
+  return version;
 }
+
+test("private constructor comparison uses draft assets and keeps the selected counterpart on refresh", async ({
+  page,
+}) => {
+  const fixture = await archiveFixture(page);
+  const ferrari = {
+    ...fixture("ferrari", 2),
+    status: "ready",
+    is_current: false,
+  };
+  const mercedes = {
+    ...fixture("mercedes", 2),
+    status: "ready",
+    is_current: false,
+  };
+  let reads = 0;
+  await page.route("**/api/v1/review/session", (route) =>
+    route.fulfill({ json: { authenticated: true } }),
+  );
+  await page.route("**/api/v1/review/dashboard", (route) => {
+    reads++;
+    return route.fulfill({
+      json: {
+        versions: [ferrari, mercedes, fixture("mercedes", 1)],
+        candidates: [],
+        jobs: [],
+        sources: [],
+        audits: [],
+      },
+    });
+  });
+  await page.goto("/review");
+  await page
+    .getByRole("button", { name: "Compare other constructor", exact: true })
+    .click();
+  await expect(page.locator(".constructor-pane canvas")).toHaveCount(2);
+  await expect(page.locator(".constructor-pane").nth(1)).toContainText(
+    "Unpublished draft",
+  );
+  await page
+    .getByRole("button", { name: "Neutral surfaces", exact: true })
+    .click();
+  await expect(page.locator('[data-material-mode="shape"]')).toHaveCount(2);
+  await page.getByLabel("Draft camera view").selectOption("side");
+  const canvases = page.locator(".constructor-pane canvas");
+  await expect(canvases.first()).toHaveAttribute(
+    "data-camera-position",
+    /8\.0000/,
+  );
+  await expect
+    .poll(
+      async () =>
+        (await canvases.first().getAttribute("data-camera-position")) ===
+        (await canvases.nth(1).getAttribute("data-camera-position")),
+    )
+    .toBe(true);
+  await page
+    .getByLabel("Other constructor release")
+    .selectOption("fixture-mercedes-1");
+  const before = reads;
+  await expect.poll(() => reads, { timeout: 15000 }).toBeGreaterThan(before);
+  await expect(page.getByLabel("Other constructor release")).toHaveValue(
+    "fixture-mercedes-1",
+  );
+});
 
 test("loads the selected release, selects components, and synchronizes cameras", async ({
   page,

@@ -27,6 +27,7 @@ export default defineConfig({
             "--window-position=40,40",
             "--disable-backgrounding-occluded-windows",
             "--disable-renderer-backgrounding",
+            "--disable-background-timer-throttling",
           ]
         : [
             "--use-angle=swiftshader",

@@ -2,6 +2,8 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { createCameraBus } from "./CarViewer";
+import TeamComparison from "./TeamComparison";
 import {
   request,
   mutate,
@@ -197,6 +199,7 @@ export default function ReviewStudio() {
                 <DraftReview
                   key={version.id + version.status}
                   version={version}
+                  comparisons={data.versions}
                   allowBaselineRevision={
                     !data.versions.some(
                       (v) =>
@@ -333,11 +336,13 @@ type Action = (work: () => Promise<unknown>, message?: string) => Promise<void>;
 
 function DraftReview({
   version,
+  comparisons,
   allowBaselineRevision,
   busy,
   action,
 }: {
   version: CarVersion;
+  comparisons: CarVersion[];
   allowBaselineRevision: boolean;
   busy: boolean;
   action: Action;
@@ -358,6 +363,16 @@ function DraftReview({
   const [rollbackReason, setRollbackReason] = useState("");
   const [neutral, setNeutral] = useState(false);
   const [detail, setDetail] = useState("");
+  const [compareOther, setCompareOther] = useState(false);
+  const [preset, setPreset] = useState<ViewName>("three_quarter");
+  const [resetIndex, setResetIndex] = useState(0);
+  const [bus] = useState(createCameraBus);
+  const canCompare = comparisons.some(
+    (v) =>
+      v.team_key !== version.team_key &&
+      ["ready", "published"].includes(v.status) &&
+      v.manifest.assets.glb,
+  );
   return (
     <section className="draft-review">
       <div className="draft-title">
@@ -376,15 +391,41 @@ function DraftReview({
       </div>
       {version.manifest.assets.glb ? (
         <>
-          <CarViewer
-            version={version}
-            height="480px"
-            neutral={neutral}
-            activeComponent={detail || null}
-            onSelectComponent={setDetail}
-            focus={!!detail}
-          />
+          {compareOther ? (
+            <TeamComparison
+              version={version}
+              comparisons={comparisons}
+              preset={preset}
+              resetIndex={resetIndex}
+              active={detail || null}
+              onSelect={setDetail}
+              focus={!!detail}
+              bus={bus}
+              neutral={neutral}
+              isolate={false}
+            />
+          ) : (
+            <CarViewer
+              version={version}
+              preset={preset}
+              resetIndex={resetIndex}
+              cameraBus={bus}
+              height="480px"
+              neutral={neutral}
+              activeComponent={detail || null}
+              onSelectComponent={setDetail}
+              focus={!!detail}
+            />
+          )}
           <div className="shape-tools">
+            <button
+              type="button"
+              disabled={!canCompare}
+              aria-pressed={compareOther}
+              onClick={() => setCompareOther((v) => !v)}
+            >
+              Compare other constructor
+            </button>
             <button
               type="button"
               aria-pressed={neutral}
@@ -401,6 +442,20 @@ function DraftReview({
               {Object.entries(version.manifest.components).map(([key, c]) => (
                 <option value={key} key={key}>
                   {c.label}
+                </option>
+              ))}
+            </select>
+            <select
+              aria-label="Draft camera view"
+              value={preset}
+              onChange={(e) => {
+                setPreset(e.target.value as ViewName);
+                setResetIndex((v) => v + 1);
+              }}
+            >
+              {VIEWS.map((view) => (
+                <option key={view} value={view}>
+                  {view.replace("_", " ")}
                 </option>
               ))}
             </select>

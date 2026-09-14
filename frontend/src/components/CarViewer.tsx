@@ -50,6 +50,18 @@ class ModelBoundary extends React.Component<
   }
 }
 
+function ContextLossGuard({ onLost }: { onLost: () => void }) {
+  const { gl } = useThree();
+  useEffect(() => {
+    const canvas = gl.domElement;
+    canvas.addEventListener("webglcontextlost", onLost);
+    // R3F deliberately disposes an old context after unmount. A late event from
+    // that canvas must not fail the replacement canvas created by Retry 3D.
+    return () => canvas.removeEventListener("webglcontextlost", onLost);
+  }, [gl, onLost]);
+  return null;
+}
+
 function Model({
   url,
   active,
@@ -374,14 +386,8 @@ function ViewerInstance({
             shadows
             camera={{ position: [5, 2.6, -7], fov: 38, near: 0.05, far: 100 }}
             gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
-            onCreated={({ gl }) => {
-              gl.domElement.addEventListener(
-                "webglcontextlost",
-                () => setFailed(true),
-                { once: true },
-              );
-            }}
           >
+            <ContextLossGuard onLost={() => setFailed(true)} />
             <color attach="background" args={["#14191e"]} />
             <ambientLight intensity={0.18} />
             <directionalLight

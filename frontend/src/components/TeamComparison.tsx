@@ -15,6 +15,7 @@ export default function TeamComparison({
   bus,
   neutral,
   isolate,
+  comparisons,
 }: {
   version: CarVersion | null;
   preset: ViewName;
@@ -25,6 +26,7 @@ export default function TeamComparison({
   bus: CameraBus;
   neutral: boolean;
   isolate: boolean;
+  comparisons?: CarVersion[];
 }) {
   const otherTeam = version?.team_key === "ferrari" ? "mercedes" : "ferrari";
   const [releases, setReleases] = useState<CarVersion[]>([]);
@@ -33,6 +35,27 @@ export default function TeamComparison({
   const [loading, setLoading] = useState(true);
   const [retry, setRetry] = useState(0);
   useEffect(() => {
+    if (comparisons) {
+      const available = comparisons.filter(
+        (v) =>
+          v.team_key === otherTeam &&
+          ["ready", "published"].includes(v.status) &&
+          v.manifest.assets.glb,
+      );
+      setReleases(available);
+      setSelected((previous) =>
+        available.some((v) => v.id === previous)
+          ? previous
+          : ((
+              available.find((v) => v.status === "ready") ??
+              available.find((v) => v.is_current) ??
+              available[0]
+            )?.id ?? ""),
+      );
+      setError("");
+      setLoading(false);
+      return;
+    }
     const controller = new AbortController();
     setReleases([]);
     setSelected("");
@@ -51,7 +74,7 @@ export default function TeamComparison({
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [otherTeam, retry]);
+  }, [otherTeam, retry, comparisons]);
   const other =
     releases.find((v) => v.id === selected && v.team_key === otherTeam) ?? null;
   return (
@@ -88,6 +111,7 @@ export default function TeamComparison({
                   {releases.map((v) => (
                     <option key={v.id} value={v.id}>
                       {dateLabel(v.as_of)} — {v.label}
+                      {v.status !== "published" ? " (unpublished draft)" : ""}
                     </option>
                   ))}
                 </select>
@@ -95,6 +119,9 @@ export default function TeamComparison({
                 <span>
                   {car ? `${dateLabel(car.as_of)} · ${car.label}` : ""}
                 </span>
+              )}
+              {car && car.status !== "published" && (
+                <small>Unpublished draft</small>
               )}
             </div>
             {index === 1 && (loading || error) ? (

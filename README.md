@@ -61,6 +61,10 @@ Configure sources in [data/references/sources.json](data/references/sources.json
 
 The archive provides a team selector, dated timeline, camera presets, component picking, evidence passages, uncertainty notes, and 4K downloads. Comparison defaults to two releases of the same team and offers synchronized cameras, side-by-side views, before/after switching, and changed-component highlighting.
 
+Use **Compare teams** to inspect Ferrari and Mercedes from the same viewpoint. **Show neutral surfaces** removes livery distractions; the inlet, airbox and nose shortcuts focus both cameras on matching assemblies. Each car retains its own configuration date, sources and uncertainty notes. Constructor differences are not classified as racing upgrades.
+
+The authenticated review studio also offers **Compare other constructor**, including validated unpublished drafts. To improve an existing model of the same dated configuration, choose **Improve an existing reconstruction** in New release. This creates new component revisions and requires four-view review; it does not change the original observation date or replace published assets. A draft targeting an older modeling generator must be recreated before rebuilding. Annotation-only releases continue to reuse their parent's exact geometry and builder provenance.
+
 A GLB failure shows only that release's still and a retry control. Switching teams clears the previous selection. No procedural car is substituted. Published assets have immutable URLs and cache headers; draft assets require authentication.
 
 ## Application layout
