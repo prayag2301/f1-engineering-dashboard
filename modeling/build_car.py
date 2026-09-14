@@ -207,7 +207,7 @@ def rounded_box(name, position, dimensions, mat, bevel=0.02):
     return obj
 
 
-def pod_surface(name, sections, side, mat):
+def pod_surface(name, sections, side, mat, channel=0):
     """Asymmetric sections: z, inner x, outer x, roof y, belly y.
 
     The shoulder stays wide while the belly tucks inward. Unlike a symmetric
@@ -217,9 +217,10 @@ def pod_surface(name, sections, side, mat):
     verts, faces = [], []
     for z, inner, outer, roof, belly in sections:
         w, h = outer - inner, roof - belly
+        depression = channel * min(1, max(0, (z + 0.3) / 0.5))
         outline = [
-            (inner, roof - h * 0.12),
-            (inner + w * 0.25, roof),
+            (inner, roof - h * 0.12 - depression * 0.6),
+            (inner + w * 0.25, roof - depression),
             (outer - w * 0.16, roof),
             (outer, roof - h * 0.12),
             (outer, roof - h * 0.34),
@@ -586,7 +587,7 @@ def build_car(team, params):
     for side in (-1, 1):
         # Separate station layouts, not a common body scaled about the origin.
         # SF-26: broad forward opening, full shoulder and later coke-bottle taper.
-        # W17: shallow high slot, pronounced overhang and earlier descending ramp.
+        # W17 launch renders: shallow high slot, relatively flat deck and rear upsweep.
         width_delta = p["width"] - (0.36 if ferrari else 0.315)
         stations = (
             [
@@ -603,12 +604,12 @@ def build_car(team, params):
             else [
                 (-0.51, 0.32, 0.715, 0.605, 0.525),
                 (-0.48, 0.32, 0.725, 0.606, 0.52),
-                (-0.25, 0.31, 0.73, 0.575, 0.29),
-                (0.08, 0.285, 0.68, 0.50, 0.23),
-                (0.43, 0.25, 0.57, 0.395, 0.195),
-                (0.84, 0.21, 0.43, 0.31, 0.18),
-                (1.25, 0.15, 0.295, 0.285, 0.18),
-                (1.62, 0.10, 0.185, 0.275, 0.19),
+                (-0.25, 0.31, 0.73, 0.59, 0.29),
+                (0.08, 0.285, 0.70, 0.55, 0.23),
+                (0.43, 0.25, 0.635, 0.52, 0.20),
+                (0.84, 0.21, 0.55, 0.50, 0.195),
+                (1.25, 0.15, 0.43, 0.54, 0.23),
+                (1.62, 0.10, 0.23, 0.50, 0.31),
             ]
         )
         stations = [
@@ -627,10 +628,11 @@ def build_car(team, params):
             for z, ix, ox, roof, belly in stations
         ]
         shell = pod_surface(
-            ("broad_shoulder" if ferrari else "descending_ramp") + "_" + str(side),
+            ("broad_shoulder" if ferrari else "raised_rear_deck") + "_" + str(side),
             stations,
             side,
             red if ferrari else white,
+            channel=0 if ferrari else 0.065,
         )
         # The slot's small height on W17 is supported visually; the actual
         # dimensions, internal radiator faces and duct routing remain unknown.
@@ -648,10 +650,10 @@ def build_car(team, params):
                 "upper_turquoise_sweep",
                 [
                     (side * 0.70, 0.585, -0.48),
-                    (side * 0.70, 0.53, -0.22),
-                    (side * 0.64, 0.445, 0.15),
-                    (side * 0.52, 0.345, 0.55),
-                    (side * 0.37, 0.285, 1.02),
+                    (side * 0.70, 0.57, -0.22),
+                    (side * 0.65, 0.52, 0.15),
+                    (side * 0.575, 0.495, 0.55),
+                    (side * 0.46, 0.51, 1.02),
                 ],
                 0.035,
                 accent,
@@ -702,9 +704,9 @@ def build_car(team, params):
                 (0.36, 0.115, 0.815, 0.11),
                 (0.39, 0.145, 0.80, p["spine_height"] - 0.80),
                 (0.58, 0.17, 0.72, 0.19),
-                (0.88, 0.155, 0.61, 0.205),
-                (1.20, 0.12, 0.49, 0.16),
-                (1.56, 0.052, 0.37, 0.09),
+                (0.88, 0.155, 0.65, 0.20),
+                (1.20, 0.12, 0.57, 0.17),
+                (1.56, 0.052, 0.45, 0.10),
                 (1.70, 0.029, 0.335, 0.06),
             ]
         ),
@@ -755,10 +757,10 @@ def build_car(team, params):
             if ferrari
             else [
                 (0, 0.92, 0.43),
-                (0, 0.81, 0.80),
-                (0, 0.60, 1.19),
-                (0, 0.425, 1.56),
-                (0, 0.34, 1.66),
+                (0, 0.87, 0.80),
+                (0, 0.77, 1.19),
+                (0, 0.70, 1.56),
+                (0, 0.47, 1.66),
                 (0, 0.51, 0.8),
             ]
         ),
@@ -1203,7 +1205,7 @@ def main():
             {
                 "component_hashes": hashes,
                 "shape_hashes": shape_hashes,
-                "generator_version": "2026.2",
+                "generator_version": "2026.3",
             },
             indent=2,
         )

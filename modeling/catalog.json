@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generator_version": "2026.2",
+  "generator_version": "2026.3",
   "components": {
     "chassis": {
       "label": "Chassis & cockpit",
@@ -228,13 +228,15 @@
       "publisher": "Mercedes-AMG PETRONAS F1 Team",
       "title": "Mercedes W17 official launch",
       "reference_images": [
-        "https://images.ctfassets.net/1fvlg6xqnm65/5mPoJIJroXGsBxhRL0tYrQ/5bcb87e98a87414fe2fc900bc68382ba/Mercedes-AMG_F1_W17_E_PERFORMANCE_-_GR_6.jpg?w=1600"
+        "https://images.ctfassets.net/1fvlg6xqnm65/5mPoJIJroXGsBxhRL0tYrQ/5bcb87e98a87414fe2fc900bc68382ba/Mercedes-AMG_F1_W17_E_PERFORMANCE_-_GR_6.jpg?w=1600",
+        "https://media.formula1.com/image/upload/c_fit,w_1600,h_900/q_auto/v1740000001/fom-website/2026/Mercedes/Mercedes-AMG%20F1%20W17%20E%20PERFORMANCE%20-%20KA%2010.webp",
+        "https://media.formula1.com/image/upload/c_fit,w_1600,h_900/q_auto/v1740000001/fom-website/2026/Mercedes/Mercedes-AMG%20F1%20W17%20E%20PERFORMANCE%20-%20KA%2012.webp"
       ],
       "notes": "Original exterior reconstruction from the W17 launch. Silver forward bodywork, black rear bodywork, and a low turquoise flow line follow the official livery description. Fine inlet sections and hidden surfaces remain estimates. Sponsor artwork is not included.",
       "component_notes": {
         "chassis": "W17 launch reconstruction: the dark inner cockpit tub now remains visible within the survival-cell opening. This corrects the previously obscured seat; it does not establish a real-world chassis upgrade. Hidden cockpit details and dimensions remain estimates.",
-        "sidepods": "W17 launch reconstruction: a shallow, high inlet slot above a pronounced overhang, followed by a descending body ramp and earlier inward taper. The opening is modeled separately from the recessed duct. Its precise dimensions and concealed radiator geometry remain estimates.",
-        "engine_cover": "W17 launch reconstruction: a rounded airbox opening with a central divider, a narrower dark spine and a curved taper towards the exhaust. The launch image establishes the visible outline; hidden surfaces and exact section dimensions remain estimates.",
+        "sidepods": "W17 presentation-render reconstruction: shallow high inlet slots, undercut shoulders and a relatively flat upper deck with shallow channels and a raised rear body profile. These contours follow the January 22 official renders, not a verified on-track configuration. Section dimensions, channel depth and concealed radiator geometry remain estimates.",
+        "engine_cover": "W17 presentation-render reconstruction: a rounded airbox opening with a central divider, a narrow dark spine and a higher, flat-sided dorsal fin over the raised rear deck. The official launch renders establish this visible outline; on-track correspondence, hidden surfaces and exact dimensions are unconfirmed.",
         "nose": "W17 launch reconstruction: a slimmer, straighter nose taper with silver upper paint and a turquoise edge line. Neutral surface mode removes the paint line to expose the modeled contour. Exact nose sections and attachments remain visual estimates."
       },
       "parameters": {

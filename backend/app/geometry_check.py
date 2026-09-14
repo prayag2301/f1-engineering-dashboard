@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 import subprocess
 import tempfile
+import numpy as np
+import trimesh
 from app.config import get_settings
 from app.services.catalog import catalog
 from app.services.validation import validate_geometry
@@ -53,6 +55,25 @@ def main():
             if result.returncode:
                 raise RuntimeError(result.stdout[-4000:])
             validation = validate_geometry(out / "car.glb")
+            scene = trimesh.load(out / "car.glb", force="scene")
+            points = []
+            for node in scene.graph.nodes_geometry:
+                if node.startswith(
+                    ("sidepods.broad_shoulder", "sidepods.raised_rear_deck")
+                ):
+                    transform, geometry = scene.graph[node]
+                    points.extend(
+                        trimesh.transformations.transform_points(
+                            scene.geometry[geometry].vertices, transform
+                        )
+                    )
+            points = np.array(points)
+            middle = points[(points[:, 2] > 0.75) & (points[:, 2] < 0.9), 1].max()
+            rear = points[(points[:, 2] > 1.2) & (points[:, 2] < 1.3), 1].max()
+            # Model silhouette checks, not measurements of a factory car.
+            assert (
+                rear - middle > 0.008 if team == "mercedes" else rear - middle < -0.03
+            )
             hashes[name] = json.loads((out / "geometry.json").read_text())[
                 "component_hashes"
             ]

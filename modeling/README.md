@@ -20,6 +20,8 @@ Generator `2026.2` revises four assemblies against the same launch galleries: ch
 
 The geometry check compares material-independent shape hashes for those three assemblies. This proves that the team differences are in the mesh, but does not replace reference review or certify factory dimensions. Suspension remains a shared estimated assembly; this revision does not assert that the real teams use identical suspension geometry.
 
+Generator `2026.3` corrects the Mercedes rear profile after comparison with the official side and overhead launch renders: a relatively flat deck, shallow upper channels, rear upsweep and a higher dorsal fin. See the [January 22 launch gallery](https://www.formula1.com/en/latest/article/gallery-check-out-every-angle-of-mercedes-new-livery-for-2026.70sm6Znl139u64MesOt5Vf) and [F1's contemporary technical analysis](https://www.formula1.com/en/latest/article/tech-analysis-have-mercedes-pioneered-a-left-field-solution-with-their-new.6fpytwTL29cap2mrQuAEdc). These are presentation-render features; correspondence with the actual racing car is unconfirmed. Ferrari's `2026.2` geometry is retained. The earlier, unbuilt Mercedes draft is preserved as superseded, not published.
+
 The source gallery must be checked in **front, side, rear, and three-quarter** views before accepting a baseline. The included image links are starting references, not a completed visual approval. Where a gallery does not establish a surface, document that uncertainty rather than certifying it.
 
 ## Local editing

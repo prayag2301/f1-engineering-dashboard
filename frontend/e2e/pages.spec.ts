@@ -291,10 +291,10 @@ test("constructor comparison exposes shapes, matches detail cameras and stays us
     )
     .toBe(true);
   await expect(
-    page.getByRole("link", { name: "View Ferrari reference" }),
+    page.getByRole("link", { name: "View Ferrari reference" }).first(),
   ).toHaveAttribute("href", /^https:\/\//);
   await expect(
-    page.getByRole("link", { name: "View Mercedes reference" }),
+    page.getByRole("link", { name: "View Mercedes reference" }).first(),
   ).toHaveAttribute("href", /^https:\/\//);
   await page.getByRole("button", { name: "Airbox & spine" }).click();
   await expect(page.getByLabel("Component", { exact: true })).toHaveValue(
