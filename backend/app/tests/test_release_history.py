@@ -258,6 +258,10 @@ def test_two_publications_and_rollback_keep_history(admin, db, monkeypatch):
     versions = admin.get("/api/v1/cars/ferrari/versions").json()
     assert len(versions) == 2
     assert [v["id"] for v in versions if v["is_current"]] == [str(parent.id)]
+    reviewed = admin.get("/api/v1/review/dashboard").json()["versions"]
+    assert [v["id"] for v in reviewed if v["is_current"]] == [str(parent.id)]
+    assert admin.get(f"/api/v1/review/versions/{parent.id}").json()["is_current"]
+    assert not admin.get(f"/api/v1/review/versions/{version.id}").json()["is_current"]
     assert (
         admin.head("/api/v1/models/ferrari/latest.glb", follow_redirects=False)
         .headers["location"]

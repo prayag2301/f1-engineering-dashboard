@@ -188,9 +188,10 @@ def latest_model(team: str, season: int = 2026, db: Session = Depends(get_db)):
 
 @admin.get("/dashboard")
 def dashboard(db: Session = Depends(get_db)):
+    current = {(p.team_key, p.season): p.version_id for p in db.query(ReleasePointer)}
     return {
         "versions": [
-            version_public(v)
+            version_public(v, current.get((v.team_key, v.season)))
             for v in db.query(CarVersion)
             .order_by(CarVersion.created_at.desc())
             .limit(100)
@@ -227,7 +228,9 @@ def dashboard(db: Session = Depends(get_db)):
 
 @admin.get("/versions/{version_id}")
 def draft_detail(version_id: UUID, db: Session = Depends(get_db)):
-    return version_public(get_version(db, version_id))
+    version = get_version(db, version_id)
+    pointer = db.get(ReleasePointer, (version.team_key, version.season))
+    return version_public(version, pointer.version_id if pointer else None)
 
 
 @admin.post("/sources", status_code=201)
