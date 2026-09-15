@@ -1,1 +1,1 @@
-export { default } from "../review/page";
+export { default } from "@/components/EvidenceBrowser";

@@ -29,6 +29,7 @@ test("all public routes load directly under the repository path without an API",
     "car/ferrari/upgrades/",
     "models/",
     "teams/",
+    "upgrades/",
     "analyze/",
     "evidence/",
     "performance/",
@@ -186,7 +187,7 @@ test("static releases support selection, synchronized comparison and rapid team 
   page,
 }) => {
   await populatedSnapshot(page);
-  await page.goto(`${prefix}/`);
+  await page.goto(`${prefix}/models/`);
   await expect(page.locator(".stage-caption")).toBeVisible({ timeout: 45000 });
   await page
     .getByLabel("Component", { exact: true })
@@ -249,7 +250,7 @@ test("static releases support selection, synchronized comparison and rapid team 
 test("constructor comparison exposes shapes, matches detail cameras and stays usable on mobile", async ({
   page,
 }) => {
-  await page.goto(`${prefix}/`);
+  await page.goto(`${prefix}/models/`);
   await expect(page.locator(".stage-caption")).toBeVisible({ timeout: 45000 });
   await page
     .getByRole("button", { name: "Compare teams", exact: true })
@@ -330,7 +331,7 @@ test("a failed archive request can be retried without a backend", async ({
       ? route.fulfill({ status: 503, body: "Temporary failure" })
       : route.continue(),
   );
-  await page.goto(`${prefix}/`);
+  await page.goto(`${prefix}/models/`);
   await expect(page.locator(".notice.error")).toContainText(
     "could not be loaded",
   );

@@ -174,7 +174,7 @@ test("loads the selected release, selects components, and synchronizes cameras",
   page,
 }) => {
   await archiveFixture(page);
-  await page.goto("/");
+  await page.goto("/models");
   await expect(page.locator(".loading-pill")).toHaveCount(0, {
     timeout: 30000,
   });
@@ -222,7 +222,7 @@ test("failed GLB shows its release still and retry succeeds", async ({
       ? route.abort("failed")
       : route.fulfill({ contentType: "model/gltf-binary", body: fixtureGLB() }),
   );
-  await page.goto("/");
+  await page.goto("/models");
   await expect(page.getByRole("button", { name: "Retry 3D" })).toBeVisible({
     timeout: 30000,
   });
@@ -239,7 +239,7 @@ test("rapid team switching cannot display the previous team asset", async ({
   page,
 }) => {
   await archiveFixture(page);
-  await page.goto("/");
+  await page.goto("/models");
   const ferrari = page.getByRole("tab", { name: /Scuderia Ferrari/ });
   const mercedes = page.getByRole("tab", { name: /Mercedes-AMG/ });
   await mercedes.click();
@@ -261,7 +261,7 @@ test("rapid team switching cannot display the previous team asset", async ({
 test("mobile layout and keyboard controls remain usable", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await archiveFixture(page);
-  await page.goto("/");
+  await page.goto("/models");
   await page.getByRole("tab", { name: /Mercedes-AMG/ }).focus();
   await page.keyboard.press("Enter");
   await expect(page.locator(".car-stage")).toHaveAttribute(

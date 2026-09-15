@@ -1,4 +1,27 @@
-# Car archive and review studio
+# F1 Engineering Dashboard
+
+The dashboard restores the original `main` branch's Cars, Teams, Performance,
+Evidence and Analyze sections, using the current reviewed release data and visual
+style. The model generator, model assets, 3D viewer, comparison controls and review
+studio are unchanged.
+
+| Route                                      | Workflow                                                               |
+| ------------------------------------------ | ---------------------------------------------------------------------- |
+| `/`                                        | Overview, car previews, development log and research shortcuts         |
+| `/models`, `/car/ferrari`, `/car/mercedes` | Existing interactive car explorer                                      |
+| `/teams`                                   | Search the original constructor directory and find published models    |
+| `/upgrades`                                | Filter configurations by constructor, component, event and record type |
+| `/compare`                                 | Existing synchronized model and release comparison                     |
+| `/performance`                             | Published development activity and timing-data availability            |
+| `/evidence`                                | Search references and inspect their component/configuration links      |
+| `/analyze`                                 | Local, rule-based interpretation of upgrade descriptions               |
+| `/review`                                  | Existing authenticated model generation and publication studio         |
+
+Public dashboard pages read the same catalog and published manifests as the car
+explorer, in both API and static-snapshot mode. Reconstruction corrections are
+labeled separately from upgrade reports. No lap-time gains are inferred from
+model geometry. The analyzer identifies vocabulary and suggests investigative
+questions; it neither validates a source nor publishes or saves an upgrade.
 
 This is the canonical Next.js frontend. Run `npm ci`, `npm run typecheck`, and `npm run build`. Docker runs the standalone production output.
 

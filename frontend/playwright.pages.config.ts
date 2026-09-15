@@ -4,7 +4,7 @@ import shared from "./playwright.config";
 const basePath =
   process.env.NEXT_PUBLIC_BASE_PATH ?? "/f1-engineering-dashboard";
 export default defineConfig(shared, {
-  testMatch: "pages.spec.ts",
+  testMatch: ["pages.spec.ts", "dashboard.spec.ts"],
   use: {
     ...shared.use,
     baseURL: `http://127.0.0.1:4173${basePath}/`,

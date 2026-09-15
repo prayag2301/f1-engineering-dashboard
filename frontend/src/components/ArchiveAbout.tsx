@@ -41,7 +41,7 @@ export default function ArchiveAbout() {
         not affiliated with Formula 1, Ferrari, Mercedes, or the FIA.
       </p>
       <div className="toolbar-controls">
-        <Link className="button" href="/">
+        <Link className="button" href="/models">
           Explore the archive →
         </Link>
         <a

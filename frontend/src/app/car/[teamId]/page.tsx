@@ -9,7 +9,7 @@ export default function Car({ params }: { params: { teamId: string } }) {
   if (params.teamId !== "ferrari" && params.teamId !== "mercedes") notFound();
   return (
     <main className="container">
-      <Link className="text-link" href="/">
+      <Link className="text-link" href="/models">
         ← Archive
       </Link>
       <ReleaseExplorer initialTeam={params.teamId} />

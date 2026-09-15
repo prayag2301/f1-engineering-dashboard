@@ -1,4 +1,4 @@
-import ReleaseExplorer from "@/components/ReleaseExplorer";
+import EngineeringDashboard from "@/components/EngineeringDashboard";
 export default function Home() {
-  return <ReleaseExplorer />;
+  return <EngineeringDashboard />;
 }
