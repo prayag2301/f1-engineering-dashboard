@@ -29,6 +29,8 @@ const AERO_FRAMING: Record<string, CameraPose> = {
   front_wing: { target: [0, 0.18, -2.25], position: [1.7, 1.1, -5.45] },
   floor: { target: [0, 0.18, 0.35], position: [3.6, 2.6, -4.15] },
   rear_wing: { target: [0, 0.66, 2.05], position: [1.6, 1.55, 4.6] },
+  diffuser: { target: [0, 0.17, 1.8], position: [1.7, 0.8, 4.1] },
+  suspension: { target: [0, 0.35, -1.5], position: [2.6, 1.3, -4.3] },
 };
 export interface CameraBus {
   listeners: Set<(pose: CameraPose, sender: string) => void>;

@@ -511,6 +511,8 @@ export default function ReleaseExplorer({
               ["front_wing", "Front-wing contours"],
               ["floor", "Floor edge & boards"],
               ["rear_wing", "Rear-wing profiles"],
+              ["suspension", "Suspension mounts"],
+              ["diffuser", "Diffuser outlet"],
               ["sidepods", "Inlets & undercut"],
               ["engine_cover", "Airbox & spine"],
               ["nose", "Nose profile"],

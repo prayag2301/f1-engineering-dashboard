@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-09-15",
+  "generator_version": "2026.5",
+  "configuration_policy": "Correct the dated launch exterior; later race photographs are cross-checks, not proof of unchanged parts. No complete Madrid configuration is claimed.",
+  "sources": [
+    {
+      "url": "https://www.formula1.com/en/latest/article/mercedes-target-madring-gains-as-every-teams-upgrades-are-revealed.3LbXlbZXmsVrfsR2np3NpK",
+      "publisher": "Formula 1",
+      "published_at": "2026-09-11T14:45:00Z",
+      "event": "Spanish Grand Prix, Madrid",
+      "image_url": "https://media.formula1.com/image/upload/c_lfill%2Cw_3392/q_auto/v1740000001/trackside-images/2026/F1_Grand_Prix_of_Spain___Practice/2294695550.webp",
+      "observation": "Front photograph of Leclerc: wishbones meet the body and upright; thin fairings rather than uniform round tubes. The Ferrari section reports a rear suspension fairing profile update. The floor-bib claim belongs to Red Bull, not Ferrari.",
+      "limitations": "Perspective image cannot establish suspension hardpoint coordinates or hidden mechanisms. The rear fairing update remains annotation-only."
+    },
+    {
+      "url": "https://www.mercedesamgf1.com/news/in-pictures-the-best-images-from-madrid-2026",
+      "publisher": "Mercedes-AMG PETRONAS F1 Team",
+      "event": "Spanish Grand Prix, Madrid",
+      "image_reference": "M627356, September 11; M629056, September 13",
+      "observation": "Front suspension joins the narrowing body; front-quarter photography corroborates separate thin floor-edge surfaces.",
+      "limitations": "Small distant surfaces do not resolve floor-slot dimensions, support count or a complete diffuser. FIA-reported rear winglet changes are separately documented in aero-2026-09-14.json."
+    }
+  ],
+  "component_notes": {
+    "suspension": "Exterior coherence correction: inboard ends seat 4 mm into each team's evaluated body shell; closed flattened wishbone fairings and wheel uprights replace floating round rods. The front axle-like bar is removed. Launch views and September 11 front photography support the general arrangement; hardpoints, fairing sections and concealed joints are estimates. This does not reconstruct Ferrari's Madrid rear-fairing upgrade.",
+    "floor": "Dated launch floor outline retained. Separate thin edge laminates now leave a visible open gap with connecting bridges. Launch rear-quarter/overhead images and current race photographs support layered exterior surfaces; exact gap, bridge positions/count and concealed underside remain illustrative estimates. No September floor upgrade or additional unsupported slit array is claimed.",
+    "rear_wing": "Dated launch airfoil outlines retained with thin slot separators and hinge barrels derived from the same section coordinates. Launch rear-quarter and overhead views support the slotted arrangement. Small support dimensions and hinge construction are estimates; September Mercedes winglet revisions are not backdated into this configuration.",
+    "diffuser": "Exterior coherence correction: continuous curved expansion skin, joined outlet walls and a thin laminate return replace a rounded sparse quad with disconnected flat strakes. The visible rear opening is checked against launch rear-quarter imagery. Channel count, internal shape and exact outlet section remain estimates; no newly evidenced diffuser upgrade is claimed."
+  },
+  "rights": "External photography is used for reference only and is not bundled into the model or public release assets. All geometry is originally authored."
+}

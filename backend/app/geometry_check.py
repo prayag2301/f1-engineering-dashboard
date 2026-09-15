@@ -56,6 +56,23 @@ def main():
                 raise RuntimeError(result.stdout[-4000:])
             validation = validate_geometry(out / "car.glb")
             scene = trimesh.load(out / "car.glb", force="scene")
+            report = json.loads((out / "geometry.json").read_text())
+            # Check the actual exported shell, not just the requested endpoints.
+            # Each mount is embedded 4 mm; a detached arm must fail this check.
+            mounts = report["suspension_attachments"]
+            assert len(mounts) == 26
+            for mount in mounts:
+                transform, geometry = scene.graph[mount["surface"]]
+                shell = scene.geometry[geometry].copy()
+                shell.apply_transform(transform)
+                _, distance, _ = trimesh.proximity.closest_point_naive(
+                    shell, np.array([mount["anchor"]])
+                )
+                assert distance[0] < 0.006, f"Detached mount: {mount} ({distance})"
+            assert not any(
+                n.startswith("suspension.front_axle")
+                for n in scene.graph.nodes_geometry
+            )
             # Catch inside-out airfoils, accidentally bridged nose gaps and a
             # regression to the old flat floor / cylindrical edge construction.
             for node in scene.graph.nodes_geometry:
@@ -119,13 +136,14 @@ def main():
             "front_wing",
             "floor",
             "rear_wing",
+            "suspension",
+            "diffuser",
         ):
             assert (
                 shapes["ferrari"][component] != shapes["mercedes"][component]
             ), component
-        assert shapes["ferrari"]["suspension"] == shapes["mercedes"]["suspension"]
         print(
-            "PASS: body, front wing, rear wing and floor differ independently of their materials; common suspension is retained."
+            "PASS: team-specific body, aero and surface-seated suspension; all 26 mounts contact the exported shell."
         )
 
 

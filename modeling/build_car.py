@@ -21,6 +21,7 @@ import numpy as np
 PI = math.pi
 CAR_OBJECTS = []
 COMPONENT = "chassis"
+ATTACHMENTS = []
 
 
 def V(point):
@@ -159,6 +160,54 @@ def rod(name, a, b, radius, mat, vertices=12):
     obj = bpy.context.object
     obj.rotation_euler = (vb - va).to_track_quat("Z", "Y").to_euler()
     return register(obj, name, mat)
+
+
+def body_attachment(surface, side, height, z):
+    """Seat the inboard joint inside the evaluated shell, including subdivision.
+
+    These are exterior reconstruction mounts, not factory suspension hardpoints.
+    Searching the actual shell avoids floating arms when the nose taper changes.
+    """
+    bpy.context.view_layer.update()
+    tree = BVHTree.FromObject(surface, bpy.context.evaluated_depsgraph_get())
+    hit, normal, _, _ = tree.find_nearest(V((side * 0.24, height, z)))
+    point = hit - normal * 0.004
+    anchor = (point.x, point.z, -point.y)
+    ATTACHMENTS.append({"surface": surface.name, "anchor": anchor})
+    return anchor
+
+
+def suspension_blade(name, a, b, mat):
+    """Closed lenticular fairing, with its chord along the airflow."""
+    a, b = Vector(a), Vector(b)
+    axis = (b - a).normalized()
+    chord = Vector((0, 0, 1))
+    chord = (chord - axis * chord.dot(axis)).normalized()
+    thickness = axis.cross(chord).normalized()
+    vertices = []
+    for t, scale in ((0, 0.7), (0.04, 1), (0.85, 1), (1, 0.7)):
+        centre = a.lerp(b, t)
+        for j in range(16):
+            angle = 2 * PI * j / 16
+            vertices.append(
+                tuple(
+                    centre
+                    + chord * (0.031 * scale * math.cos(angle))
+                    + thickness * (0.009 * math.sin(angle))
+                )
+            )
+    faces = [
+        (
+            i * 16 + j,
+            i * 16 + (j + 1) % 16,
+            (i + 1) * 16 + (j + 1) % 16,
+            (i + 1) * 16 + j,
+        )
+        for i in range(3)
+        for j in range(16)
+    ]
+    faces.extend([tuple(reversed(range(16))), tuple(range(48, 64))])
+    return mesh(name, vertices, faces, mat)
 
 
 def paint_ribbon(name, points, width, mat, surface):
@@ -609,14 +658,43 @@ def build_floor(team, p, carbon):
                 [
                     z,
                     side * (width - 0.033),
-                    height + 0.003,
+                    height + 0.016,
                     z,
                     side * (width + 0.008),
-                    height + lift,
+                    height + lift + 0.009,
                     z,
                 ]
             )
         ruled_skin("sculpted_edge_lip", lip, carbon, 0.004)
+        # Separate laminates leave an actual open slot. Small bridges carry
+        # the edge element; their dimensions are reconstruction estimates.
+        for z in (-0.24, 0.40, 0.98):
+            width, height = station_sample(outline, z)
+            ruled_skin(
+                "edge_slot_bridge",
+                [
+                    [
+                        0,
+                        side * (width - 0.045),
+                        height - 0.002,
+                        z - 0.009,
+                        side * (width - 0.045),
+                        height - 0.002,
+                        z + 0.009,
+                    ],
+                    [
+                        1,
+                        side * (width - 0.015),
+                        height + 0.035,
+                        z - 0.009,
+                        side * (width - 0.015),
+                        height + 0.035,
+                        z + 0.009,
+                    ],
+                ],
+                carbon,
+                0.003,
+            )
         # S-curved board with swept upper rail, independently authored per team.
         board = (
             [
@@ -704,7 +782,22 @@ def build_rear_wing(team, p, carbon):
             ],
         ]
     )
+    scaled_profiles = []
     for name, rows in zip(("spoon_mainplane", "slot_flap", "upper_flap"), profiles):
+        scaled_profiles.append(
+            [
+                [
+                    x,
+                    z,
+                    y,
+                    c * p["chord"] / (0.31 if ferrari else 0.285),
+                    r,
+                    k * p["camber"] / (0.052 if ferrari else 0.044),
+                    t,
+                ]
+                for x, z, y, c, r, k, t in rows
+            ]
+        )
         sectional_wing(
             name,
             [
@@ -721,6 +814,31 @@ def build_rear_wing(team, p, carbon):
             ],
             carbon,
         )
+    # Thin slot separators and exposed hinge barrels. Derive their ends from
+    # the same airfoil sections so changes of chord cannot leave loose pieces.
+    for x in (-0.44, 0.44):
+        for lower, upper in zip(scaled_profiles, scaled_profiles[1:]):
+            z, y, chord, rise, camber, _ = station_sample(lower, abs(x))
+            a = (x, y + rise * 0.92 + camber * math.sin(PI * 0.92), z + chord * 0.92)
+            z, y, chord, rise, camber, _ = station_sample(upper, abs(x))
+            b = (x, y + rise * 0.12 + camber * math.sin(PI * 0.12), z + chord * 0.12)
+            ruled_skin(
+                "slot_separator",
+                [
+                    [0, x, a[1] - 0.004, a[2] - 0.012, x, a[1] - 0.004, a[2] + 0.012],
+                    [1, x, b[1] + 0.004, b[2] - 0.012, x, b[1] + 0.004, b[2] + 0.012],
+                ],
+                carbon,
+                0.003,
+            )
+            rod(
+                "flap_hinge",
+                (x - 0.009, b[1], b[2]),
+                (x + 0.009, b[1], b[2]),
+                0.007,
+                carbon,
+                16,
+            )
     for side in (-1, 1):
         ruled_skin(
             "curved_endplate",
@@ -750,12 +868,27 @@ def build_rear_wing(team, p, carbon):
             carbon,
             0.007,
         )
+        z0, y0, chord, rise, camber, _ = station_sample(scaled_profiles[0], 0.13)
+        # Follow the underside of each team's mainplane; the old fixed .83 m
+        # top left a visible gap under the higher Mercedes wing.
+        top = [
+            (y0 + rise * t + camber * math.sin(PI * t), z0 + chord * t)
+            for t in (0.48, 0.87)
+        ]
         ruled_skin(
             "pylon",
             [
                 [0, side * 0.12, 0.30, 1.69, side * 0.12, 0.30, 1.79],
                 [0.5, side * 0.125, 0.57, 1.79, side * 0.125, 0.57, 1.90],
-                [1, side * 0.13, 0.83, 1.96, side * 0.13, 0.83, 2.05],
+                [
+                    1,
+                    side * 0.13,
+                    top[0][0],
+                    top[0][1],
+                    side * 0.13,
+                    top[1][0],
+                    top[1][1],
+                ],
             ],
             carbon,
             0.012,
@@ -1077,7 +1210,7 @@ def build_car(team, params):
 
     COMPONENT = "engine_cover"
     p = params[COMPONENT]
-    loft(
+    engine_body = loft(
         "engine_body",
         [
             (0.22, 0.24, 0.46, 0.17),
@@ -1221,39 +1354,54 @@ def build_car(team, params):
 
     COMPONENT = "diffuser"
     p = params[COMPONENT]
-    verts = [
-        (x, y, z)
-        for z, y in (
-            (1.12, 0.08),
-            (1.48, 0.11),
-            (1.83, p["exit_height"] * 0.78),
-            (2.15, p["exit_height"]),
-        )
-        for x in (-0.51, 0.51)
+    # Continuous ramp and joined walls, rather than a subdivided quad whose
+    # rounded boundary leaves the flat strakes detached. Concealed channels
+    # remain an estimated enclosure, not an inferred aerodynamic upgrade.
+    ramp = [
+        (1.12, 0.082),
+        (1.38, 0.098),
+        (1.70, p["exit_height"] * 0.62),
+        (1.98, p["exit_height"] * 0.93),
+        (2.15, p["exit_height"]),
     ]
-    obj = mesh(
+    ruled_skin(
         "expansion_surface",
-        verts,
-        [(0, 1, 3, 2), (2, 3, 5, 4), (4, 5, 7, 6)],
+        [[z, -0.51, y, z, 0.51, y, z] for z, y in ramp],
         carbon,
-        1,
+        0.007,
     )
-    mod = obj.modifiers.new("Shell thickness", "SOLIDIFY")
-    mod.thickness = 0.012
-    for x in (-0.5, -0.27, 0, 0.27, 0.5):
-        obj = mesh(
-            "strake",
-            [
-                (x, 0.07, 1.22),
-                (x, 0.08, 2.16),
-                (x, p["exit_height"], 2.16),
-                (x, 0.10, 1.22),
-            ],
-            [(0, 1, 2, 3)],
+    for x in (-0.51, -0.27, 0, 0.27, 0.51):
+        ruled_skin(
+            "outlet_wall" if abs(x) > 0.5 else "estimated_channel_wall",
+            [[z, x, 0.072, z, x, y + 0.003, z] for z, y in ramp],
             carbon,
+            0.005,
         )
-        mod = obj.modifiers.new("Strake thickness", "SOLIDIFY")
-        mod.thickness = 0.008
+    ruled_skin(
+        "outlet_laminate_return",
+        [
+            [
+                0,
+                -0.51,
+                p["exit_height"] - 0.003,
+                2.13,
+                -0.51,
+                p["exit_height"] + 0.008,
+                2.158,
+            ],
+            [
+                1,
+                0.51,
+                p["exit_height"] - 0.003,
+                2.13,
+                0.51,
+                p["exit_height"] + 0.008,
+                2.158,
+            ],
+        ],
+        carbon,
+        0.003,
+    )
 
     COMPONENT = "rear_wing"
     p = params[COMPONENT]
@@ -1268,25 +1416,28 @@ def build_car(team, params):
     for axle, z in (("front", -1.7), ("rear", 1.7)):
         for side in (-1, 1):
             x = side * (0.81 if axle == "front" else 0.76)
+            surface = nose if axle == "front" else engine_body
             for h in (0.22, 0.44):
-                for dz in (-0.27, 0.23):
-                    rod(
+                for mount_z in (-1.78, -1.10) if axle == "front" else (1.36, 1.82):
+                    mount = body_attachment(surface, side, h + 0.02, mount_z)
+                    suspension_blade(
                         axle + "_wishbone",
-                        (side * 0.21, h + 0.02, z + dz),
+                        mount,
                         (x, h, z),
-                        0.012,
                         carbon,
                     )
             rod(
                 axle + "_pushrod",
-                (side * 0.20, 0.52, z + 0.12),
+                body_attachment(
+                    surface, side, 0.52, -1.12 if axle == "front" else 1.48
+                ),
                 (x, 0.22, z),
                 0.014,
                 carbon,
             )
             rod(
                 axle + "_trackrod",
-                (side * 0.20, 0.31, z - 0.10),
+                body_attachment(surface, side, 0.31, z - 0.10),
                 (x, 0.32, z - 0.06),
                 0.008,
                 alloy,
@@ -1298,7 +1449,15 @@ def build_car(team, params):
                 carbon,
                 0.035,
             )
-            rod(axle + "_axle", (side * 0.20, 0.352, z), (x, 0.352, z), 0.017, alloy)
+            rod(axle + "_upright", (x, 0.20, z), (x, 0.46, z), 0.024, carbon)
+            if axle == "rear":
+                rod(
+                    "rear_halfshaft",
+                    body_attachment(surface, side, 0.352, z),
+                    (x, 0.352, z),
+                    0.017,
+                    alloy,
+                )
 
     COMPONENT = "wheels"
     for tag, x, z, width, radius in (
@@ -1526,7 +1685,8 @@ def main():
             {
                 "component_hashes": hashes,
                 "shape_hashes": shape_hashes,
-                "generator_version": "2026.4",
+                "generator_version": "2026.5",
+                "suspension_attachments": ATTACHMENTS,
             },
             indent=2,
         )

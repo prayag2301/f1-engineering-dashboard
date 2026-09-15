@@ -545,7 +545,7 @@ def reconstruct_launch(db, parent):
             configuration_event=parent.configuration_event,
             as_of=parent.as_of,
             evidence_cutoff=now(),
-            notes="Reconstruction correction of the original launch configuration: individually contoured front and rear wings, curved floor boards and edge lips, plus the previously reconstructed body, inlets and cockpit. This does not establish a new racing upgrade or apply September parts to a January car. Exact dimensions and hidden surfaces remain estimates.",
+            notes="Reconstruction correction of the original launch configuration: body-seated suspension fairings, separated floor-edge laminates, rear-wing slot supports and joined diffuser surfaces, plus the previously reconstructed body and wings. This does not establish a new racing upgrade or apply September parts to a January car. Exact dimensions, small support details and hidden surfaces remain estimates.",
             revisions=[
                 dict(
                     component=name,
