@@ -1,0 +1,46 @@
+{
+  "id": "fia-2026-c-issue20",
+  "season": 2026,
+  "issue": "Section C, Issue 20",
+  "issued_at": "2026-08-05",
+  "source_url": "https://www.fia.com/system/files/documents/fia_2026_f1_regulations_-_section_c_technical_-_iss_20_-_2026-08-05.pdf",
+  "scope": "Reviewed fundamental dimensions only. This is not a complete FIA compliance test.",
+  "constraints": [
+    {
+      "component": "overall",
+      "parameter": "max_body_half_width",
+      "value": 950,
+      "unit": "mm",
+      "article_ref": "C2.3.1",
+      "page": 10,
+      "notes": "Excludes tyres, rims, and the rim attachments specified in C10.7.6; measured at Legality Setup."
+    },
+    {
+      "component": "overall",
+      "parameter": "max_wheelbase",
+      "value": 3400,
+      "unit": "mm",
+      "article_ref": "C2.3.3",
+      "page": 11,
+      "notes": "Between the front and rear wheel coordinate-system origin planes at Legality Setup."
+    },
+    {
+      "component": "overall",
+      "parameter": "min_cockpit_reference_distance",
+      "value": 1830,
+      "unit": "mm",
+      "article_ref": "C2.3.5",
+      "page": 11,
+      "notes": "XA=0 to XC=0; not the cockpit opening length."
+    },
+    {
+      "component": "overall",
+      "parameter": "max_cockpit_reference_distance",
+      "value": 2030,
+      "unit": "mm",
+      "article_ref": "C2.3.5",
+      "page": 11,
+      "notes": "XA=0 to XC=0; not the cockpit opening length."
+    }
+  ]
+}

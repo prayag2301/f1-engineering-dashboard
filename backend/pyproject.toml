@@ -2,20 +2,17 @@
 name = "f1-api"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = [
-    "fastapi==0.109.0",
-    "uvicorn[standard]==0.27.0",
-    "sqlalchemy==2.0.25",
-    "psycopg2-binary==2.9.9",
-    "alembic==1.13.1",
-    "pydantic==2.5.3",
-    "pydantic-settings==2.1.0",
-    "python-dotenv==1.0.0",
-    "httpx==0.26.0",
-]
+dynamic = ["dependencies"]
 
-[tool.pytest.ini_options]
-testpaths = ["backend/tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "black==24.10.0"]

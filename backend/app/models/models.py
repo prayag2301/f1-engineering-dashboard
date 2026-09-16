@@ -12,8 +12,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID, JSON
 from sqlalchemy.orm import relationship
-from backend.database import Base
-from backend.models.enums import UpgradeCategory, ComponentZone, EventStatus, AssetType
+from app.database import Base
+from app.models.enums import UpgradeCategory, ComponentZone, EventStatus, AssetType
 
 
 class Team(Base):
@@ -59,7 +59,7 @@ class Component(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String(200), nullable=False, index=True)
-    zone = Column(SAEnum(ComponentZone), nullable=False)
+    zone = Column(SAEnum(ComponentZone, values_callable=lambda enum: [e.value for e in enum]), nullable=False)
     description = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -77,7 +77,7 @@ class Upgrade(Base):
     race_id = Column(UUID(as_uuid=True), ForeignKey("races.id"), nullable=False)
     component_id = Column(UUID(as_uuid=True), ForeignKey("components.id"), nullable=False)
 
-    category = Column(SAEnum(UpgradeCategory), nullable=False, index=True)
+    category = Column(SAEnum(UpgradeCategory, values_callable=lambda enum: [e.value for e in enum]), nullable=False, index=True)
     description = Column(Text, nullable=False)
     technical_detail = Column(Text)
     expected_effect = Column(String(500))
@@ -136,7 +136,7 @@ class Event(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     race_id = Column(UUID(as_uuid=True), ForeignKey("races.id"), nullable=False)
-    status = Column(SAEnum(EventStatus), nullable=False, default=EventStatus.PENDING, index=True)
+    status = Column(SAEnum(EventStatus, values_callable=lambda enum: [e.value for e in enum]), nullable=False, default=EventStatus.PENDING, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -169,7 +169,7 @@ class Asset(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     upgrade_id = Column(UUID(as_uuid=True), ForeignKey("upgrades.id"), nullable=False)
-    asset_type = Column(SAEnum(AssetType), nullable=False)
+    asset_type = Column(SAEnum(AssetType, values_callable=lambda enum: [e.value for e in enum]), nullable=False)
     path = Column(String(500), nullable=False)
     metadata_ = Column("metadata", JSON, default=dict)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -195,3 +195,22 @@ class Callout(Base):
 
     def __repr__(self):
         return f"<Callout {self.label} on {self.upgrade_id}>"
+
+
+class RegulationConstraint(Base):
+    """A single dimensional or angular constraint extracted from the FIA technical regulations."""
+
+    __tablename__ = "regulation_constraints"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    season = Column(Integer, nullable=False, index=True)
+    component = Column(String(100), nullable=False, index=True)  # e.g. "front_wing"
+    parameter = Column(String(200), nullable=False)              # e.g. "max_width"
+    value = Column(Float, nullable=False)
+    unit = Column(String(20), nullable=False)                    # "mm", "deg", "ratio"
+    article_ref = Column(String(100))                            # e.g. "Art. 3.9.2"
+    notes = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<RegulationConstraint {self.component}.{self.parameter}={self.value}{self.unit} ({self.season})>"

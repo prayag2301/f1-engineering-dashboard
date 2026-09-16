@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, List, Any
 from datetime import datetime
 from uuid import UUID
-from backend.models.enums import UpgradeCategory, ComponentZone, EventStatus, AssetType
+from app.models.enums import UpgradeCategory, ComponentZone, EventStatus, AssetType
 
 
 # ── Team ──────────────────────────────────────────────────────────────────────
@@ -246,6 +246,30 @@ class AssetRead(AssetBase):
     class Config:
         from_attributes = True
         populate_by_name = True
+
+
+# ── Regulation Constraint ─────────────────────────────────────────────────────
+
+class RegulationConstraintBase(BaseModel):
+    season: int
+    component: str
+    parameter: str
+    value: float
+    unit: str
+    article_ref: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class RegulationConstraintCreate(RegulationConstraintBase):
+    pass
+
+
+class RegulationConstraintRead(RegulationConstraintBase):
+    id: UUID
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
 
 
 # ── Callout ───────────────────────────────────────────────────────────────────

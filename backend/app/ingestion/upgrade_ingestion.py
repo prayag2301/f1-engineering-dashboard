@@ -4,9 +4,9 @@ from dataclasses import dataclass
 
 from sqlalchemy.orm import Session
 
-from backend.models.models import Upgrade
-from backend.schemas.schemas import UpgradeIngestItem
-from backend.upgrade_parser import analyze_upgrade
+from app.models.models import Upgrade
+from app.schemas.schemas import UpgradeIngestItem
+from app.upgrade_parser import analyze_upgrade
 
 
 @dataclass

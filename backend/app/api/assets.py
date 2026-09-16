@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
-from backend.database import get_db
-from backend.models.models import Asset
-from backend.models.enums import AssetType
-from backend.schemas.schemas import AssetCreate, AssetRead
+from app.database import get_db
+from app.models.models import Asset
+from app.models.enums import AssetType
+from app.schemas.schemas import AssetCreate, AssetRead
 
 router = APIRouter()
 

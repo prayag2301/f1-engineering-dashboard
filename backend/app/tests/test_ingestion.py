@@ -4,14 +4,14 @@ from uuid import uuid4
 
 import pytest
 
-from backend.ingestion.upgrade_ingestion import (
+from app.ingestion.upgrade_ingestion import (
     BatchIngestOutcome,
     _build_upgrade_model,
     _is_duplicate,
     ingest_upgrade_items,
 )
-from backend.models.enums import UpgradeCategory
-from backend.schemas.schemas import UpgradeIngestItem
+from app.models.enums import UpgradeCategory
+from app.schemas.schemas import UpgradeIngestItem
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -171,7 +171,7 @@ class TestIngestUpgradeItems:
         items = [make_item() for _ in range(4)]
         side_effects = [True, False, True, False]
         with patch(
-            "backend.ingestion.upgrade_ingestion._is_duplicate",
+            "app.ingestion.upgrade_ingestion._is_duplicate",
             side_effect=side_effects,
         ):
             outcome = ingest_upgrade_items(db, items, skip_duplicates=True)

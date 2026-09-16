@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable
 
-from backend.models.enums import ComponentZone, UpgradeCategory
+from app.models.enums import ComponentZone, UpgradeCategory
 
 
 @dataclass

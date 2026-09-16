@@ -1,0 +1,284 @@
+{
+  "schema_version": 1,
+  "generator_version": "2026.5",
+  "components": {
+    "chassis": {
+      "label": "Chassis & cockpit",
+      "anchor": [
+        0,
+        0.5,
+        -0.3
+      ],
+      "parameters": {}
+    },
+    "nose": {
+      "label": "Nose",
+      "anchor": [
+        0,
+        0.42,
+        -1.85
+      ],
+      "parameters": {
+        "tip_width": [
+          0.09,
+          0.2
+        ],
+        "shoulder_height": [
+          0.44,
+          0.62
+        ]
+      }
+    },
+    "front_wing": {
+      "label": "Front wing",
+      "anchor": [
+        0,
+        0.18,
+        -2.35
+      ],
+      "parameters": {
+        "chord": [
+          0.18,
+          0.4
+        ],
+        "sweep": [
+          -0.05,
+          0.2
+        ],
+        "camber": [
+          0.015,
+          0.075
+        ]
+      }
+    },
+    "sidepods": {
+      "label": "Sidepods & cooling inlets",
+      "anchor": [
+        0.62,
+        0.48,
+        0.15
+      ],
+      "parameters": {
+        "width": [
+          0.24,
+          0.42
+        ],
+        "inlet_height": [
+          0.12,
+          0.27
+        ],
+        "undercut": [
+          0.04,
+          0.18
+        ]
+      }
+    },
+    "engine_cover": {
+      "label": "Engine cover & airbox",
+      "anchor": [
+        0,
+        0.83,
+        0.65
+      ],
+      "parameters": {
+        "spine_height": [
+          0.77,
+          1.02
+        ],
+        "tail_width": [
+          0.06,
+          0.15
+        ]
+      }
+    },
+    "floor": {
+      "label": "Floor",
+      "anchor": [
+        0.68,
+        0.1,
+        0.5
+      ],
+      "parameters": {
+        "edge_width": [
+          0.65,
+          0.83
+        ]
+      }
+    },
+    "diffuser": {
+      "label": "Diffuser",
+      "anchor": [
+        0,
+        0.22,
+        2.05
+      ],
+      "parameters": {
+        "exit_height": [
+          0.16,
+          0.32
+        ]
+      }
+    },
+    "rear_wing": {
+      "label": "Rear wing",
+      "anchor": [
+        0,
+        0.91,
+        2.06
+      ],
+      "parameters": {
+        "chord": [
+          0.2,
+          0.4
+        ],
+        "camber": [
+          0.02,
+          0.09
+        ]
+      }
+    },
+    "suspension": {
+      "label": "Suspension & brake ducts",
+      "anchor": [
+        0.55,
+        0.35,
+        -1.7
+      ],
+      "parameters": {}
+    },
+    "wheels": {
+      "label": "Wheels & tyres",
+      "anchor": [
+        0.81,
+        0.352,
+        -1.7
+      ],
+      "parameters": {}
+    },
+    "halo": {
+      "label": "Halo",
+      "anchor": [
+        0,
+        0.82,
+        -0.3
+      ],
+      "parameters": {}
+    }
+  },
+  "teams": {
+    "ferrari": {
+      "name": "Scuderia Ferrari",
+      "car_name": "SF-26",
+      "accent": "#e52d3a",
+      "baseline_date": "2026-01-23T12:00:00Z",
+      "event": "Maranello launch / Fiorano shakedown",
+      "source_url": "https://www.formula1.com/en/latest/article/gallery-check-out-every-angle-of-ferraris-2026-f1-car.7HdOPtJJwN5VHJ8XAWVtuS",
+      "publisher": "Formula 1 / Scuderia Ferrari",
+      "title": "Ferrari SF-26 official launch gallery",
+      "reference_images": [
+        "https://media.formula1.com/image/upload/c_fit,w_1600,h_900/q_auto/v1740000001/fom-website/2026/Ferrari/F678_still_f03_16_9_v10.webp",
+        "https://media.formula1.com/image/upload/c_fit,w_1600,h_900/q_auto/v1740000001/fom-website/2026/Ferrari/F678_still_f15_16_9_v10.webp",
+        "https://media.formula1.com/image/upload/c_fit,w_1600,h_900/q_auto/v1740000001/fom-website/2026/Ferrari/F678_still_f08_16_9_v10.webp"
+      ],
+      "notes": "Original exterior reconstruction from launch views. Broad inlet mouths, red sidepods and nose, white upper cockpit/engine cover, and narrow rear bodywork are visible. Unseen internal surfaces and exact section dimensions are estimated. Sponsor artwork is not included.",
+      "component_notes": {
+        "front_wing": "SF-26 January launch exterior: broad swept upper flaps, separate left/right elements around the nose, a rising mid-span mainplane and a dropped outboard junction. The endplates and feet are curved laminate skins. Front and overhead launch views establish the visible outline; section thickness, slot clearance and bracket dimensions are estimates. September livery imagery is a cross-check, not evidence that this launch wing raced at Monza.",
+        "floor": "SF-26 January launch exterior: a swept front floor board, a curved lower turning surface and a thin raised edge lip replace the flat panel and round tube. The upper perimeter follows the launch top and rear-quarter views. Hidden underside, tunnel sections, small fences and exact curvature are unresolved. The FIA-reported September 4 single-element floor-board revision is separately recorded as annotation-only and is not applied to this January configuration. Detail pass 2026.5: Dated launch floor outline retained. Separate thin edge laminates now leave a visible open gap with connecting bridges. Launch rear-quarter/overhead images and current race photographs support layered exterior surfaces; exact gap, bridge positions/count and concealed underside remain illustrative estimates. No September floor upgrade or additional unsupported slit array is claimed.",
+        "rear_wing": "SF-26 January launch exterior: a deeper spoon-shaped mainplane, individually contoured slotted flaps and swept lower endplate supports follow the front and rear-quarter launch views. Pylons are thin blade surfaces. Exact profiles, actuator details and deflection are estimates; this does not reconstruct a Monza low-drag wing. Detail pass 2026.5: Dated launch airfoil outlines retained with thin slot separators and hinge barrels derived from the same section coordinates. Launch rear-quarter and overhead views support the slotted arrangement. Small support dimensions and hinge construction are estimates; September Mercedes winglet revisions are not backdated into this configuration.",
+        "suspension": "Exterior coherence correction: inboard ends seat 4 mm into each team's evaluated body shell; closed flattened wishbone fairings and wheel uprights replace floating round rods. The front axle-like bar is removed. Launch views and September 11 front photography support the general arrangement; hardpoints, fairing sections and concealed joints are estimates. This does not reconstruct Ferrari's Madrid rear-fairing upgrade.",
+        "diffuser": "Exterior coherence correction: continuous curved expansion skin, joined outlet walls and a thin laminate return replace a rounded sparse quad with disconnected flat strakes. The visible rear opening is checked against launch rear-quarter imagery. Channel count, internal shape and exact outlet section remain estimates; no newly evidenced diffuser upgrade is claimed.",
+        "chassis": "SF-26 launch reconstruction: the dark inner cockpit tub now remains visible within the painted survival-cell opening. This corrects the previously obscured seat; it does not establish a real-world chassis upgrade. Hidden cockpit details and dimensions remain estimates.",
+        "sidepods": "SF-26 launch reconstruction: broad forward-facing mouths, full upper shoulders and a later inward taper. The model separates the recessed inlet from the undercut body surface. Photograph comparison supports these exterior features; section dimensions and internal ducts remain estimates.",
+        "engine_cover": "SF-26 launch reconstruction: triangular airbox opening above broader white shoulders and a long dorsal fin. Small shoulder cooling reliefs are illustrative; their count, depth and hidden cooling layout are not established by the gallery.",
+        "nose": "SF-26 launch reconstruction: a broad, flattened taper approaching the front wing. Compare its shoulders and tip against the slimmer W17 model in neutral surface mode. Exact sections and attachment dimensions are estimated from the launch views."
+      },
+      "parameters": {
+        "nose": {
+          "tip_width": 0.14,
+          "shoulder_height": 0.56
+        },
+        "front_wing": {
+          "chord": 0.31,
+          "sweep": 0.12,
+          "camber": 0.046
+        },
+        "sidepods": {
+          "width": 0.36,
+          "inlet_height": 0.22,
+          "undercut": 0.12
+        },
+        "engine_cover": {
+          "spine_height": 0.97,
+          "tail_width": 0.09
+        },
+        "floor": {
+          "edge_width": 0.79
+        },
+        "diffuser": {
+          "exit_height": 0.25
+        },
+        "rear_wing": {
+          "chord": 0.31,
+          "camber": 0.052
+        }
+      }
+    },
+    "mercedes": {
+      "name": "Mercedes-AMG PETRONAS",
+      "car_name": "W17",
+      "accent": "#45d6c6",
+      "baseline_date": "2026-01-22T12:00:00Z",
+      "event": "W17 launch presentation",
+      "source_url": "https://www.mercedesamgf1.com/news/mercedes-amg-f1-2026-challenger-w17-revealed",
+      "publisher": "Mercedes-AMG PETRONAS F1 Team",
+      "title": "Mercedes W17 official launch",
+      "reference_images": [
+        "https://images.ctfassets.net/1fvlg6xqnm65/5mPoJIJroXGsBxhRL0tYrQ/5bcb87e98a87414fe2fc900bc68382ba/Mercedes-AMG_F1_W17_E_PERFORMANCE_-_GR_6.jpg?w=1600",
+        "https://media.formula1.com/image/upload/c_fit,w_1600,h_900/q_auto/v1740000001/fom-website/2026/Mercedes/Mercedes-AMG%20F1%20W17%20E%20PERFORMANCE%20-%20KA%2010.webp",
+        "https://media.formula1.com/image/upload/c_fit,w_1600,h_900/q_auto/v1740000001/fom-website/2026/Mercedes/Mercedes-AMG%20F1%20W17%20E%20PERFORMANCE%20-%20KA%2012.webp"
+      ],
+      "notes": "Original exterior reconstruction from the W17 launch. Silver forward bodywork, black rear bodywork, and a low turquoise flow line follow the official livery description. Fine inlet sections and hidden surfaces remain estimates. Sponsor artwork is not included.",
+      "component_notes": {
+        "front_wing": "W17 January presentation exterior: narrower swept upper flaps, a distinct outer mainplane trough and rolled outer foot, with a scalloped endplate upper rail. Each element has its own spanwise height and chord profile. Launch overhead and three-quarter views support the outline; September Madrid photos corroborate the general arrangement but do not establish identical part identity. Airfoil sections and slot clearances remain estimates.",
+        "floor": "W17 January presentation exterior: a swept floor board, raised forward shoulder and a shaped edge lip with a different height progression from Ferrari. These are visible upper-surface estimates from the launch overhead and three-quarter views. Concealed underside, precise edge-wing sections and small supports are not established. Madrid race imagery is insufficient to reconstruct a complete later floor revision. Detail pass 2026.5: Dated launch floor outline retained. Separate thin edge laminates now leave a visible open gap with connecting bridges. Launch rear-quarter/overhead images and current race photographs support layered exterior surfaces; exact gap, bridge positions/count and concealed underside remain illustrative estimates. No September floor upgrade or additional unsupported slit array is claimed.",
+        "rear_wing": "W17 January presentation exterior: a shallower mainplane bowl, more uniform upper-flap height and straighter lower endplate sweep than the Ferrari reconstruction. Each slotted element is a separate closed surface. Hidden mechanisms and exact sections remain estimates. The Madrid central-winglet span reduction in the September 11 FIA submission is recorded separately, not backdated into this launch model. Detail pass 2026.5: Dated launch airfoil outlines retained with thin slot separators and hinge barrels derived from the same section coordinates. Launch rear-quarter and overhead views support the slotted arrangement. Small support dimensions and hinge construction are estimates; September Mercedes winglet revisions are not backdated into this configuration.",
+        "suspension": "Exterior coherence correction: inboard ends seat 4 mm into each team's evaluated body shell; closed flattened wishbone fairings and wheel uprights replace floating round rods. The front axle-like bar is removed. Launch views and September 11 front photography support the general arrangement; hardpoints, fairing sections and concealed joints are estimates. This does not reconstruct Ferrari's Madrid rear-fairing upgrade.",
+        "diffuser": "Exterior coherence correction: continuous curved expansion skin, joined outlet walls and a thin laminate return replace a rounded sparse quad with disconnected flat strakes. The visible rear opening is checked against launch rear-quarter imagery. Channel count, internal shape and exact outlet section remain estimates; no newly evidenced diffuser upgrade is claimed.",
+        "chassis": "W17 launch reconstruction: the dark inner cockpit tub now remains visible within the survival-cell opening. This corrects the previously obscured seat; it does not establish a real-world chassis upgrade. Hidden cockpit details and dimensions remain estimates.",
+        "sidepods": "W17 presentation-render reconstruction: shallow high inlet slots, undercut shoulders and a relatively flat upper deck with shallow channels and a raised rear body profile. These contours follow the January 22 official renders, not a verified on-track configuration. Section dimensions, channel depth and concealed radiator geometry remain estimates.",
+        "engine_cover": "W17 presentation-render reconstruction: a rounded airbox opening with a central divider, a narrow dark spine and a higher, flat-sided dorsal fin over the raised rear deck. The official launch renders establish this visible outline; on-track correspondence, hidden surfaces and exact dimensions are unconfirmed.",
+        "nose": "W17 launch reconstruction: a slimmer, straighter nose taper with silver upper paint and a turquoise edge line. Neutral surface mode removes the paint line to expose the modeled contour. Exact nose sections and attachments remain visual estimates."
+      },
+      "parameters": {
+        "nose": {
+          "tip_width": 0.115,
+          "shoulder_height": 0.53
+        },
+        "front_wing": {
+          "chord": 0.285,
+          "sweep": 0.085,
+          "camber": 0.038
+        },
+        "sidepods": {
+          "width": 0.315,
+          "inlet_height": 0.17,
+          "undercut": 0.15
+        },
+        "engine_cover": {
+          "spine_height": 0.94,
+          "tail_width": 0.105
+        },
+        "floor": {
+          "edge_width": 0.765
+        },
+        "diffuser": {
+          "exit_height": 0.235
+        },
+        "rear_wing": {
+          "chord": 0.285,
+          "camber": 0.044
+        }
+      }
+    }
+  }
+}

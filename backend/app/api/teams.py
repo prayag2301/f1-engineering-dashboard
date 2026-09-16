@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
-from backend.database import get_db
-from backend.models.models import Team
-from backend.schemas.schemas import TeamCreate, TeamRead
+from app.database import get_db
+from app.models.models import Team
+from app.schemas.schemas import TeamCreate, TeamRead
 
 router = APIRouter()
 

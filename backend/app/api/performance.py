@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
-from backend.database import get_db
-from backend.models.models import PerformanceDelta
-from backend.schemas.schemas import PerformanceDeltaCreate, PerformanceDeltaRead
+from app.database import get_db
+from app.models.models import PerformanceDelta
+from app.schemas.schemas import PerformanceDeltaCreate, PerformanceDeltaRead
 
 router = APIRouter()
 

@@ -1,23 +1,30 @@
 """Unit tests for seed endpoint behavior (database mocked)."""
 from unittest.mock import MagicMock
+import pytest
+from app.config import get_settings
 
-from backend.api.seed import seed_database
+@pytest.fixture(autouse=True)
+def enable_explicit_demo(monkeypatch):
+    monkeypatch.setattr(get_settings(),"ENABLE_DEMO_DATA",True)
+
+from app.api.seed import seed_database
 
 
 class TestSeedDatabase:
     def test_returns_already_seeded_when_team_exists(self):
         db = MagicMock()
-        db.query.return_value.first.return_value = MagicMock()
+        db.query.return_value.filter.return_value.first.return_value = MagicMock()
 
         result = seed_database(db=db)
 
-        assert result == {"message": "Database already seeded", "seeded": False}
+        assert result == {"message": "Database already seeded", "seeded": False, "regulation_constraints_seeded": 0}
         db.add.assert_not_called()
         db.commit.assert_not_called()
 
     def test_seeds_teams_races_components_upgrades_events_evidence_and_deltas(self):
         db = MagicMock()
-        db.query.return_value.first.return_value = None
+        db.query.return_value.filter.return_value.first.return_value = None
+        db.query.return_value.filter_by.return_value.first.return_value = None
 
         result = seed_database(db=db)
 

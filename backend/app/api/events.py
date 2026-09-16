@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session, joinedload
 from typing import List
 from uuid import UUID
 
-from backend.database import get_db
-from backend.models.models import Event
-from backend.models.enums import EventStatus
-from backend.schemas.schemas import EventCreate, EventRead, EventUpdate
+from app.database import get_db
+from app.models.models import Event
+from app.models.enums import EventStatus
+from app.schemas.schemas import EventCreate, EventRead, EventUpdate
 
 router = APIRouter()
 

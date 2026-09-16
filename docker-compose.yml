@@ -1,157 +1,89 @@
-version: "3.9"
-
+name: f1-engineering-dashboard
+x-app: &app
+  DATABASE_URL: postgresql://f1user:${POSTGRES_PASSWORD:-f1local}@db:5432/f1dashboard
+  REDIS_URL: redis://redis:6379/0
+  RELEASE_ROOT: /releases
+  REFERENCE_ROOT: /app/references
+  MODELING_ROOT: /app/modeling
+  ADMIN_TOKEN: ${ADMIN_TOKEN:?Run python3 scripts/configure.py to create your local review credentials}
+  SESSION_SECRET: ${SESSION_SECRET:?Run python3 scripts/configure.py first}
+  DEBUG: "false"
+  RENDER_SAMPLES: ${RENDER_SAMPLES:-128}
+  BUILD_TIMEOUT_SECONDS: ${BUILD_TIMEOUT_SECONDS:-7200}
+  COOKIE_SECURE: ${COOKIE_SECURE:-false}
+  ENABLE_DEMO_DATA: ${ENABLE_DEMO_DATA:-false}
 services:
   db:
+    restart: unless-stopped
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: f1user
-      POSTGRES_PASSWORD: f1pass
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-f1local}
       POSTGRES_DB: f1dashboard
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+    volumes: [pgdata:/var/lib/postgresql/data]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U f1user -d f1dashboard"]
+      test: [CMD-SHELL, "pg_isready -U f1user -d f1dashboard"]
       interval: 5s
       timeout: 5s
-      retries: 5
-
+      retries: 20
   redis:
+    restart: unless-stopped
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
+    command: [redis-server, --appendonly, "yes"]
+    volumes: [redisdata:/data]
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [CMD, redis-cli, ping]
       interval: 5s
-      timeout: 3s
-      retries: 5
-
-  minio:
-    image: minio/minio:latest
-    command: server /data --console-address ":9001"
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      MINIO_ROOT_USER: f1admin
-      MINIO_ROOT_PASSWORD: f1adminpass
-    volumes:
-      - miniodata:/data
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
+      timeout: 5s
+      retries: 20
+  migrate:
+    build: {context: ., dockerfile: infra/docker/Dockerfile.api}
+    environment: *app
+    command: [python, -m, app.bootstrap]
+    depends_on:
+      db: {condition: service_healthy}
   api:
-    build:
-      context: .
-      dockerfile: infra/docker/Dockerfile.api
-    ports:
-      - "8000:8000"
-    environment:
-      DATABASE_URL: postgresql://f1user:f1pass@db:5432/f1dashboard
-      REDIS_URL: redis://redis:6379/0
-      DEBUG: "true"
+    restart: unless-stopped
+    build: {context: ., dockerfile: infra/docker/Dockerfile.api}
+    environment: *app
+    volumes: [releases:/releases]
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - ./apps/api/backend:/app/backend
-
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
   web:
-    build:
-      context: .
-      dockerfile: infra/docker/Dockerfile.web
-    ports:
-      - "3000:3000"
+    restart: unless-stopped
+    build: {context: ., dockerfile: infra/docker/Dockerfile.web}
     environment:
-      INTERNAL_API_URL: http://api:8000/api/v1
       BACKEND_URL: http://api:8000
+      INTERNAL_API_URL: http://api:8000/api/v1
+    ports: ["127.0.0.1:${WEB_PORT:-3000}:3000"]
     depends_on:
-      - api
-    volumes:
-      - ./apps/web:/app
-      - /app/node_modules
-
-  ingest:
-    build:
-      context: .
-      dockerfile: services/ingest/Dockerfile
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: "6379"
-      API_URL: http://api:8000/api/v1
-      MINIO_ENDPOINT: minio
-      MINIO_PORT: "9000"
+      api: {condition: service_healthy}
+  worker:
+    restart: unless-stopped
+    build: {context: ., dockerfile: infra/docker/Dockerfile.worker}
+    environment: *app
+    volumes: [releases:/releases]
     depends_on:
-      redis:
-        condition: service_healthy
-      api:
-        condition: service_started
-    profiles:
-      - workers
-
-  annotate:
-    build:
-      context: .
-      dockerfile: services/annotate/Dockerfile
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: "6379"
-      API_URL: http://api:8000/api/v1
-    depends_on:
-      redis:
-        condition: service_healthy
-    profiles:
-      - workers
-
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    stop_grace_period: 2m
   scheduler:
-    build:
-      context: .
-      dockerfile: services/scheduler/Dockerfile
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: "6379"
-      API_URL: http://api:8000/api/v1
+    restart: unless-stopped
+    build: {context: ., dockerfile: infra/docker/Dockerfile.api}
+    command: [celery, -A, app.tasks.celery_app, worker, --beat, --queues=scheduler, --pool=solo, --concurrency=1, --loglevel=INFO, --schedule=/schedule/celerybeat]
+    environment: *app
+    volumes: [schedule:/schedule]
     depends_on:
-      redis:
-        condition: service_healthy
-    profiles:
-      - workers
-
-  recon:
-    build:
-      context: .
-      dockerfile: services/recon/Dockerfile
-    environment:
-      REDIS_URL: redis://redis:6379/0
-      API_URL: http://api:8000/api/v1
-      MINIO_ENDPOINT: minio:9000
-    depends_on:
-      redis:
-        condition: service_healthy
-    profiles:
-      - workers
-      - gpu
-
-  meshops:
-    build:
-      context: .
-      dockerfile: services/meshops/Dockerfile
-    environment:
-      REDIS_URL: redis://redis:6379/0
-      API_URL: http://api:8000/api/v1
-      MINIO_ENDPOINT: minio:9000
-    depends_on:
-      redis:
-        condition: service_healthy
-    profiles:
-      - workers
-
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
 volumes:
   pgdata:
-  miniodata:
+  redisdata:
+  releases:
+  schedule:

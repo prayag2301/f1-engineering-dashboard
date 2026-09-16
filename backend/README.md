@@ -1,37 +1,7 @@
-# F1 Engineering Dashboard — API
+# Canonical API and workers
 
-FastAPI backend serving the REST API.
+This directory contains the only backend implementation. See [the root README](../README.md) for the Docker workflow, migration and publication rules.
 
-## Local Development
+Install development dependencies with `python3.12 -m venv .venv && .venv/bin/pip install -e '.[dev]'`. Run `.venv/bin/python -m pytest` here. Unit tests use isolated SQLite state; Docker smoke tests exercise PostgreSQL migrations and native Blender.
 
-```bash
-pip install -r backend/requirements.txt
-uvicorn backend.main:app --reload --port 8000
-```
-
-API docs at [http://localhost:8000/docs](http://localhost:8000/docs).
-
-## Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://f1user:f1pass@db:5432/f1dashboard` |
-| `DEBUG` | Enable debug mode | `true` |
-| `REDIS_URL` | Redis connection string | `redis://localhost:6379/0` |
-
-## Endpoints
-
-- `GET /health` — Health check
-- `GET /api/v1/teams/` — List teams
-- `GET /api/v1/races/` — List races
-- `GET /api/v1/upgrades/` — List upgrades (filterable)
-- `POST /api/v1/upgrades/intelligence/preview` — AI classification
-- `POST /api/v1/upgrades/ingest` — Batch ingestion
-- `POST /api/v1/seed/` — Seed database
-
-## Tests
-
-```bash
-cd apps/api
-python -m pytest
-```
+`app.bootstrap` is the one-shot migration service. API startup does not mutate the database. `app.tasks` owns durable jobs; the scheduler consumes its own queue so rendering cannot block recovery. Legacy records and endpoints remain maintainer-only.
