@@ -1,4 +1,4 @@
-"""Idempotent migrations and two unpublished reference baselines."""
+"""Idempotent migrations and unpublished catalog reference baselines."""
 
 from pathlib import Path
 from alembic import command
@@ -56,7 +56,7 @@ def main():
     migrate()
     with SessionLocal() as db:
         for key, info in catalog()["teams"].items():
-            name = "Ferrari" if key == "ferrari" else "Mercedes"
+            name = info.get("short_name", info["name"])
             if not db.query(Team).filter_by(name=name).first():
                 db.add(Team(name=name, full_name=info["name"]))
             version = bootstrap_baseline(db, key)
@@ -64,7 +64,7 @@ def main():
                 queue_build(db, version)
         db.commit()
     print(
-        "Database ready. Two reference drafts are queued; sign in at /review to inspect and publish."
+        "Database ready. Catalog reference drafts are queued; sign in at /review to inspect and publish."
     )
 
 

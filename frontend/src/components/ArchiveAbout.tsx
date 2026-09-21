@@ -6,15 +6,16 @@ export default function ArchiveAbout() {
       <p className="eyebrow">FORM & FLOW / THE ARCHIVE</p>
       <h1>Every shape has a source.</h1>
       <p className="lede">
-        Explore original Ferrari and Mercedes exterior reconstructions, grounded
-        in dated public references.
+        Explore original 2026 constructor exterior reconstructions, grounded in
+        dated public references.
       </p>
       <h2>From observation to release</h2>
       <p>
         Team photography, FIA submissions, and technical reporting establish
-        visible changes. Each reconstruction is compared against front, side,
-        rear, and perspective references before publication. Hidden geometry and
-        dimensions without a source remain estimates.
+        visible changes. Each reconstruction is inspected from front, side,
+        rear, and perspective views against the available references before
+        publication. Hidden geometry and dimensions without a source remain
+        estimates.
       </p>
       <p>
         A reported upgrade can appear as an annotation when the evidence cannot

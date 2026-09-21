@@ -61,6 +61,6 @@ export async function readVersions(
   signal?: AbortSignal,
 ): Promise<CarVersion[]> {
   return staticArchive
-    ? (await readSnapshot(signal)).versions[team]
+    ? ((await readSnapshot(signal)).versions[team] ?? [])
     : request<CarVersion[]>(`/cars/${team}/versions?season=2026`, { signal });
 }

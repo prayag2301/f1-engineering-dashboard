@@ -200,14 +200,15 @@ small {
   display: flex;
   border: 1px solid var(--line);
   border-radius: 7px 7px 0 0;
-  overflow: hidden;
+  overflow-x: auto;
   background: #11171c;
 }
 .team-tab {
   display: flex;
   align-items: center;
   gap: 14px;
-  min-width: 310px;
+  flex: 0 0 auto;
+  min-width: 200px;
   padding: 19px 24px;
   background: transparent;
   border: 0;
@@ -362,7 +363,9 @@ small {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-height: 82px;
+  min-height: 134px;
+  height: 134px;
+  box-sizing: border-box;
 }
 .constructor-label strong {
   font-size: 14px;

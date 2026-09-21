@@ -43,7 +43,7 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "### Deployment deferred: both reviewed baselines are required. The current site stays live." >> "$GITHUB_STEP_SUMMARY"
+            echo "### Deployment deferred: reviewed baselines for every snapshot constructor are required. The current site stays live." >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Upload reviewable static build
         uses: actions/upload-artifact@v4
@@ -59,7 +59,7 @@ jobs:
   deploy:
     needs: build
     # Set PAGES_DEPLOY_BRANCH to this branch after its first passing build.
-    # A snapshot must contain reviewed Ferrari AND Mercedes releases.
+    # Every constructor included in the selected snapshot must have a reviewed release.
     if: github.event_name != 'pull_request' && needs.build.outputs.ready == 'true' && github.ref_name == vars.PAGES_DEPLOY_BRANCH
     runs-on: ubuntu-latest
     concurrency:

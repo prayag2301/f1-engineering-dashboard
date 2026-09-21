@@ -1,0 +1,154 @@
+{
+  "reviewed_at": "2026-09-21",
+  "method": "Four-view inspection of estimated exterior models against attributed Madrid track/paddock photographs. Rendered with Blender 4.3.2, Cycles, 24 samples and Metal GPU denoising.",
+  "teams": {
+    "red_bull": {
+      "front": true,
+      "side": true,
+      "rear": true,
+      "three_quarter": true,
+      "reference_urls": [
+        "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#red_bull",
+        "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/"
+      ],
+      "notes": "Reviewed all four rendered views on 21 September against Madrid Friday track photographs and Thursday RB22 rear assembly photographs. Narrow yellow nose tip, high recessed inlet and descending sidepod silhouette are represented. The rear wing and suspension are coherent external estimates; exact wing profiles, fairings, diffuser channels and underside cannot be established by these photographs. Livery is simplified without sponsor graphics; no upgrade or factory-dimension claim.",
+      "frozen_build": {
+        "build_car.py": "01d96bf8c7a67e758a49e4e6a78bb000c36e52982aa486d054c37f93acadb161",
+        "catalog.json": "9667cb89ab53b88d9810c24e7029ecfef56b1ed4c3a0c371944d834492831107",
+        "car.glb": "7404b1e41cac07b23992c8f94bce4f179ddd94e071a826c70caf3f775319390b"
+      },
+      "generator_version": "2026.6"
+    },
+    "aston_martin": {
+      "front": true,
+      "side": true,
+      "rear": true,
+      "three_quarter": true,
+      "reference_urls": [
+        "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#aston_martin"
+      ],
+      "notes": "Inspected front, side, rear and perspective renders against the available Madrid track photographs. Triangular airbox, raised inlet shoulder, descending sidepod ramp and green/lime identity are represented. Side/rear completion uses estimated sections where the photos do not resolve detail; hidden floor, diffuser internals and suspension hardpoints are not certified. All tyres contact the ground and exterior assemblies remain connected. Approved as an explicitly estimated exterior reference, without sponsor art or a claim of factory fidelity.",
+      "frozen_build": {
+        "build_car.py": "01d96bf8c7a67e758a49e4e6a78bb000c36e52982aa486d054c37f93acadb161",
+        "catalog.json": "9667cb89ab53b88d9810c24e7029ecfef56b1ed4c3a0c371944d834492831107",
+        "car.glb": "1b982a9a8cca21f1e7d8496c9d11aaec214f1511e7e04421075b6c1595ae8081"
+      },
+      "generator_version": "2026.6"
+    },
+    "alpine": {
+      "front": true,
+      "side": true,
+      "rear": true,
+      "three_quarter": true,
+      "reference_urls": [
+        "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#alpine"
+      ],
+      "notes": "Checked front, side, rear and perspective renders against Madrid photographs showing the pink forward body, blue sidepods, compact rounded airbox and descending shoulder. Geometry is coherent and the colour boundaries distinguish this car. Rear wing sections, hidden diffuser channels, suspension hardpoints and detailed side sections are shared authored estimates where reference coverage is incomplete. This is an estimated dated exterior, not a claim to measured surfaces or a newly introduced upgrade.",
+      "frozen_build": {
+        "build_car.py": "01d96bf8c7a67e758a49e4e6a78bb000c36e52982aa486d054c37f93acadb161",
+        "catalog.json": "9667cb89ab53b88d9810c24e7029ecfef56b1ed4c3a0c371944d834492831107",
+        "car.glb": "0f6fdf94a8d3ca4892fc711f076d4b4a103c24bcda570ee2286dc4add6611d6e"
+      },
+      "generator_version": "2026.6"
+    },
+    "williams": {
+      "front": true,
+      "side": true,
+      "rear": true,
+      "three_quarter": true,
+      "reference_urls": [
+        "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#williams",
+        "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/"
+      ],
+      "notes": "Inspected all four renders against Madrid track and paddock references. This dated exterior uses the special white Madrid colour scheme, a rounded triangular airbox with blue rim, broad inlet shoulder and descending sidepod. The connected bodywork and ground contact are coherent. Fine wing sections, hidden floor channels and suspension mounting coordinates remain authored estimates; sponsor graphics are omitted. This is not a measured reconstruction or an assertion of an upgrade.",
+      "frozen_build": {
+        "build_car.py": "01d96bf8c7a67e758a49e4e6a78bb000c36e52982aa486d054c37f93acadb161",
+        "catalog.json": "9667cb89ab53b88d9810c24e7029ecfef56b1ed4c3a0c371944d834492831107",
+        "car.glb": "efa9ad018942600667416dee31338fdb436113d798a6306638508468111c5cad"
+      },
+      "generator_version": "2026.6"
+    },
+    "racing_bulls": {
+      "front": true,
+      "side": true,
+      "rear": true,
+      "three_quarter": true,
+      "reference_urls": [
+        "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#racing_bulls",
+        "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/"
+      ],
+      "notes": "Checked front, side, rear and perspective renders against the selected VCARB photographs, excluding gallery images that actually show Red Bull. White upper surfaces, a yellow nose tip, rounded intake, inlet shoulders and downward rear body taper are represented. The model is an estimated exterior with simplified colour blocking and no sponsor graphics. Rear wing profiles, underside, suspension coordinates and photo-obscured sections remain unresolved estimates.",
+      "frozen_build": {
+        "build_car.py": "01d96bf8c7a67e758a49e4e6a78bb000c36e52982aa486d054c37f93acadb161",
+        "catalog.json": "9667cb89ab53b88d9810c24e7029ecfef56b1ed4c3a0c371944d834492831107",
+        "car.glb": "bfa351bfdb52a29d319aa57ad0479a0f083ab0621fb1f0c71fd0a175caf40e5d"
+      },
+      "generator_version": "2026.6"
+    },
+    "haas": {
+      "front": true,
+      "side": true,
+      "rear": true,
+      "three_quarter": true,
+      "reference_urls": [
+        "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#haas"
+      ],
+      "notes": "Reviewed all four corrected renders against Madrid track photographs. The first draft had excessively white sidepods and was rejected; this final version separates black sidepod paint from the white upper body, with red accents and a rounded triangular airbox. Nose, inlet shoulder and descending side surfaces are visual estimates. Fine wing sections, unseen rear/underbody surfaces and suspension hardpoints remain authored approximations, with sponsor graphics omitted.",
+      "frozen_build": {
+        "build_car.py": "ebcbdbc714e82e1f720022b583735942419ab2b4d1b62fcd3cb38f42f340a007",
+        "catalog.json": "d886b2d17528112c3a6b0f5ccb4ac9788cc82f48e3f15ff08da44b9333b20c5f",
+        "car.glb": "185af031d9ea6770daef003d30f440129ad9eec9a901ce079f59c84fc61e1830"
+      },
+      "generator_version": "2026.6"
+    },
+    "audi": {
+      "front": true,
+      "side": true,
+      "rear": true,
+      "three_quarter": true,
+      "reference_urls": [
+        "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#audi"
+      ],
+      "notes": "Inspected all four views against selected Audi track references; white cars appearing in some gallery captions were excluded as Cadillac. Dark graphite surfaces, red accents, triangular airbox outline, high inlet shoulder and rear ramp are represented. The livery uses simplified colour blocking. Rear assembly profiles, hidden floor details and suspension mounting coordinates remain authored estimates, not factory measurements or a verified upgrade.",
+      "frozen_build": {
+        "build_car.py": "01d96bf8c7a67e758a49e4e6a78bb000c36e52982aa486d054c37f93acadb161",
+        "catalog.json": "9667cb89ab53b88d9810c24e7029ecfef56b1ed4c3a0c371944d834492831107",
+        "car.glb": "2e9a093e6dc074ed4a9477ccb6bdb210d180c73de86a201875b0e1ef00773b16"
+      },
+      "generator_version": "2026.6"
+    },
+    "cadillac": {
+      "front": true,
+      "side": true,
+      "rear": true,
+      "three_quarter": true,
+      "reference_urls": [
+        "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#cadillac"
+      ],
+      "notes": "Inspected front, side, rear and perspective renders against the available Cadillac track photos; the gallery crowd image was excluded. Split light/dark body paint, rounded airbox, inlet shoulders and descending rear body are represented. The split is a simplified exterior colour treatment, without sponsor graphics. Available photos do not establish exact side/rear sections, wing profiles, diffuser internals or suspension hardpoints; these remain explicit authored estimates, with no factory-CAD or performance claim.",
+      "frozen_build": {
+        "build_car.py": "01d96bf8c7a67e758a49e4e6a78bb000c36e52982aa486d054c37f93acadb161",
+        "catalog.json": "9667cb89ab53b88d9810c24e7029ecfef56b1ed4c3a0c371944d834492831107",
+        "car.glb": "67ffc95b495d2f29d6e330f3887ff4cdb3bda35845fde1755b5d06cda4c6ac42"
+      },
+      "generator_version": "2026.6"
+    },
+    "mclaren": {
+      "front": true,
+      "side": true,
+      "rear": true,
+      "three_quarter": true,
+      "reference_urls": [
+        "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#mclaren",
+        "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/"
+      ],
+      "notes": "Inspected all four renders against the Madrid track and technical photographs. Papaya nose and upper engine cover, black sidepod surfaces, rounded airbox and pronounced inlet shoulder/downward ramp are represented. Sponsor graphics and complex paint boundaries are simplified. Nose/sidepod/cover surfaces are distinct authored estimates; hidden floor, fine wing sections, unseen rear details and suspension hardpoints cannot be established from these images. No factory-dimension, aerodynamic-performance or upgrade-introduction claim.",
+      "frozen_build": {
+        "build_car.py": "01d96bf8c7a67e758a49e4e6a78bb000c36e52982aa486d054c37f93acadb161",
+        "catalog.json": "9667cb89ab53b88d9810c24e7029ecfef56b1ed4c3a0c371944d834492831107",
+        "car.glb": "1776c6d56da38a5afd48b7fd4c09ffd6681a85ebeee4d51773e8822c7f362ca8"
+      },
+      "generator_version": "2026.6"
+    }
+  }
+}

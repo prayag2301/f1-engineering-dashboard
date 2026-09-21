@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 import { createCameraBus } from "./CarViewer";
 import TeamComparison from "./TeamComparison";
 import {
+  TEAM_KEYS,
+  TEAM_NAMES,
   request,
   mutate,
   dateLabel,
@@ -863,8 +865,11 @@ function CandidateForm({
               }
             >
               <option value="">Unresolved</option>
-              <option value="ferrari">Ferrari</option>
-              <option value="mercedes">Mercedes</option>
+              {TEAM_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {TEAM_NAMES[key]}
+                </option>
+              ))}
             </select>
           </label>
           <label>
@@ -1096,8 +1101,11 @@ function NewReleaseForm({
               setUncertainty({});
             }}
           >
-            <option value="ferrari">Ferrari</option>
-            <option value="mercedes">Mercedes</option>
+            {TEAM_KEYS.map((key) => (
+              <option key={key} value={key}>
+                {TEAM_NAMES[key]}
+              </option>
+            ))}
           </select>
         </label>
         <label>

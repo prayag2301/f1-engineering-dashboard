@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from "react";
 import CarViewer, { type CameraBus } from "./CarViewer";
-import { readVersions } from "@/lib/archive";
-import { dateLabel, type CarVersion, type ViewName } from "@/lib/releases";
+import { readVersions, readCatalog } from "@/lib/archive";
+import {
+  dateLabel,
+  TEAM_NAMES,
+  type CarVersion,
+  type ViewName,
+  type TeamKey,
+} from "@/lib/releases";
 
 export default function TeamComparison({
   version,
@@ -28,7 +34,7 @@ export default function TeamComparison({
   isolate: boolean;
   comparisons?: CarVersion[];
 }) {
-  const otherTeam = version?.team_key === "ferrari" ? "mercedes" : "ferrari";
+  const primaryTeam = version?.team_key;
   const [releases, setReleases] = useState<CarVersion[]>([]);
   const [selected, setSelected] = useState("");
   const [error, setError] = useState("");
@@ -38,7 +44,7 @@ export default function TeamComparison({
     if (comparisons) {
       const available = comparisons.filter(
         (v) =>
-          v.team_key === otherTeam &&
+          v.team_key !== primaryTeam &&
           ["building", "ready", "published"].includes(v.status) &&
           v.manifest.assets.glb,
       );
@@ -61,7 +67,15 @@ export default function TeamComparison({
     setSelected("");
     setLoading(true);
     setError("");
-    readVersions(otherTeam, controller.signal)
+    readCatalog(controller.signal)
+      .then((catalog) =>
+        Promise.all(
+          (Object.keys(catalog.teams) as TeamKey[])
+            .filter((team) => team !== primaryTeam)
+            .map((team) => readVersions(team, controller.signal)),
+        ),
+      )
+      .then((groups) => groups.flat())
       .then((data) => {
         if (controller.signal.aborted) return;
         setReleases(data);
@@ -74,9 +88,10 @@ export default function TeamComparison({
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [otherTeam, retry, comparisons]);
+  }, [primaryTeam, retry, comparisons]);
   const other =
-    releases.find((v) => v.id === selected && v.team_key === otherTeam) ?? null;
+    releases.find((v) => v.id === selected && v.team_key !== primaryTeam) ??
+    null;
   return (
     <section
       className="team-comparison"
@@ -94,13 +109,11 @@ export default function TeamComparison({
         {[version, other].map((car, index) => (
           <div
             className="constructor-pane"
-            key={index === 0 ? "primary" : otherTeam}
+            key={index === 0 ? "primary" : "comparison"}
           >
             <div className="constructor-label">
               <strong>
-                {(index === 0 ? version?.team_key : otherTeam) === "ferrari"
-                  ? "Ferrari · SF-26"
-                  : "Mercedes · W17"}
+                {car ? TEAM_NAMES[car.team_key] : "Choose a constructor"}
               </strong>
               {index === 1 && releases.length > 1 ? (
                 <select
@@ -110,7 +123,8 @@ export default function TeamComparison({
                 >
                   {releases.map((v) => (
                     <option key={v.id} value={v.id}>
-                      {dateLabel(v.as_of)} — {v.label}
+                      {TEAM_NAMES[v.team_key]} · {dateLabel(v.as_of)} —{" "}
+                      {v.label}
                       {v.status !== "published" ? " (unpublished draft)" : ""}
                     </option>
                   ))}
@@ -165,8 +179,7 @@ export default function TeamComparison({
                   )
                   .map((s) => (
                     <a href={s.url} target="_blank" rel="noreferrer" key={s.id}>
-                      View {car.team_key === "ferrari" ? "Ferrari" : "Mercedes"}{" "}
-                      reference ↗
+                      View {TEAM_NAMES[car.team_key]} reference ↗
                     </a>
                   ))}
                 <small>Evidence cutoff {dateLabel(car.evidence_cutoff)}</small>

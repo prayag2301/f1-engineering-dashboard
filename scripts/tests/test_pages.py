@@ -115,7 +115,7 @@ class ArchiveTests(unittest.TestCase):
         self.snapshot["versions"]["ferrari"].insert(0, newer)
         self.save()
         result = pages.validate(self.directory, require_baselines=True)
-        self.assertEqual(result["versions"], 3)
+        self.assertEqual(result["versions"], len(pages.TEAMS) + 1)
         self.assertEqual(result["unique_assets"], 3)
 
     def test_draft_and_unreviewed_versions_cannot_deploy(self):
@@ -239,7 +239,7 @@ class ArchiveTests(unittest.TestCase):
         def get(url):
             if url.endswith("/catalog"):
                 return self.snapshot["catalog"]
-            team = "ferrari" if "/ferrari/" in url else "mercedes"
+            team = url.split("/cars/")[1].split("/")[0]
             return self.snapshot["versions"][team]
 
         def download(url, destination):
@@ -259,12 +259,26 @@ class ArchiveTests(unittest.TestCase):
             pages, "download", download
         ):
             result = pages.export("http://127.0.0.1:3000", output)
-        self.assertEqual(result["versions"], 2)
+        self.assertEqual(result["versions"], len(pages.TEAMS))
         with tempfile.TemporaryDirectory() as out:
-            self.assertEqual(pages.unpack(output, out)["versions"], 2)
+            self.assertEqual(pages.unpack(output, out)["versions"], len(pages.TEAMS))
             pages.validate(out, True)
         with self.assertRaisesRegex(ValueError, "exists"):
             pages.export("http://127.0.0.1:3000", output)
+
+    def test_historical_two_team_snapshot_remains_readable(self):
+        for field in (self.snapshot["catalog"]["teams"], self.snapshot["versions"]):
+            for key in list(field):
+                if key not in {"ferrari", "mercedes"}:
+                    del field[key]
+        self.save()
+        self.assertEqual(pages.validate(self.directory, True)["versions"], 2)
+
+    def test_added_team_requires_reviewed_release_for_export(self):
+        self.snapshot["versions"]["audi"] = []
+        self.save()
+        with self.assertRaisesRegex(ValueError, "audi has no reviewed release"):
+            pages.validate(self.directory, True)
 
     def test_failed_export_preserves_existing_output(self):
         output = Path(self.temporary.name) / "snapshot.tar.gz"

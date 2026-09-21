@@ -231,6 +231,9 @@
 }
 .d-segmented {
   display: inline-flex;
+  max-width: 100%;
+  overflow-x: auto;
+  min-width: 0;
   gap: 3px;
   padding: 3px;
   border: 1px solid #35424b;
@@ -238,6 +241,8 @@
   border-radius: 5px;
 }
 .d-segmented button {
+  flex: 0 0 auto;
+  white-space: nowrap;
   border: 0;
   background: transparent;
   padding: 8px 12px;

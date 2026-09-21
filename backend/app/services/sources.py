@@ -18,7 +18,20 @@ from app.config import get_settings
 from app.models.releases import SourceDocument, UpgradeCandidate
 from app.schemas.releases import SourceImport
 
-ALLOWED_HOSTS = (
+TEAM_HOSTS = (
+    "ferrari.com",
+    "mercedesamgf1.com",
+    "mclaren.com",
+    "redbullracing.com",
+    "astonmartinf1.com",
+    "alpinef1.com",
+    "williamsf1.com",
+    "haasf1team.com",
+    "visacashapprb.com",
+    "audif1.com",
+    "cadillacf1team.com",
+)
+ALLOWED_HOSTS = TEAM_HOSTS + (
     "fia.com",
     "formula1.com",
     "ferrari.com",
@@ -31,6 +44,15 @@ ALLOWED_HOSTS = (
 TEAM_PATTERNS = {
     "ferrari": r"\bferrari\b|\bsf[- ]?26\b",
     "mercedes": r"\bmercedes\b|\bw17\b",
+    "mclaren": r"\bmclaren\b|\bmcl40\b",
+    "red_bull": r"\bred bull(?: racing)?\b|\brb22\b",
+    "aston_martin": r"\baston martin\b|\bamr26\b",
+    "alpine": r"\balpine\b|\ba526\b",
+    "williams": r"\bwilliams\b|\bfw48\b",
+    "haas": r"\bhaas\b|\bvf[- ]?26\b",
+    "racing_bulls": r"\bracing bulls\b|\bvcarb(?:[- ]?03)?\b",
+    "audi": r"\baudi\b|\br26\b",
+    "cadillac": r"\bcadillac\b|\bmac[- ]?26\b",
 }
 COMPONENT_PATTERNS = {
     "front_wing": r"\bfront wing\b",
@@ -220,8 +242,8 @@ def parse_document(data, mime, url):
         "source_type": (
             "team_release"
             if any(
-                h in urlparse(url).hostname
-                for h in ("ferrari.com", "mercedesamgf1.com")
+                urlparse(url).hostname == h or urlparse(url).hostname.endswith("." + h)
+                for h in TEAM_HOSTS
             )
             else "article"
         ),
@@ -232,6 +254,9 @@ def extract_candidates(document, season=2026):
     result = []
 
     def append_claim(paragraph, team, components, page):
+        years = {int(value) for value in re.findall(r"\b20[2-9][0-9]\b", paragraph)}
+        if years and season not in years:
+            return  # A clearly dated 2027 development is not a 2026 upgrade.
         for component in components:
             result.append(
                 UpgradeCandidate(
@@ -377,3 +402,39 @@ def feed_links(data):
         if title and link:
             result.append({"url": link, "title": title, "published_at": date})
     return result
+
+
+def discover_links(entry, data, url):
+    """Find bounded, deduplicated article links without wandering into other sports."""
+    if entry["kind"] == "document":
+        return [{"url": url, "published_at": None}]
+    if entry["kind"] == "feed":
+        items = [
+            item
+            for item in feed_links(data)
+            if re.search(
+                r"\bf1\b|formula.?1|formula.?one",
+                item["url"] + " " + item["title"],
+                re.I,
+            )
+            and not re.search(
+                r"/(motogp|imsa|indycar|nascar|formula-e)/", item["url"], re.I
+            )
+        ]
+    else:
+        soup = BeautifulSoup(data, "html.parser")
+        for node in soup.find_all(["nav", "footer", "header", "aside"]):
+            node.decompose()
+        host = urlparse(url).hostname
+        items = [
+            {"url": urljoin(url, a["href"]), "published_at": None}
+            for a in soup.find_all("a", href=True)
+            if re.search(entry["link_pattern"], a["href"] + " " + a.get_text(" "), re.I)
+            and urlparse(urljoin(url, a["href"])).hostname == host
+        ]
+    unique = {}
+    for item in items:
+        target = canonical_url(item["url"])
+        if target != canonical_url(url):
+            unique.setdefault(target, {**item, "url": target})
+    return list(unique.values())[: entry.get("limit", 5)]

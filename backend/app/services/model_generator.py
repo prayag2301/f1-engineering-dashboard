@@ -11,7 +11,7 @@ from app.services.catalog import catalog
 def generate_and_save(team_id: str, output_path: str | Path, season: int = 2026):
     if season != 2026 or team_id not in catalog()["teams"]:
         raise ValueError(
-            "Only the Ferrari and Mercedes 2026 reference configurations are supported."
+            "Select a catalog constructor and season 2026."
         )
     output = Path(output_path)
     output.mkdir(parents=True, exist_ok=True)
@@ -46,7 +46,7 @@ def generate_and_save(team_id: str, output_path: str | Path, season: int = 2026)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--team", choices=["ferrari", "mercedes"], required=True)
+    parser.add_argument("--team", choices=list(catalog()["teams"]), required=True)
     parser.add_argument(
         "--output", required=True, help="Output directory, not a GLB filename"
     )

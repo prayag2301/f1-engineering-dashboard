@@ -1,18 +1,15 @@
 """Durable jobs, CPU Blender execution, and a timezone-aware weekly intake."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 import json
 import os
 from pathlib import Path
-import re
 import shutil
 import subprocess
 import time
-from urllib.parse import urljoin
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
-from bs4 import BeautifulSoup
 from celery import Celery
 from sqlalchemy.exc import IntegrityError
 
@@ -67,6 +64,15 @@ def tick():
                     version = db.get(CarVersion, job.version_id)
                     if version and version.status != "published":
                         version.status = "failed"
+        # Bounded retries survive process restarts; published pointers are never touched.
+        for job in db.query(BuildJob).filter_by(kind="collect", status="failed"):
+            if (
+                job.attempts < 3
+                and job.finished_at
+                and aware(job.finished_at)
+                < now() - timedelta(minutes=15 * max(1, job.attempts))
+            ):
+                job.status = "queued"
         key = scheduled_week(now())
         if not db.query(BuildJob).filter_by(schedule_key=key).first():
             db.add(BuildJob(kind="collect", status="queued", schedule_key=key))
@@ -103,7 +109,7 @@ def heartbeat(job_id, attempt):
 
 
 def collect_sources(job_id, attempt):
-    from app.services.sources import fetch_bytes, feed_links, import_source, CHANGE
+    from app.services.sources import fetch_bytes, import_source, discover_links
     from app.schemas.releases import SourceImport
 
     config = json.loads((settings.REFERENCE_ROOT / "sources.json").read_text())
@@ -118,34 +124,15 @@ def collect_sources(job_id, attempt):
         heartbeat(job_id, attempt)
         try:
             data, mime, url = fetch_bytes(entry["url"])
-            feed_dates = {}
-            if entry["kind"] == "feed":
-                items = feed_links(data)
-                feed_dates = {item["url"]: item["published_at"] for item in items}
-                links = [
-                    item["url"]
-                    for item in items
-                    if CHANGE.search(item["title"])
-                    and re.search(
-                        r"\bf1\b|formula.?1|formula.?one|ferrari|mercedes|\bw17\b|\bsf.?26\b",
-                        item["title"] + " " + item["url"],
-                        re.I,
-                    )
-                ]
-            elif entry["kind"] == "document":
-                links = [url]
-            else:
-                soup = BeautifulSoup(data, "html.parser")
-                links = list(
-                    dict.fromkeys(
-                        urljoin(url, a["href"])
-                        for a in soup.find_all("a", href=True)
-                        if re.search(
-                            entry["link_pattern"],
-                            a["href"] + " " + a.get_text(" "),
-                            re.I,
-                        )
-                    )
+            items = discover_links(entry, data, url)
+            feed_dates = {item["url"]: item["published_at"] for item in items}
+            links = [item["url"] for item in items]
+            if not links:
+                result["errors"].append(
+                    {
+                        "url": url,
+                        "error": "No readable matching article links; source coverage is incomplete.",
+                    }
                 )
             stats = {
                 "url": url,
@@ -177,7 +164,9 @@ def collect_sources(job_id, attempt):
     result["message"] = (
         "No new modeled change established. Collected claims await review."
     )
-    if not result["sources"]:
+    if not result["sources"] or (
+        result["errors"] and not any(s["imported"] for s in result["sources"])
+    ):
         raise CollectionFailure(result)
     return result
 

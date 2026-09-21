@@ -1,15 +1,15 @@
 # F1 Engineering Dashboard
 
-The dashboard restores the original `main` branch's Cars, Teams, Performance,
-Evidence and Analyze sections, using the current reviewed release data and visual
-style. The model generator, model assets, 3D viewer, comparison controls and review
-studio are unchanged.
+The dashboard covers all 11 constructors with interactive car models, dated
+references, release history, comparisons and a review studio. New 2026 models are
+estimated exterior reconstructions; unavailable geometry is identified in their
+review notes.
 
 | Route                                      | Workflow                                                               |
 | ------------------------------------------ | ---------------------------------------------------------------------- |
 | `/`                                        | Overview, car previews, development log and research shortcuts         |
-| `/models`, `/car/ferrari`, `/car/mercedes` | Existing interactive car explorer                                      |
-| `/teams`                                   | Search the original constructor directory and find published models    |
+| `/models`, `/car/[teamId]` | Existing interactive car explorer                                      |
+| `/teams`                                   | Search all 11 constructors and find published models    |
 | `/upgrades`                                | Filter configurations by constructor, component, event and record type |
 | `/compare`                                 | Existing synchronized model and release comparison                     |
 | `/performance`                             | Published development activity and timing-data availability            |
