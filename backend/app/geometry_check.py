@@ -17,11 +17,9 @@ def main():
         root = Path(temporary)
         hashes = {}
         shapes = {}
-        for name, team, change in (
-            ("ferrari", "ferrari", False),
-            ("mercedes", "mercedes", False),
-            ("revised", "ferrari", True),
-        ):
+        cases = [(team, team, False) for team in catalog()["teams"]]
+        cases.append(("revised", "ferrari", True))
+        for name, team, change in cases:
             params = {
                 key: dict(catalog()["teams"][team]["parameters"].get(key, {}))
                 for key in catalog()["components"]
@@ -62,9 +60,17 @@ def main():
             mounts = report["suspension_attachments"]
             assert len(mounts) == 26
             for mount in mounts:
-                transform, geometry = scene.graph[mount["surface"]]
-                shell = scene.geometry[geometry].copy()
-                shell.apply_transform(transform)
+                parts = []
+                for node in scene.graph.nodes_geometry:
+                    if node == mount["surface"] or node.startswith(
+                        mount["surface"] + "_"
+                    ):
+                        transform, geometry = scene.graph[node]
+                        part = scene.geometry[geometry].copy()
+                        part.apply_transform(transform)
+                        parts.append(part)
+                assert parts, f"Missing attachment surface: {mount['surface']}"
+                shell = trimesh.util.concatenate(parts)
                 _, distance, _ = trimesh.proximity.closest_point_naive(
                     shell, np.array([mount["anchor"]])
                 )
@@ -122,6 +128,14 @@ def main():
                 "shape_hashes"
             ]
             print(name, json.dumps(validation), flush=True)
+        for component in ("sidepods", "engine_cover", "nose"):
+            fingerprints = [shapes[team][component] for team in catalog()["teams"]]
+            assert len(set(fingerprints)) == len(
+                fingerprints
+            ), f"Recoloured duplicate: {component}"
+        print(
+            "PASS: all eleven constructors have distinct nose, sidepod and engine-cover surfaces."
+        )
         changed = {
             key
             for key in hashes["ferrari"]

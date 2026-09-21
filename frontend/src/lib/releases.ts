@@ -1,4 +1,18 @@
-export type TeamKey = "ferrari" | "mercedes";
+export const TEAM_NAMES = {
+  ferrari: "Ferrari",
+  mercedes: "Mercedes",
+  mclaren: "McLaren",
+  red_bull: "Red Bull Racing",
+  aston_martin: "Aston Martin",
+  alpine: "Alpine",
+  williams: "Williams",
+  haas: "Haas",
+  racing_bulls: "Racing Bulls",
+  audi: "Audi",
+  cadillac: "Cadillac",
+} as const;
+export type TeamKey = keyof typeof TEAM_NAMES;
+export const TEAM_KEYS = Object.keys(TEAM_NAMES) as TeamKey[];
 export type ViewName = "three_quarter" | "front" | "side" | "rear";
 export interface Source {
   id: string;

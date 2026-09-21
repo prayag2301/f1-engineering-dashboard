@@ -1,12 +1,17 @@
-import type { CarVersion, Catalog, Source, TeamKey } from "./releases";
+import {
+  TEAM_NAMES,
+  type CarVersion,
+  type Catalog,
+  type Source,
+  type TeamKey,
+} from "./releases";
 
 export interface DashboardData {
   catalog: Catalog;
   versions: CarVersion[];
 }
 
-export const teamName = (team: TeamKey) =>
-  team === "ferrari" ? "Ferrari" : "Mercedes";
+export const teamName = (team: TeamKey) => TEAM_NAMES[team];
 export const currentVersion = (versions: CarVersion[], team: TeamKey) =>
   versions.find((v) => v.team_key === team && v.is_current) ??
   versions.find((v) => v.team_key === team);
@@ -20,7 +25,10 @@ export function changedComponents(version: CarVersion) {
 export function releaseKind(version: CarVersion) {
   if (version.configuration_kind === "reconstruction")
     return "Reconstruction update";
-  if (version.configuration_kind === "baseline") return "Launch reference";
+  if (version.configuration_kind === "baseline")
+    return /launch|shakedown|presentation/i.test(version.configuration_event)
+      ? "Launch reference"
+      : "Exterior reference";
   if (version.reverts_to_id) return "Configuration reversion";
   return "Configuration update";
 }

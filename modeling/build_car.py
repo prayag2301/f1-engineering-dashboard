@@ -22,6 +22,7 @@ PI = math.pi
 CAR_OBJECTS = []
 COMPONENT = "chassis"
 ATTACHMENTS = []
+CATALOG = json.loads((Path(__file__).resolve().parent / "catalog.json").read_text())
 
 
 def V(point):
@@ -945,16 +946,24 @@ def ring(name, center, radius, thickness, mat, axis="x"):
 def build_car(team, params):
     global COMPONENT
     ferrari = team == "ferrari"
+    info = CATALOG["teams"][team]
+    profile = info.get("shape_profile")
+    def color(key, fallback):
+        value = info.get("livery", {}).get(key)
+        if value is None:
+            return fallback
+        rgb = [int(value[i:i+2], 16) / 255 for i in (1, 3, 5)]
+        return tuple(v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4 for v in rgb)
     red = material(
-        "Rosso paint" if ferrari else "Silver paint",
-        (0.62, 0.009, 0.022) if ferrari else (0.43, 0.49, 0.51),
+        f"{team} primary paint" if profile else ("Rosso paint" if ferrari else "Silver paint"),
+        color("primary", (0.62, 0.009, 0.022) if ferrari else (0.43, 0.49, 0.51)),
         0.26,
-        0.25 if ferrari else 0.7,
+        0.20 if profile else (0.25 if ferrari else 0.7),
         0.38,
     )
     white = material(
-        "White upper livery" if ferrari else "Graphite rear livery",
-        (0.82, 0.84, 0.83) if ferrari else (0.013, 0.018, 0.019),
+        f"{team} upper paint" if profile else ("White upper livery" if ferrari else "Graphite rear livery"),
+        color("upper", (0.82, 0.84, 0.83) if ferrari else (0.013, 0.018, 0.019)),
         0.27,
         0.15,
         0.35,
@@ -972,7 +981,7 @@ def build_car(team, params):
     )
     accent = material(
         "Livery pinstripe",
-        (0.84, 0.018, 0.025) if ferrari else (0.005, 0.66, 0.51),
+        color("accent", (0.84, 0.018, 0.025) if ferrari else (0.005, 0.66, 0.51)),
         0.28,
         0.25,
         0.25,
@@ -999,7 +1008,7 @@ def build_car(team, params):
             (0.49, 0.23, 0.35, 0.14),
             (0.5, 0.21, 0.34, 0.12),
         ],
-        red if ferrari else carbon,
+        red if ferrari or profile else carbon,
     )
     # Actual open cockpit: cut through the top of the shell, keeping its floor.
     bpy.context.view_layer.objects.active = body
@@ -1078,8 +1087,8 @@ def build_car(team, params):
         [
             (-2.37, p["tip_width"] * 0.48, 0.265, 0.045),
             (-2.34, p["tip_width"] * 0.5, 0.28, 0.065),
-            (-2.12, 0.095 if ferrari else 0.075, 0.32, 0.065),
-            (-1.65, 0.145 if ferrari else 0.105, 0.38, 0.085),
+            (-2.12, p["tip_width"] * .65 if profile else (0.095 if ferrari else 0.075), 0.32, 0.065),
+            (-1.65, p["tip_width"] * .95 if profile else (0.145 if ferrari else 0.105), 0.38, 0.085),
             (-1.19, 0.195, p["shoulder_height"] - 0.13, 0.13),
             (-0.86, 0.25, 0.42, 0.17),
             (-0.8, 0.255, 0.42, 0.17),
@@ -1087,6 +1096,11 @@ def build_car(team, params):
         red,
         exponent=0.6,
     )
+    if profile and team in {"red_bull", "racing_bulls"}:
+        nose.data.materials.append(accent)
+        for polygon in nose.data.polygons:
+            if sum(nose.data.vertices[i].co.y for i in polygon.vertices) / len(polygon.vertices) > 2.03:
+                polygon.material_index = 1
     for side in (-1, 1):
         loft(
             "wing_pylon",
@@ -1118,6 +1132,10 @@ def build_car(team, params):
     build_front_wing(team, p, carbon, red)
 
     COMPONENT = "sidepods"
+    pod_paint = (
+        material(f"{team} sidepod paint", color("sidepods", (0.02, 0.02, 0.025)), 0.27, 0.15, 0.35)
+        if "sidepods" in info.get("livery", {}) else white
+    )
     p = params[COMPONENT]
     for side in (-1, 1):
         # Separate station layouts, not a common body scaled about the origin.
@@ -1147,6 +1165,9 @@ def build_car(team, params):
                 (1.62, 0.10, 0.23, 0.50, 0.31),
             ]
         )
+        if profile:
+            stations = profile["sidepod_stations"]
+            width_delta = p["width"] - info["parameters"]["sidepods"]["width"]
         stations = [
             (
                 z,
@@ -1154,10 +1175,10 @@ def build_car(team, params):
                 ox + width_delta,
                 roof,
                 belly
-                - (p["inlet_height"] - (0.22 if ferrari else 0.17))
+                - (p["inlet_height"] - (info["parameters"]["sidepods"]["inlet_height"] if profile else (0.22 if ferrari else 0.17)))
                 * (1 if ferrari else 0.39)
                 * (1 if z < -0.4 else 0)
-                + (p["undercut"] - (0.12 if ferrari else 0.15))
+                + (p["undercut"] - (info["parameters"]["sidepods"]["undercut"] if profile else (0.12 if ferrari else 0.15)))
                 * (1 if -0.3 < z < 0.6 else 0),
             )
             for z, ix, ox, roof, belly in stations
@@ -1166,8 +1187,8 @@ def build_car(team, params):
             ("broad_shoulder" if ferrari else "raised_rear_deck") + "_" + str(side),
             stations,
             side,
-            red if ferrari else white,
-            channel=0 if ferrari else 0.065,
+            red if ferrari else pod_paint,
+            channel=profile["channel_depth"] if profile else (0 if ferrari else 0.065),
         )
         # The slot's small height on W17 is supported visually; the actual
         # dimensions, internal radiator faces and duct routing remain unknown.
@@ -1272,9 +1293,15 @@ def build_car(team, params):
             (-0.07, 0.756, 0.14),
         ]
     )
+    if profile:
+        w, h, y, z = profile["airbox_width"], profile["airbox_height"], .755, .14
+        if profile["airbox"] == "triangle":
+            mouth = [(-w, y, z), (-w*.75, y+h*.62, z), (0, y+h, z), (w*.75, y+h*.62, z), (w, y, z), (0, y-.006, z)]
+        else:
+            mouth = [(w*math.cos(a*2*PI/16), y+h/2+h/2*math.sin(a*2*PI/16), z) for a in range(16)]
     intake_cowl(mouth, carbon)
     intake("airbox", mouth, 0.16, carbon if ferrari else accent, black)
-    if not ferrari:
+    if not ferrari and not profile:
         rod("airbox_divider", (0, 0.757, 0.14), (0, 0.91, 0.14), 0.005, carbon)
     rod("camera_support", (0, p["spine_height"], 0.40), (0, 1.04, 0.40), 0.012, carbon)
     rounded_box("onboard_camera", (0, 1.055, 0.40), (0.23, 0.038, 0.065), carbon, 0.014)
@@ -1302,6 +1329,10 @@ def build_car(team, params):
         [(0, 1, 2, 3, 4, 5)],
         white,
     )
+    if profile:
+        for vertex in fin.data.vertices:
+            # Shape the visible dorsal silhouette without disturbing the body anchor.
+            vertex.co.z = .40 + (vertex.co.z - .40) * (profile["fin_height"] - .40) / .47
     fin.modifiers.new("Fin thickness", "SOLIDIFY").thickness = 0.009
     # Small cooling reliefs on the Ferrari's white shoulder are visible in the
     # rear launch image. Count/depth are illustrative, not an inferred radiator.
@@ -1605,6 +1636,23 @@ def main():
     bpy.ops.object.delete(use_global=False)
     bpy.context.scene.unit_settings.system = "METRIC"
     build_car(spec["team_key"], spec["parameters"])
+    team = spec["team_key"]
+    if team in CATALOG["teams"] and CATALOG["teams"][team].get("shape_profile"):
+        primary = bpy.data.materials.get(f"{team} primary paint")
+        upper = bpy.data.materials.get(f"{team} upper paint")
+        for obj in CAR_OBJECTS:
+            if obj["component"] == "halo" and team in {"haas", "racing_bulls", "cadillac", "williams", "aston_martin"}:
+                obj.data.materials.clear()
+                obj.data.materials.append(primary)
+            if team == "mclaren" and obj.name.startswith(("engine_cover.upper_spine", "engine_cover.dorsal_fin")):
+                obj.data.materials.clear()
+                obj.data.materials.append(primary)
+            if team == "cadillac" and obj.type == "MESH" and obj["component"] in {"chassis", "nose", "sidepods", "engine_cover"}:
+                dark = bpy.data.materials.get("Livery pinstripe")
+                obj.data.materials.append(dark)
+                for polygon in obj.data.polygons:
+                    if obj.data.materials[polygon.material_index] in {primary, upper} and sum((obj.matrix_world @ obj.data.vertices[i].co).x for i in polygon.vertices) > 0:
+                        polygon.material_index = len(obj.data.materials)-1
     bpy.ops.object.select_all(action="DESELECT")
     for obj in CAR_OBJECTS:
         obj.select_set(True)
@@ -1685,7 +1733,7 @@ def main():
             {
                 "component_hashes": hashes,
                 "shape_hashes": shape_hashes,
-                "generator_version": "2026.5",
+                "generator_version": CATALOG["generator_version"],
                 "suspension_attachments": ATTACHMENTS,
             },
             indent=2,
@@ -1705,6 +1753,7 @@ def main():
         for device in preferences.devices:
             device.use = device.type == "METAL"
         scene.cycles.device = "GPU"
+        scene.cycles.denoising_use_gpu = True
     scene.cycles.samples = args.samples
     import _cycles
 

@@ -85,7 +85,7 @@ test("the exported snapshot exposes only local published assets with matching ch
   ).json();
   expect(snapshot.schema_version).toBe(1);
   const checked = new Set<string>();
-  for (const team of ["ferrari", "mercedes"]) {
+  for (const team of Object.keys(snapshot.catalog.teams)) {
     for (const version of snapshot.versions[team]) {
       expect(version.status).toBe("published");
       expect(version.team_key).toBe(team);
@@ -101,6 +101,7 @@ test("the exported snapshot exposes only local published assets with matching ch
         expect(createHash("sha256").update(body).digest("hex")).toBe(
           asset.sha256,
         );
+        await response.dispose();
       }
     }
   }
@@ -341,4 +342,46 @@ test("a failed archive request can be retried without a backend", async ({
   await expect(
     page.getByRole("tab", { name: /Scuderia Ferrari/ }),
   ).toBeVisible();
+});
+
+test("every catalog constructor has a direct route and its own published GLB", async ({
+  page,
+  request,
+}) => {
+  const data = await (await request.get(`${prefix}/archive/index.json`)).json();
+  const glbs = new Set<string>();
+  for (const [team, versions] of Object.entries(data.versions) as [
+    string,
+    any[],
+  ][]) {
+    expect((await request.get(`${prefix}/car/${team}/`)).status()).toBe(200);
+    if (!versions.length) continue;
+    const current = versions.find((version) => version.is_current);
+    expect(current).toBeTruthy();
+    const glb = current.manifest.assets.glb;
+    const response = await request.get(`${prefix}/archive/${glb.url}`);
+    expect(response.status()).toBe(200);
+    expect((await response.body()).subarray(0, 4).toString()).toBe("glTF");
+    expect(glbs.has(glb.sha256)).toBe(false);
+    glbs.add(glb.sha256);
+  }
+  if (data.versions.audi?.length) {
+    await page.goto(`${prefix}/car/audi/`);
+    await expect(page.getByRole("tab", { name: /Audi/ })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await page
+      .getByRole("button", { name: "Compare teams", exact: true })
+      .click();
+    const selector = page.getByLabel("Other constructor release");
+    const cadillac = data.versions.cadillac.find(
+      (version: any) => version.is_current,
+    );
+    await selector.selectOption(cadillac.id);
+    await expect(page.locator(".constructor-pane").nth(1)).toContainText(
+      "Cadillac",
+    );
+    await expect(page.locator(".constructor-pane canvas")).toHaveCount(2);
+  }
 });

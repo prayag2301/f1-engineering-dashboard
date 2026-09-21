@@ -43,7 +43,15 @@ export default function TeamsDirectory() {
           (!availableOnly || currentVersion(data.versions, key)),
       )
     : [];
-  const otherTeams = availableOnly ? [] : directory.filter(matches);
+  const otherTeams = availableOnly
+    ? []
+    : directory.filter(
+        (name) =>
+          matches(name) &&
+          !Object.values(data?.catalog.teams ?? {}).some((info) =>
+            info.name.toLowerCase().includes(name.toLowerCase()),
+          ),
+      );
   return (
     <div className="d-page">
       <PageHeading
@@ -78,7 +86,7 @@ export default function TeamsDirectory() {
             <>
               <SectionHeading
                 number="01"
-                title="Ready to inspect"
+                title="Constructor models"
                 href="/compare"
                 action="Compare cars"
               />
@@ -150,7 +158,7 @@ export default function TeamsDirectory() {
                           target="_blank"
                           rel="noreferrer"
                         >
-                          Launch reference ↗
+                          Image references ↗
                         </a>
                       </div>
                     </article>

@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   dateLabel,
+  TEAM_KEYS,
+  TEAM_NAMES,
   type CarVersion,
   type Catalog,
   type TeamKey,
@@ -213,47 +215,54 @@ export default function ReleaseExplorer({
         </div>
       </div>
       <div className="team-tabs" role="tablist" aria-label="Constructor">
-        {(["ferrari", "mercedes"] as TeamKey[]).map((key) => (
-          <button
-            role="tab"
-            aria-selected={team === key}
-            tabIndex={team === key ? 0 : -1}
-            data-team={key}
-            key={key}
-            onKeyDown={(event) => {
-              if (
-                ["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)
-              ) {
-                event.preventDefault();
-                const next =
-                  event.key === "Home"
-                    ? "ferrari"
-                    : event.key === "End"
-                      ? "mercedes"
-                      : team === "ferrari"
-                        ? "mercedes"
-                        : "ferrari";
-                setTeam(next);
-                (
-                  event.currentTarget.parentElement?.querySelector(
-                    `[data-team="${next}"]`,
-                  ) as HTMLButtonElement | null
-                )?.focus();
-              }
-            }}
-            onClick={() => setTeam(key)}
-            className={team === key ? "team-tab active" : "team-tab"}
-          >
-            <span className={`team-dot ${key}`} />
-            <span>
-              {catalog?.teams[key]?.name ??
-                (key === "ferrari"
-                  ? "Scuderia Ferrari"
-                  : "Mercedes-AMG PETRONAS")}
-            </span>
-            <small>{key === "ferrari" ? "SF-26" : "W17"}</small>
-          </button>
-        ))}
+        {TEAM_KEYS.filter((key) => !catalog || catalog.teams[key]).map(
+          (key) => (
+            <button
+              role="tab"
+              aria-selected={team === key}
+              tabIndex={team === key ? 0 : -1}
+              data-team={key}
+              key={key}
+              onKeyDown={(event) => {
+                if (
+                  ["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)
+                ) {
+                  event.preventDefault();
+                  const keys = TEAM_KEYS.filter(
+                    (key) => !catalog || catalog.teams[key],
+                  );
+                  const index = keys.indexOf(team);
+                  const next =
+                    event.key === "Home"
+                      ? keys[0]
+                      : event.key === "End"
+                        ? keys[keys.length - 1]
+                        : keys[
+                            (index +
+                              (event.key === "ArrowRight" ? 1 : -1) +
+                              keys.length) %
+                              keys.length
+                          ];
+                  setTeam(next);
+                  (
+                    event.currentTarget.parentElement?.querySelector(
+                      `[data-team="${next}"]`,
+                    ) as HTMLButtonElement | null
+                  )?.focus();
+                }
+              }}
+              onClick={() => setTeam(key)}
+              className={team === key ? "team-tab active" : "team-tab"}
+            >
+              <span
+                className={`team-dot ${key}`}
+                style={{ background: catalog?.teams[key]?.accent }}
+              />
+              <span>{catalog?.teams[key]?.name ?? TEAM_NAMES[key]}</span>
+              <small>{catalog?.teams[key]?.car_name}</small>
+            </button>
+          ),
+        )}
       </div>
       {error && (
         <div className="notice error" role="alert">
@@ -267,9 +276,7 @@ export default function ReleaseExplorer({
             className="team-dot"
             style={{ background: "var(--team-accent)" }}
           />
-          <strong>
-            {info?.car_name ?? (team === "ferrari" ? "SF-26" : "W17")}
-          </strong>
+          <strong>{info?.car_name ?? TEAM_NAMES[team]}</strong>
           <span>
             {version
               ? dateLabel(version.as_of)

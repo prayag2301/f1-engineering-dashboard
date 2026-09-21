@@ -140,8 +140,12 @@ test("teams preserve the directory and filter model availability", async ({
   page,
 }) => {
   await page.goto(`${prefix}/teams/`);
-  await expect(page.locator(".d-team-card")).toHaveCount(2);
-  await expect(page.locator(".d-directory-grid article")).toHaveCount(9);
+  const data = await snapshot(page);
+  const count = Object.keys(data.catalog.teams).length;
+  await expect(page.locator(".d-team-card")).toHaveCount(count);
+  await expect(page.locator(".d-directory-grid article")).toHaveCount(
+    11 - count,
+  );
   await page.getByLabel("Published models only").check();
   await expect(page.locator(".d-directory-grid article")).toHaveCount(0);
   await page.getByRole("searchbox").fill("Ferrari");

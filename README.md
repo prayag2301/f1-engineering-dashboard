@@ -1,6 +1,6 @@
 # Form & Flow — F1 car archive
 
-An interactive archive of dated Ferrari SF-26 and Mercedes W17 exterior reconstructions, with evidence review, component history, and studio renders.
+An interactive archive of dated exterior reconstructions for all eleven 2026 constructors, with evidence review, component history, and studio renders.
 
 The first published Pages snapshot contains **reviewed launch references**: Ferrari, 23 January 2026; Mercedes, 22 January 2026. Both were reviewed and published on 12 September 2026. These are not claims about the latest race specification. Later articles enter an evidence inbox; a reviewer decides what can be modeled. Exact team CAD, internal geometry, sponsor artwork, and a complete season history are not supplied. Fresh local installations still create unpublished drafts that require their own review.
 
@@ -18,9 +18,9 @@ python3 scripts/configure.py
 docker compose up -d --build
 ```
 
-Open **http://127.0.0.1:3000/review** and sign in with `ADMIN_TOKEN` from your local `.env`. Credentials are generated locally and never sent to the frontend bundle. Do not commit `.env`.
+Open **http://127.0.0.1:3000/review** (or the `WEB_PORT` configured in `.env`) and sign in with `ADMIN_TOKEN` from your local `.env`. Credentials are generated locally and never sent to the frontend bundle. Do not commit `.env`.
 
-The initial migration queues both reference drafts. Native ARM64/AMD64 Blender builds editable scenes, GLBs, four 1080p previews, and four 3840×2160 PNGs. CPU rendering can take tens of minutes per car, depending on your Mac and sample count. Inspect progress with:
+The initial migration queues a reference draft for each catalog constructor. Native ARM64/AMD64 Blender builds editable scenes, GLBs, four 1080p previews, and four 3840×2160 PNGs. CPU rendering can take tens of minutes per car, depending on your Mac and sample count. Inspect progress with:
 
 ```sh
 docker compose exec -T api python -m app.cli jobs
@@ -61,7 +61,7 @@ Configure sources in [data/references/sources.json](data/references/sources.json
 
 The archive provides a team selector, dated timeline, camera presets, component picking, evidence passages, uncertainty notes, and 4K downloads. Comparison defaults to two releases of the same team and offers synchronized cameras, side-by-side views, before/after switching, and changed-component highlighting.
 
-Use **Compare teams** to inspect Ferrari and Mercedes from the same viewpoint. **Show neutral surfaces** removes livery distractions; the inlet, airbox and nose shortcuts focus both cameras on matching assemblies. Each car retains its own configuration date, sources and uncertainty notes. Constructor differences are not classified as racing upgrades.
+Use **Compare teams** to inspect any two published constructors from the same viewpoint. **Show neutral surfaces** removes livery distractions; the inlet, airbox and nose shortcuts focus both cameras on matching assemblies. Each car retains its own configuration date, sources and uncertainty notes. Constructor differences are not classified as racing upgrades.
 
 The authenticated review studio also offers **Compare other constructor**, including validated unpublished drafts. To improve an existing model of the same dated configuration, choose **Improve an existing reconstruction** in New release. This creates new component revisions and requires four-view review; it does not change the original observation date or replace published assets. A draft targeting an older modeling generator must be recreated before rebuilding. Annotation-only releases continue to reuse their parent's exact geometry and builder provenance.
 
@@ -69,15 +69,15 @@ A GLB failure shows only that release's still and a retry control. Switching tea
 
 ## Application layout
 
-| Path | Responsibility |
-|---|---|
-| `frontend/` | Canonical Next.js / React Three Fiber archive and maintainer UI |
-| `backend/app/` | Canonical FastAPI API, evidence extraction, versioning, Celery jobs |
-| `backend/alembic/` | Additive PostgreSQL migrations and publication immutability guards |
-| `modeling/` | Original editable Blender builder, component catalog, dated references |
-| `data/references/` | Reviewed 2026 regulation registry and collection configuration |
-| `infra/docker/` | Web, API, and native CPU Blender images |
-| `docker-compose.yml` | PostgreSQL, Redis, migration, API, web, worker, scheduler |
+| Path                   | Responsibility                                                         |
+| ---------------------- | ---------------------------------------------------------------------- |
+| `frontend/`          | Canonical Next.js / React Three Fiber archive and maintainer UI        |
+| `backend/app/`       | Canonical FastAPI API, evidence extraction, versioning, Celery jobs    |
+| `backend/alembic/`   | Additive PostgreSQL migrations and publication immutability guards     |
+| `modeling/`          | Original editable Blender builder, component catalog, dated references |
+| `data/references/`   | Reviewed 2026 regulation registry and collection configuration         |
+| `infra/docker/`      | Web, API, and native CPU Blender images                                |
+| `docker-compose.yml` | PostgreSQL, Redis, migration, API, web, worker, scheduler              |
 
 The diverged `apps/` implementations and primitive GLB fallbacks have been retired. Legacy API records remain accessible to the maintainer under their existing endpoint names.
 
@@ -137,4 +137,15 @@ The reviewed [2026 reference set](data/references/regulations-2026.json) records
 
 The [modeling notes](modeling/README.md) document coordinates, assembly ownership, editable parameters, and remaining visual uncertainty. All generated geometry, carbon textures, and studio lights are original. External photographs are linked for reference and are not bundled into release assets. The project does not redistribute team CAD or paid assets.
 
-Full-grid coverage, video export, automated geometric inference from prose, and public hosting remain outside this release.
+Video export and automated geometric inference from prose remain outside this release.
+
+### Full-grid models and weekly intake
+
+The modeling catalog and dashboard support all eleven 2026 constructors.
+The nine additions use dated Madrid exterior references; Ferrari and Mercedes
+retain their historical releases. See [full-grid modeling](modeling/README.md#full-constructor-grid-20266)
+for reproducible Blender builds and [weekly updates](docs/weekly-updates.md)
+for the local evidence scheduler and optional hosted report workflow.
+
+The completed local delivery, review records and validated export are documented
+in [Full-grid delivery — 21 September 2026](docs/full-grid-2026-09-21.md).

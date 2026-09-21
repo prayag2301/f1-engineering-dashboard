@@ -24,7 +24,7 @@ from urllib.request import urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 DESCRIPTOR = ROOT / "data/pages/snapshot.json"
-TEAMS = ("ferrari", "mercedes")
+TEAMS = tuple(json.loads((ROOT / "modeling/catalog.json").read_text())["teams"])
 VIEWS = ("front", "side", "rear", "three_quarter")
 ASSETS = {"glb": "car.glb"} | {
     f"{kind}_{view}": f"{kind}_{view}.png"
@@ -174,17 +174,20 @@ def public_version(record):
 def validate(directory, require_baselines=False):
     directory = Path(directory)
     snapshot = read_json(directory / "index.json")
-    if snapshot.get("schema_version") != 1 or set(snapshot["versions"]) != set(TEAMS):
-        raise ValueError("Unsupported archive schema or team set.")
+    teams = set(snapshot.get("catalog", {}).get("teams", {}))
     if (
-        set(snapshot["catalog"]["teams"]) != set(TEAMS)
-        or snapshot["catalog"]["season"] != 2026
+        snapshot.get("schema_version") != 1
+        or set(snapshot["versions"]) != teams
+        or not teams
+        or not teams <= set(TEAMS)
     ):
-        raise ValueError("Expected the Ferrari and Mercedes 2026 catalog.")
+        raise ValueError("Unsupported archive schema or team set.")
+    if not {"ferrari", "mercedes"} <= teams or snapshot["catalog"]["season"] != 2026:
+        raise ValueError("Expected a supported 2026 constructor catalog.")
     expected = {"index.json"}
     checked = set()
     count = 0
-    for team in TEAMS:
+    for team in sorted(teams):
         versions = snapshot["versions"][team]
         ids = {v["id"] for v in versions}
         if len(ids) != len(versions):
@@ -299,7 +302,7 @@ def export(api, output):
             "catalog": get_json(api + "/api/v1/cars/catalog"),
             "versions": {},
         }
-        for team in TEAMS:
+        for team in snapshot["catalog"]["teams"]:
             records = get_json(api + f"/api/v1/cars/{team}/versions?season=2026")
             snapshot["versions"][team] = []
             for record in records:

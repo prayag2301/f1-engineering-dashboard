@@ -25,7 +25,22 @@ class SourceImport(Input):
 
 class CandidateReview(Input):
     legacy_upgrade_id: UUID | None = None
-    team_key: Literal["ferrari", "mercedes"] | None = None
+    team_key: (
+        Literal[
+            "ferrari",
+            "mercedes",
+            "mclaren",
+            "red_bull",
+            "aston_martin",
+            "alpine",
+            "williams",
+            "haas",
+            "racing_bulls",
+            "audi",
+            "cadillac",
+        ]
+        | None
+    ) = None
     component: str | None = Field(default=None, max_length=60)
     event_name: str | None = Field(default=None, max_length=200)
     observed_at: datetime | None = None
@@ -57,7 +72,19 @@ class RevisionInput(Input):
 
 
 class VersionInput(Input):
-    team_key: Literal["ferrari", "mercedes"]
+    team_key: Literal[
+        "ferrari",
+        "mercedes",
+        "mclaren",
+        "red_bull",
+        "aston_martin",
+        "alpine",
+        "williams",
+        "haas",
+        "racing_bulls",
+        "audi",
+        "cadillac",
+    ]
     season: Literal[2026] = 2026
     label: str = Field(min_length=3, max_length=200)
     configuration_event: str = Field(min_length=3, max_length=200)

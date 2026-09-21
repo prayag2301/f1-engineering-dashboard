@@ -1,0 +1,401 @@
+{
+  "checked_at": "2026-09-21",
+  "observed_at": "2026-09-11",
+  "event": "Madrid Friday practice",
+  "method": "Visual exterior estimates from attributed race photographs; no factory CAD or photogrammetric calibration.",
+  "teams": {
+    "mclaren": {
+      "observations": "Papaya forward body and black side surfaces; high narrow inlet mouths, pronounced shoulder undercut and a descending rear ramp. Rounded airbox opening.",
+      "images": [
+        {
+          "url": "https://cdn-3.motorsport.com/images/mgl/YXyK5q76/s1100/lando-norris-mclaren.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/mclaren-0.webp",
+          "sha256": "f01ff09f1e5dfd9e4b2363c3666aa2d91eb75dc309c674db346941c5b6c89af8"
+        },
+        {
+          "url": "https://cdn-8.motorsport.com/images/mgl/2eZxqnaY/s1100/oscar-piastri-mclaren.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/mclaren-1.webp",
+          "sha256": "1e0a49ed23b93419389117bf04fd312c997fc7951a240ace01106c07016516d6"
+        },
+        {
+          "url": "https://cdn-5.motorsport.com/images/mgl/6zoDzkL0/s1100/lando-norris-mclaren.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/mclaren-5.webp",
+          "sha256": "67a3ffa7503befe222460da339f0806ca4944c5ded3412260d0c7300152239b5"
+        }
+      ],
+      "unresolved": [
+        "hidden floor underside",
+        "rear diffuser channels",
+        "precise suspension hardpoints",
+        "exact wing sections"
+      ],
+      "supplementary_detail_images": [
+        {
+          "url": "https://cdn-4.motorsport.com/images/mgl/01QNkNv0/s1100/dettaglio-tecnico-mclaren-mcl4.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "cadd12d12167bf15784e6d0341d7848258e906a469c710c8becfa8b940b630de"
+        },
+        {
+          "url": "https://cdn-8.motorsport.com/images/mgl/YXyK5Ko6/s1100/dettaglio-tecnico-mclaren-mcl4.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "405724832de28bac33e3c59d358a5fa91aec767bb30b740e3b759909d15864c7"
+        },
+        {
+          "url": "https://cdn-7.motorsport.com/images/mgl/6VyKmKGY/s1100/dettaglio-tecnico-mclaren-mcl4.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "ff2c58675f3a6f545195aa76af20532d0b06fed8051110125cfcaf9e8753c5d8"
+        },
+        {
+          "url": "https://cdn-2.motorsport.com/images/mgl/25dLKLn0/s1100/dettaglio-tecnico-mclaren-mcl4.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "b18c6648e666442a0f3fed34ff6570bcc7ae1f1c924cda22a730ad326a5f35e0"
+        },
+        {
+          "url": "https://cdn-7.motorsport.com/images/mgl/2jEAjAg0/s1100/dettaglio-tecnico-mclaren-mcl4.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "644f3dc7825bdb8b1fcd0462aabe7e5eec116b2b94af381138a09eb557309da0"
+        }
+      ]
+    },
+    "red_bull": {
+      "observations": "Dark blue body with yellow nose tip; narrow nose, shallow inlet mouth and a strongly tapering rear body. Rounded airbox opening.",
+      "images": [
+        {
+          "url": "https://cdn-3.motorsport.com/images/mgl/27NoKlx0/s1100/max-verstappen-red-bull-racing.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/red-bull-0.webp",
+          "sha256": "6e2b24a23d399ef19f41c7aa0ae55c9ba101c4e0901c83582b01cd4ee4ef063b"
+        },
+        {
+          "url": "https://cdn-9.motorsport.com/images/mgl/2jEAjoM0/s1100/max-verstappen-red-bull-racing.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/red-bull-1.webp",
+          "sha256": "7f9ec3ebd069f32ece18525a8c1155b531865e01de1f42efa00c68297324671f"
+        },
+        {
+          "url": "https://cdn-2.motorsport.com/images/mgl/0mXy7Mk6/s1100/max-verstappen-red-bull-racing.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/red-bull-5.webp",
+          "sha256": "e39e0eaa31121a5b69a1930fd61fe68693e2174184c7cf5691c20ebf1390f778"
+        }
+      ],
+      "unresolved": [
+        "hidden floor underside",
+        "rear diffuser channels",
+        "precise suspension hardpoints",
+        "exact wing sections"
+      ],
+      "supplementary_detail_images": [
+        {
+          "url": "https://cdn-4.motorsport.com/images/mgl/2y7QlQg6/s1100/dettaglio-tecnico-red-bull-rb2.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "31622e41024a7c7ec03fad0864a51096ed424ed7d4ab1dc829a85f03232ec454"
+        },
+        {
+          "url": "https://cdn-7.motorsport.com/images/mgl/6DGgMgOY/s1100/dettaglio-tecnico-red-bull-rb2.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "6f3e14cf14de32b8f284704aba7827955b88672b2d615a52a3c0d0122588552c"
+        },
+        {
+          "url": "https://cdn-9.motorsport.com/images/mgl/0Zq858V6/s1100/dettaglio-tecnico-red-bull-rb2.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "3e9a33e4cf195d93598151228f7b70976c18a3ca921841cd6e5179a7e015dc11"
+        }
+      ]
+    },
+    "aston_martin": {
+      "observations": "Green body with lime accents; elevated inlet shoulders, deep undercut and a triangular airbox. The rear of the visible shoulder descends steeply.",
+      "images": [
+        {
+          "url": "https://cdn-9.motorsport.com/images/mgl/01QNk4r0/s1100/fernando-alonso-aston-martin.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/aston-martin-1.webp",
+          "sha256": "b3cc8723c5d8046ec0f4a9eb55fecaeb6e9813f0054925df60d7c23ed9edcd87"
+        },
+        {
+          "url": "https://cdn-6.motorsport.com/images/mgl/6b8Zl3r2/s1100/lance-stroll-aston-martin-raci.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/aston-martin-2.webp",
+          "sha256": "606e97518acc92ce82165d5470083b13ff2d00a3704d45c6b8de85c5722fea01"
+        },
+        {
+          "url": "https://cdn-1.motorsport.com/images/mgl/0LdeOga0/s1100/lance-stroll-aston-martin-raci.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/aston-martin-6.webp",
+          "sha256": "6ae6ccb4a73ebceceacdee873e77040399c704a6e1878be82a2d2659b5920796"
+        }
+      ],
+      "unresolved": [
+        "hidden floor underside",
+        "rear diffuser channels",
+        "precise suspension hardpoints",
+        "exact wing sections"
+      ]
+    },
+    "alpine": {
+      "observations": "Pink nose and blue body panels; compact rounded airbox and a gently descending sidepod shoulder.",
+      "images": [
+        {
+          "url": "https://cdn-2.motorsport.com/images/mgl/YWKAqdKY/s1100/franco-colapinto-alpine.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/alpine-1.webp",
+          "sha256": "b254451499cfa8e10d941fc2802a85cd9b1aa55eb760f5e3eb49512b87485c63"
+        },
+        {
+          "url": "https://cdn-2.motorsport.com/images/mgl/2GdKOqMY/s1100/franco-colapinto-alpine.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/alpine-2.webp",
+          "sha256": "5d7d3a195a55c82623aa54e5e61182ebd764b69fff0ea3e658cbe545005026c0"
+        },
+        {
+          "url": "https://cdn-1.motorsport.com/images/mgl/63QaKlE2/s1100/franco-colapinto-alpine.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/alpine-4.webp",
+          "sha256": "cad93745e2ee68aec873324a3112cebb4bae2b06bae0d1ad0a75e317f4d97d8d"
+        }
+      ],
+      "unresolved": [
+        "hidden floor underside",
+        "rear diffuser channels",
+        "precise suspension hardpoints",
+        "exact wing sections"
+      ]
+    },
+    "williams": {
+      "observations": "Madrid-specific white body with dark blue/green accents; broad forward nose and fuller sidepod shoulders. This is not the standard blue launch livery.",
+      "images": [
+        {
+          "url": "https://cdn-8.motorsport.com/images/mgl/0Zq853R6/s1100/alexander-albon-williams.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/williams-0.webp",
+          "sha256": "9a4fd1aa6d3d15cb89257c50852776ef80f6d12259bd1036407feba813d291b2"
+        },
+        {
+          "url": "https://cdn-2.motorsport.com/images/mgl/6VyKmB4Y/s1100/carlos-sainz-williams.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/williams-2.webp",
+          "sha256": "6d6204a068cc48fd552b6cb16e3353e359374a39874f311cf37ce325e1804e30"
+        },
+        {
+          "url": "https://cdn-5.motorsport.com/images/mgl/6lmAvx80/s1100/alexander-albon-williams.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/williams-4.webp",
+          "sha256": "591e3750089d7efe0bbe91281727bd0c13759af7fc338e9c91047ae64e484251"
+        }
+      ],
+      "unresolved": [
+        "hidden floor underside",
+        "rear diffuser channels",
+        "precise suspension hardpoints",
+        "exact wing sections"
+      ],
+      "supplementary_detail_images": [
+        {
+          "url": "https://cdn-7.motorsport.com/images/mgl/24QGWGdY/s1100/dettaglio-tecnico-williams-fw4.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "448ce85b92e45d323092cff3ef163b36c678c6379dbd84a5d84542f0eca19160"
+        },
+        {
+          "url": "https://cdn-3.motorsport.com/images/mgl/0LdeOem0/s1100/dettaglio-tecnico-williams-fw4.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "c84e1b6db3fdf8791b2858d3a95f539e8a985721a8756ceff5a0e3b47026c3d6"
+        },
+        {
+          "url": "https://cdn-6.motorsport.com/images/mgl/YWKAqABY/s1100/dettaglio-tecnico-williams-fw4.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "a3384e62f5e725d41d885bc5d8506a84e05f996c03dec88d3b0efe25d0f0b29f"
+        }
+      ]
+    },
+    "haas": {
+      "observations": "White forward body, black lower surfaces and red accents; broad inlet shoulders and a triangular airbox outline.",
+      "images": [
+        {
+          "url": "https://cdn-1.motorsport.com/images/mgl/0LdeOAV0/s1100/esteban-ocon-haas-f1-team.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/haas-0.webp",
+          "sha256": "045e60556003fc463d50c1bbec2679d68bffdf7ee2a665b94d9bcf5fe706b00d"
+        },
+        {
+          "url": "https://cdn-8.motorsport.com/images/mgl/YvKBAw76/s1100/esteban-ocon-haas-f1-team.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/haas-1.webp",
+          "sha256": "59f812a5186fa706cb952919b0d52882557471ab5a18ca832b6c9a1b0c0aa1c8"
+        },
+        {
+          "url": "https://cdn-7.motorsport.com/images/mgl/6O7z8NN6/s1100/esteban-ocon-haas.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/haas-4.webp",
+          "sha256": "3619aa6d55bfa9a8861dd4770fa4af0199d4e1055067cfda2bfac86da04bb987"
+        }
+      ],
+      "unresolved": [
+        "hidden floor underside",
+        "rear diffuser channels",
+        "precise suspension hardpoints",
+        "exact wing sections"
+      ]
+    },
+    "racing_bulls": {
+      "observations": "White forward body and dark blue lower panels with a yellow nose tip; compact inlet shoulder and rounded airbox. Red Bull photographs with incorrect gallery filenames are excluded.",
+      "images": [
+        {
+          "url": "https://cdn-5.motorsport.com/images/mgl/0R7BZqZ2/s1100/arvid-lindblad-racing-bulls.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/racing-bulls-3.webp",
+          "sha256": "1b57dcf97d33a9294c1b95fc44fbac184539cc40ba850c5727d032e83b9a9b0d"
+        },
+        {
+          "url": "https://cdn-4.motorsport.com/images/mgl/24QGWlPY/s1100/arvid-lindblad-racing-bulls.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/racing-bulls-5.webp",
+          "sha256": "8c9f6042dca48e728f64276dc4bd5d3454bddd91aa4ce699ac1766b3166214bb"
+        },
+        {
+          "url": "https://cdn-8.motorsport.com/images/mgl/6n7bjGg0/s1100/arvid-lindblad-racing-bulls.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/racing-bulls-6.webp",
+          "sha256": "a21e973e4e5ad6b741003bd0333eb39e4ac6d6bea3e9d6b5b3afe0e3079a62a3"
+        }
+      ],
+      "unresolved": [
+        "hidden floor underside",
+        "rear diffuser channels",
+        "precise suspension hardpoints",
+        "exact wing sections"
+      ],
+      "supplementary_detail_images": [
+        {
+          "url": "https://cdn-4.motorsport.com/images/mgl/YP74B4B2/s1100/dettaglio-tecnico-racing-bulls.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "687e0e1bb2adffa6bf02247f8718c7f7fb763d851ea987c318233adff705b79a"
+        },
+        {
+          "url": "https://cdn-2.motorsport.com/images/mgl/6n7bjbm0/s1100/dettaglio-tecnico-racing-bulls.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/fotos-jueves-espana-madring-2026/14014/",
+          "observed_at": "2026-09-10",
+          "sha256": "f07baa6ee556fb9a2a394f69e721f378728d310ae64035c3007b5fab76b3f504"
+        }
+      ]
+    },
+    "audi": {
+      "observations": "Dark graphite/silver body and red accents; broad inlet shoulder, sculpted undercut and triangular airbox outline. Unrelated white-car photographs are excluded.",
+      "images": [
+        {
+          "url": "https://cdn-8.motorsport.com/images/mgl/63QaKeJ2/s1100/nico-hulkenberg-audi-f1-team.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/audi-0.webp",
+          "sha256": "0b96559c26362f02fa0e9ce60e64d437a53067470b9784da710a0d2bbac2a7ee"
+        },
+        {
+          "url": "https://cdn-4.motorsport.com/images/mgl/YpbAjoW0/s1100/nico-hulkenberg-audi-f1-team.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/audi-3.webp",
+          "sha256": "f1a447e762c0022a96df67b715d6e85c554729c982b837ecc718f097396f0b39"
+        },
+        {
+          "url": "https://cdn-3.motorsport.com/images/mgl/0rVP7od0/s1100/nico-hulkenberg-audi-f1-team.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/audi-4.webp",
+          "sha256": "f0e98bd2d3dcbf8851801a675109c32640854c12d085cb5c4aa111e0ff375d59"
+        }
+      ],
+      "unresolved": [
+        "hidden floor underside",
+        "rear diffuser channels",
+        "precise suspension hardpoints",
+        "exact wing sections"
+      ]
+    },
+    "cadillac": {
+      "observations": "White and black split livery; broad nose, fuller sidepod shoulders and rounded airbox. Rear and underside detail is poorly resolved in available Madrid photographs.",
+      "images": [
+        {
+          "url": "https://cdn-9.motorsport.com/images/mgl/0LdeOza0/s1100/sergio-perez-cadillac.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/cadillac-0.webp",
+          "sha256": "208347e54ecbd5909def54a5bcb410d2e8661ad294c134ea1d90b61daa323cb9"
+        },
+        {
+          "url": "https://cdn-9.motorsport.com/images/mgl/YE9EONMY/s1100/valtteri-bottas-cadillac.webp",
+          "gallery": "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/",
+          "observed_at": "2026-09-11",
+          "retrieved_at": "2026-09-21",
+          "file": "data/raw/grid-2026-09-21/cadillac-1.webp",
+          "sha256": "41014793d868764821736a0c92051bd53cabc728b4c235f27457f5319578a872"
+        }
+      ],
+      "unresolved": [
+        "hidden floor underside",
+        "rear diffuser channels",
+        "precise suspension hardpoints",
+        "exact wing sections"
+      ]
+    }
+  }
+}

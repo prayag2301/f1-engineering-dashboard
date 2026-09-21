@@ -51,7 +51,7 @@ with `--base-path=''`. Project sites use the repository name as their base path.
 
 ## Export an approved snapshot
 
-Publish both Ferrari and Mercedes baselines in the local studio at
+Publish the baselines for every constructor in the current catalog in the local studio at
 http://127.0.0.1:3000/review after comparing all four views to references.
 Build completion alone does not approve a model. Then export:
 
@@ -104,7 +104,7 @@ storage decision; older history is never silently removed.
 `.github/workflows/deploy-pages.yml` builds on pushes to the new branch and
 `main`, and on pull requests. It runs archive tests, static export, browser
 checks, and checksum validation, then uploads a downloadable static artifact.
-Deployment additionally requires reviewed baselines for both teams and a branch
+Deployment additionally requires reviewed baselines for every constructor in the selected snapshot and a branch
 matching the repository variable `PAGES_DEPLOY_BRANCH`.
 
 This repository already uses GitHub Actions for Pages. After the replacement's
@@ -146,3 +146,14 @@ rendering uses CPU; the interactive viewer uses browser graphics.
 References: [Next.js static exports](https://nextjs.org/docs/14/app/building-your-application/deploying/static-exports),
 [Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages),
 [Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
+
+
+## Full-grid snapshots
+
+The exporter discovers constructors from the API catalog. Every included
+constructor must have a reviewed published release before export. Old two-team
+snapshots remain readable for rollback; unknown constructor keys and mismatched
+catalog/version team sets are rejected. The September full-grid reconstruction
+adds nine Madrid references without removing Ferrari or Mercedes history.
+The weekly hosted workflow creates evidence reports only; it does not move the
+public snapshot pin. See [weekly updates](weekly-updates.md).

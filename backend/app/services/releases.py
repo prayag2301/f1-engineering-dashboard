@@ -593,7 +593,7 @@ def bootstrap_baseline(db, team, *, force_new=False):
         db.flush()
     payload = VersionInput(
         team_key=team,
-        label=f"{info['car_name']} · launch reference",
+        label=f"{info['car_name']} · {info.get('baseline_label', 'launch reference')}",
         configuration_event=info["event"],
         configuration_kind="baseline",
         as_of=info["baseline_date"],
@@ -606,7 +606,7 @@ def bootstrap_baseline(db, team, *, force_new=False):
                 "source_ids": [source.id],
                 "uncertainty": info.get("component_notes", {}).get(
                     name,
-                    "Visible exterior proportions reconstructed from launch photographs; exact dimensions and hidden surfaces are estimated. "
+                    "Visible exterior proportions reconstructed from the dated reference photographs; exact dimensions and hidden surfaces are estimated. "
                     + info["notes"],
                 ),
             }

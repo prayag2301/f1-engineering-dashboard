@@ -60,3 +60,45 @@ This creates and queues an authenticated local draft with four explicit revision
 Carbon twill is an original packed UV texture generated mathematically. Paint, rubber, intake darkness, and magnesium use physically based materials. Studio reflection cards and lights are original; no external HDRI download is required. No licensed team CAD, commercial asset, game model, or scraped sponsor texture is included.
 
 The FIA document URLs constrain the reviewed dimensions only. Team photographs remain external reference media under their owners' rights and are not part of exported scenes.
+
+## Full constructor grid (2026.6)
+
+The catalog now also includes McLaren MCL40, Red Bull RB22, Aston Martin AMR26,
+Alpine A526, Williams FW48, Haas VF-26, Racing Bulls VCARB 03, Audi R26 and
+Cadillac MAC-26. These baselines are dated to Madrid Friday practice on
+11 September, not backdated to launch. The reference audit is in
+`data/references/grid-2026-09-21.json`: selected image URLs, file hashes,
+observations and unresolved areas. Incorrectly labelled/irrelevant gallery
+images were excluded after visual inspection. Photographs remain external
+references and are not embedded in exported models.
+
+Each new constructor has explicit sidepod section stations, nose dimensions,
+airbox outline, fin height, wing parameters and livery colours. Material-free
+shape fingerprints distinguish the models. Shared construction of estimated
+parts is disclosed; these are original exterior estimates, not factory CAD or
+validated aerodynamic simulations. Williams uses the photographed Madrid
+white livery. Cadillac has separate black/white body sides; sponsor graphics
+are omitted throughout. Ferrari and Mercedes retain their existing geometry.
+
+For a native build (including four 1080p previews and four 4K renders):
+
+```sh
+python3 scripts/build_grid.py --teams mclaren audi cadillac \
+  --output data/releases/my-grid-build --blender /path/to/blender \
+  --device METAL --samples 64
+```
+
+Use `--device CPU` on other platforms. Each output directory freezes its
+builder, catalog, regulations and spec; an existing directory is never
+replaced. `--geometry-only` is useful for smoke checks. Run one job by default;
+`--jobs 2` is optional when memory and GPU capacity permit.
+
+A validated native build can be attached to its unfinished draft with
+`python -m app.cli adopt-native VERSION_UUID /mounted/build/directory` inside
+the API container. The importer checks team, parameters, frozen generator,
+component history and every artifact before marking it ready. It refuses
+published/ready versions and builds with an active worker. Four-view review
+and normal publication still follow.
+
+See [weekly intake](../docs/weekly-updates.md) for local scheduling and the
+portable GitHub Actions report.

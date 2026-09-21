@@ -79,16 +79,15 @@ def validate_geometry(path, regulation_path=None):
     ):
         raise ValueError("Car proportions are invalid.")
     tyre_centres = {}
+    nose_points = []
     for node in scene.graph.nodes_geometry:
         transform, geom_name = scene.graph[node]
         geom = scene.geometry[geom_name].copy()
         geom.apply_transform(transform)
-        if (
-            node.startswith("nose.")
-            and "impact_structure" in node
-            and (geom.extents[2] < geom.extents[1] * 2 or geom.bounds[:, 2].mean() > -1)
-        ):
-            raise ValueError("Nose must be longitudinal and point toward negative Z.")
+        if node.startswith("nose.") and "impact_structure" in node:
+            # glTF splits one mesh into primitives at material boundaries (e.g.
+            # a yellow nose tip). Validate the complete impact structure.
+            nose_points.extend(geom.vertices)
         if (
             node.startswith("wheels.")
             and "_tyre" in node
@@ -102,6 +101,12 @@ def validate_geometry(path, regulation_path=None):
             and abs(geom.vertices[:, 0]).max() > rules["max_body_half_width"] + 0.001
         ):
             raise ValueError("Body exceeds FIA C2.3.1 half-width envelope.")
+    if not nose_points:
+        raise ValueError("Nose impact structure is missing.")
+    nose_bounds = np.array([np.min(nose_points, axis=0), np.max(nose_points, axis=0)])
+    nose_extents = nose_bounds[1] - nose_bounds[0]
+    if nose_extents[2] < nose_extents[1] * 2 or nose_bounds[:, 2].mean() > -1:
+        raise ValueError("Nose must be longitudinal and point toward negative Z.")
     if len(tyre_centres) != 4:
         raise ValueError("Exactly four grounded tyre assemblies are required.")
     wheelbase = max(p[2] for p in tyre_centres.values()) - min(

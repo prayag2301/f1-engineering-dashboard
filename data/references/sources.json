@@ -33,6 +33,74 @@
       "kind": "feed",
       "url": "https://www.the-race.com/rss/",
       "limit": 8
+    },
+    {
+      "team_key": "mclaren",
+      "kind": "index",
+      "url": "https://www.mclaren.com/racing/news/",
+      "link_pattern": "/racing/formula-1/2026/.*(grand-prix|race-report|technical|upgrad|livery|gallery|spotted)",
+      "limit": 5
+    },
+    {
+      "team_key": "red_bull",
+      "kind": "index",
+      "url": "https://www.redbullracing.com/int-en",
+      "link_pattern": "(technical|upgrad|race-report|grand-prix|gallery|livery)",
+      "limit": 5
+    },
+    {
+      "team_key": "aston_martin",
+      "kind": "index",
+      "url": "https://www.astonmartinf1.com/en-GB/news/gallery",
+      "link_pattern": "/news/gallery/.+",
+      "limit": 5
+    },
+    {
+      "team_key": "alpine",
+      "kind": "index",
+      "url": "https://www.alpinef1.com/news",
+      "link_pattern": "/news/.*(grand-prix|race|technical|upgrad|gallery)",
+      "limit": 5
+    },
+    {
+      "team_key": "williams",
+      "kind": "index",
+      "url": "https://www.williamsf1.com/photos",
+      "link_pattern": "/posts/",
+      "limit": 5
+    },
+    {
+      "team_key": "haas",
+      "kind": "index",
+      "url": "https://www.haasf1team.com/news",
+      "link_pattern": "(grand-prix|technical|upgrad|gallery)",
+      "limit": 5
+    },
+    {
+      "team_key": "racing_bulls",
+      "kind": "index",
+      "url": "https://www.visacashapprb.com/int-en/news",
+      "link_pattern": "(grand-prix|technical|upgrad|livery|race-report|gallery)",
+      "limit": 5
+    },
+    {
+      "team_key": "audi",
+      "kind": "index",
+      "url": "https://contenthub.audif1.com/en",
+      "link_pattern": "/en/(news|press-releases)/",
+      "limit": 5
+    },
+    {
+      "team_key": "cadillac",
+      "kind": "index",
+      "url": "https://www.cadillacf1team.com/news",
+      "link_pattern": "(grand-prix|technical|upgrad|gallery)",
+      "limit": 5
     }
-  ]
+  ],
+  "schedule": {
+    "local": "Monday 10:00",
+    "timezone": "Europe/Berlin",
+    "publication": "Evidence inbox only; geometry requires reference review."
+  }
 }
