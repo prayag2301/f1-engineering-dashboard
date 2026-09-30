@@ -120,51 +120,68 @@ async function snapshot(page: Page) {
   return (await page.request.get(`${prefix}/archive/index.json`)).json();
 }
 
-test("dashboard uses published counts, switches car previews and retains section navigation", async ({
+test("race week home lists every car, and four tabs group the sections", async ({
   page,
 }) => {
   const data = await snapshot(page);
   await page.goto(`${prefix}/`);
-  await expect(
-    page.getByRole("heading", { name: "Engineering dashboard." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Race week." })).toBeVisible();
   await expect(page.locator(".d-stat").nth(1).locator("strong")).toHaveText(
     String(Object.values(data.versions).flat().length).padStart(2, "0"),
   );
-  await page.getByRole("button", { name: "Mercedes", exact: true }).click();
-  await expect(
-    page.getByRole("link", { name: "Inspect Mercedes in 3D" }),
-  ).toHaveAttribute("href", `${prefix}/car/mercedes/`);
-  await expect(page.locator(".d-poster-link img")).toHaveAttribute(
-    "alt",
-    /W17/,
+  await expect(page.locator(".d-grid-car")).toHaveCount(
+    Object.keys(data.catalog.teams).length,
   );
+  await expect(
+    page.getByRole("link", { name: /^Inspect Mercedes W17 in 3D/ }),
+  ).toHaveAttribute("href", `${prefix}/car/mercedes/`);
   await page
     .getByLabel("Filter development log by team")
     .selectOption("mercedes");
   for (const row of await page.locator(".d-release-row").all())
     await expect(row.locator(".d-team-label")).toHaveText("Mercedes");
+
   const navigation = page.getByRole("navigation", { name: "Main navigation" });
-  for (const section of [
-    "Dashboard",
+  await expect(navigation.getByRole("link")).toHaveText([
+    "Race Week",
     "Cars",
-    "Teams",
-    "Upgrades",
     "Compare",
-    "Performance",
-    "Evidence",
-    "Analyze",
-  ])
-    await expect(
-      navigation.getByRole("link", { name: section, exact: true }),
-    ).toBeVisible();
-  await navigation.getByRole("link", { name: "Cars", exact: true }).click();
+    "Development",
+  ]);
+  await navigation.getByRole("link", { name: "Development" }).click();
   await expect(
-    page.getByRole("heading", { name: "The car. The changes." }),
+    page.getByRole("heading", { name: "Follow the changes." }),
   ).toBeVisible();
+  const development = page.getByRole("navigation", {
+    name: "Development pages",
+  });
+  await expect(development.getByRole("link")).toHaveText([
+    "Change log",
+    "Performance",
+    "Sources",
+    "Analyze",
+  ]);
+  await development.getByRole("link", { name: "Sources" }).click();
   await expect(
-    navigation.getByRole("link", { name: "Cars", exact: true }),
+    navigation.getByRole("link", { name: "Development" }),
   ).toHaveAttribute("aria-current", "page");
+  await expect(
+    development.getByRole("link", { name: "Sources" }),
+  ).toHaveAttribute("aria-current", "page");
+
+  // The car page keeps the main navigation and the team follows the URL.
+  await page.goto(`${prefix}/car/ferrari/`);
+  await expect(navigation.getByRole("link", { name: "Cars" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await page.getByRole("tab", { name: /Mercedes/ }).click();
+  await expect(page).toHaveURL(new RegExp(`${prefix}/car/mercedes/$`));
+  await page.goto(`${prefix}/models/?team=mercedes`);
+  await expect(page.getByRole("tab", { name: /Mercedes/ })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
 });
 
 test("development filters distinguish reconstructions from upgrade reports", async ({
@@ -376,9 +393,9 @@ test("dashboard recovers from a failed snapshot and handles an empty archive", a
   );
   fail = false;
   await page.getByRole("button", { name: "Try again" }).click();
-  await expect(
-    page.getByRole("heading", { name: "No published model yet" }),
-  ).toBeVisible();
+  await expect(page.locator(".d-grid-car").first()).toContainText(
+    "No release yet",
+  );
   await expect(
     page.getByRole("heading", { name: "The development log is empty" }),
   ).toBeVisible();

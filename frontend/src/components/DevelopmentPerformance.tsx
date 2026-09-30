@@ -41,7 +41,7 @@ export default function DevelopmentPerformance() {
         <>
           <div className="d-performance-grid">
             <section>
-              <SectionHeading number="01" title="Development activity" />
+              <SectionHeading title="Development activity" />
               <div className="d-panel d-chart-panel">
                 <div className="d-segmented">
                   <button
@@ -89,7 +89,7 @@ export default function DevelopmentPerformance() {
               </div>
             </section>
             <section>
-              <SectionHeading number="02" title="Lap-time impact" />
+              <SectionHeading title="Lap-time impact" />
               <div className="d-timing-panel">
                 <span className="d-badge">TIMING DATA UNAVAILABLE</span>
                 <h2>
@@ -122,7 +122,6 @@ export default function DevelopmentPerformance() {
             </section>
           </div>
           <SectionHeading
-            number="03"
             title="Constructor comparison"
             href="/compare"
             action="Inspect differences"

@@ -47,9 +47,7 @@ export default function UpgradeAnalyzer() {
           }}
         >
           <div className="d-section-heading">
-            <h2>
-              <span>01</span>The observation
-            </h2>
+            <h2>The observation</h2>
             <span className="d-badge">TEXT ANALYSIS</span>
           </div>
           <label htmlFor="upgrade-description">
@@ -106,9 +104,7 @@ export default function UpgradeAnalyzer() {
           aria-live="polite"
         >
           <div className="d-section-heading">
-            <h2>
-              <span>02</span>The interpretation
-            </h2>
+            <h2>The interpretation</h2>
           </div>
           {result === null ? (
             <div className="d-analysis-intro">

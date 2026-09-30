@@ -4,19 +4,39 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { staticArchive } from "@/lib/archive";
 
-const sections = [
-  ["/", "Dashboard"],
-  ["/models", "Cars"],
-  ["/teams", "Teams"],
-  ["/upgrades", "Upgrades"],
-  ["/compare", "Compare"],
-  ["/performance", "Performance"],
-  ["/evidence", "Evidence"],
-  ["/analyze", "Analyze"],
+// Each tab owns a group of routes; tabs with more than one page show sub-tabs.
+const sections: { label: string; pages: [string, string][] }[] = [
+  { label: "Race Week", pages: [["/", "Race Week"]] },
+  {
+    label: "Cars",
+    pages: [
+      ["/models", "3D explorer"],
+      ["/teams", "All teams"],
+    ],
+  },
+  { label: "Compare", pages: [["/compare", "Compare"]] },
+  {
+    label: "Development",
+    pages: [
+      ["/upgrades", "Change log"],
+      ["/performance", "Performance"],
+      ["/evidence", "Sources"],
+      ["/analyze", "Analyze"],
+    ],
+  },
 ];
 
 export default function DashboardNav() {
   const pathname = usePathname().replace(/\/$/, "") || "/";
+  const current =
+    sections.find((s) =>
+      s.pages.some(([href]) => href !== "/" && pathname.startsWith(href)),
+    ) ??
+    (pathname.startsWith("/car/")
+      ? sections[1]
+      : pathname === "/"
+        ? sections[0]
+        : undefined);
   return (
     <>
       <a className="d-skip" href="#main-content">
@@ -36,21 +56,29 @@ export default function DashboardNav() {
         </div>
       </header>
       <nav className="d-nav" aria-label="Main navigation">
-        {sections.map(([href, label], index) => (
+        {sections.map((section) => (
           <Link
-            key={href}
-            href={href}
-            aria-current={pathname === href ? "page" : undefined}
+            key={section.label}
+            href={section.pages[0][0]}
+            aria-current={section === current ? "page" : undefined}
           >
-            {index === 0 && (
-              <span className="d-nav-symbol" aria-hidden="true">
-                ▦
-              </span>
-            )}
-            {label}
+            {section.label}
           </Link>
         ))}
       </nav>
+      {current && current.pages.length > 1 && (
+        <nav className="d-subnav" aria-label={`${current.label} pages`}>
+          {current.pages.map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              aria-current={pathname === href ? "page" : undefined}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+      )}
     </>
   );
 }

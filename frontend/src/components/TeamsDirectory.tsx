@@ -85,7 +85,6 @@ export default function TeamsDirectory() {
           {teams.length > 0 && (
             <>
               <SectionHeading
-                number="01"
                 title="Constructor models"
                 href="/compare"
                 action="Compare cars"
@@ -169,7 +168,7 @@ export default function TeamsDirectory() {
           )}
           {otherTeams.length > 0 && (
             <>
-              <SectionHeading number="02" title="Constructor directory" />
+              <SectionHeading title="Constructor directory" />
               <p className="d-section-note">
                 These constructors are retained from the original dashboard
                 directory. A reviewed 3D reconstruction is not yet available.

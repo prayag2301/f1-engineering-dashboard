@@ -66,22 +66,17 @@ export function EmptyState({
 }
 
 export function SectionHeading({
-  number,
   title,
   href,
   action,
 }: {
-  number: string;
   title: string;
   href?: string;
   action?: string;
 }) {
   return (
     <div className="d-section-heading">
-      <h2>
-        <span>{number}</span>
-        {title}
-      </h2>
+      <h2>{title}</h2>
       {href && (
         <Link className="text-link" href={href}>
           {action ?? "Explore"} ↗

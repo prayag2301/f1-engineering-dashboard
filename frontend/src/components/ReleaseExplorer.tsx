@@ -62,6 +62,22 @@ export default function ReleaseExplorer({
     start: true,
     end: true,
   });
+  // The selected team lives in the URL so reloads, back and shared links keep it.
+  useEffect(() => {
+    const key = new URLSearchParams(window.location.search).get("team");
+    if (TEAM_KEYS.includes(key as TeamKey)) setTeam(key as TeamKey);
+  }, []);
+  function selectTeam(key: TeamKey) {
+    setTeam(key);
+    const { pathname } = window.location;
+    window.history.replaceState(
+      window.history.state,
+      "",
+      /\/car\/[^/]+/.test(pathname)
+        ? pathname.replace(/\/car\/[^/]+/, `/car/${key}`)
+        : `?team=${key}`,
+    );
+  }
   // Each constructor starts with an independent orbit history.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const bus = useMemo(() => createCameraBus(), [team]);
@@ -243,7 +259,7 @@ export default function ReleaseExplorer({
                               keys.length) %
                               keys.length
                           ];
-                  setTeam(next);
+                  selectTeam(next);
                   (
                     event.currentTarget.parentElement?.querySelector(
                       `[data-team="${next}"]`,
@@ -251,7 +267,7 @@ export default function ReleaseExplorer({
                   )?.focus();
                 }
               }}
-              onClick={() => setTeam(key)}
+              onClick={() => selectTeam(key)}
               className={team === key ? "team-tab active" : "team-tab"}
             >
               <span
