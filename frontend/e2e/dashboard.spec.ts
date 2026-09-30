@@ -1,6 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import { analyzeDescription } from "../src/lib/upgrade-analysis";
+import { parseStandings } from "../src/lib/standings";
 import {
+  countdown,
+  isRaceDay,
   currentWeekend,
   nextPollDelay,
   sessionStatus,
@@ -97,7 +100,90 @@ const openF1 = {
   ],
 };
 
+const driver = (
+  position: number,
+  given: string,
+  family: string,
+  points: number,
+  wins: number,
+  ...teams: [string, string][]
+) => ({
+  position: String(position),
+  points: String(points),
+  wins: String(wins),
+  Driver: { givenName: given, familyName: family, code: family.slice(0, 3) },
+  Constructors: teams.map(([constructorId, name]) => ({ constructorId, name })),
+});
+const jolpica = {
+  drivers: {
+    MRData: {
+      StandingsTable: {
+        season: "2026",
+        StandingsLists: [
+          {
+            round: "15",
+            DriverStandings: Array.from({ length: 12 }, (_, i) =>
+              i === 0
+                ? driver(1, "Andrea Kimi", "Antonelli", 302, 8, [
+                    "mercedes",
+                    "Mercedes",
+                  ])
+                : i === 1
+                  ? driver(
+                      2,
+                      "Liam",
+                      "Lawson",
+                      120,
+                      0,
+                      ["red_bull", "Red Bull"],
+                      ["rb", "RB F1 Team"],
+                    )
+                  : driver(i + 1, "Driver", `Number${i + 1}`, 100 - i, 0, [
+                      "haas",
+                      "Haas F1 Team",
+                    ]),
+            ),
+          },
+        ],
+      },
+    },
+  },
+  constructors: {
+    MRData: {
+      StandingsTable: {
+        season: "2026",
+        StandingsLists: [
+          {
+            round: "15",
+            ConstructorStandings: [
+              {
+                position: "1",
+                points: "538",
+                wins: "9",
+                Constructor: { constructorId: "mercedes", name: "Mercedes" },
+              },
+              {
+                position: "2",
+                points: "83",
+                wins: "0",
+                Constructor: { constructorId: "rb", name: "RB F1 Team" },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+};
+
 test.beforeEach(async ({ page }) => {
+  await page.route("https://api.jolpi.ca/**", (route) =>
+    route.fulfill({
+      json: route.request().url().includes("driverstandings")
+        ? jolpica.drivers
+        : jolpica.constructors,
+    }),
+  );
   await page.route("https://api.openf1.org/v1/*", (route) =>
     route.fulfill({
       json: route.request().url().includes("/meetings")
@@ -478,4 +564,69 @@ test("race weekend panel shows the live session and keeps retrying quietly", asy
   await expect(panel).toContainText("Still updating the race calendar");
   await expect(panel.getByRole("button", { name: "Retry" })).toBeVisible();
   await expect(panel.getByRole("alert")).toHaveCount(0);
+});
+
+test("countdown keeps seconds and race day follows the circuit's date", () => {
+  expect(countdown(93_784_000)).toBe("1d 02:03:04");
+  expect(countdown(3_723_000)).toBe("01:02:03");
+  expect(countdown(-5)).toBe("00:00:00");
+  const race = openF1.sessions.find((s) => s.session_name === "Race")!;
+  // Race: 26 Sept 11:00 UTC at UTC+4. 21:00 UTC on the 25th is already the 26th in Baku.
+  expect(isRaceDay(race, Date.parse("2026-09-25T21:00:00Z"))).toBe(true);
+  expect(isRaceDay(race, Date.parse("2026-09-25T19:00:00Z"))).toBe(false);
+  expect(isRaceDay(undefined, Date.now())).toBe(false);
+});
+
+test("race day shows a live lights-out countdown", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-09-26T08:00:00Z"));
+  await page.goto(`${prefix}/`);
+  const clock = page.locator(".d-weekend-clock");
+  await expect(clock).toContainText("RACE DAY · Lights out in");
+  await expect(clock.locator("strong")).toHaveText("03:00:00");
+  await page.clock.setFixedTime(new Date("2026-09-26T08:00:05Z"));
+  await expect(clock.locator("strong")).toHaveText("02:59:55");
+});
+
+test("standings map Jolpica teams and use each driver's latest team", () => {
+  const standings = parseStandings(jolpica.drivers, jolpica.constructors, 1);
+  expect(standings.round).toBe(15);
+  expect(standings.drivers[0]).toMatchObject({
+    name: "Andrea Kimi Antonelli",
+    points: 302,
+    wins: 8,
+    teamKey: "mercedes",
+  });
+  expect(standings.drivers[1]).toMatchObject({
+    team: "RB F1 Team",
+    teamKey: "racing_bulls",
+  });
+  expect(standings.constructors[1].teamKey).toBe("racing_bulls");
+});
+
+test("dashboard shows both championships and keeps retrying quietly", async ({
+  page,
+}) => {
+  await page.goto(`${prefix}/`);
+  const section = page.getByRole("region", { name: "Championship standings" });
+  await expect(section).toContainText("2026 · after round 15");
+  const drivers = section.getByRole("table", { name: "Drivers' championship" });
+  await expect(drivers.locator("tbody tr")).toHaveCount(10);
+  await expect(drivers.locator("tbody tr").first()).toContainText(
+    "Andrea Kimi Antonelli",
+  );
+  await section.getByText("Show all 12 drivers").click();
+  await expect(
+    section.getByRole("table", { name: "Drivers' championship, continued" }),
+  ).toBeVisible();
+  await expect(
+    section.getByRole("table", { name: "Constructors' championship" }),
+  ).toContainText("538");
+
+  await page.evaluate(() => localStorage.clear());
+  await page.route("https://api.jolpi.ca/**", (route) =>
+    route.fulfill({ status: 503, body: "Unavailable" }),
+  );
+  await page.reload();
+  await expect(section).toContainText("Still updating the standings");
+  await expect(section.getByRole("button", { name: "Retry" })).toBeVisible();
 });

@@ -153,7 +153,14 @@ export function countdown(ms: number) {
   const h = Math.floor((s % 86_400) / 3600);
   const m = Math.floor((s % 3600) / 60);
   const pad = (n: number) => String(n).padStart(2, "0");
-  return d
-    ? `${d}d ${pad(h)}h ${pad(m)}m`
-    : `${pad(h)}:${pad(m)}:${pad(s % 60)}`;
+  const clock = `${pad(h)}:${pad(m)}:${pad(s % 60)}`;
+  return d ? `${d}d ${clock}` : clock;
+}
+
+// Race day is the race's calendar date at the circuit, not in the viewer's zone.
+export function isRaceDay(race: Session | undefined, now: number) {
+  if (!race) return false;
+  const day = (ms: number) =>
+    new Date(ms + offsetMs(race.gmt_offset)).toISOString().slice(0, 10);
+  return day(now) === day(time(race.date_start));
 }

@@ -11,6 +11,7 @@ import {
 } from "@/lib/dashboard";
 import { dateLabel, type TeamKey } from "@/lib/releases";
 import RaceWeekend from "./RaceWeekend";
+import Standings from "./Standings";
 import {
   DataState,
   EmptyState,
@@ -38,6 +39,14 @@ export default function EngineeringDashboard() {
         </Link>
       </PageHeading>
       <RaceWeekend />
+      <Standings
+        accents={Object.fromEntries(
+          Object.entries(data?.catalog.teams ?? {}).map(([key, info]) => [
+            key,
+            info.accent,
+          ]),
+        )}
+      />
       {!data ? (
         <DataState error={error} retry={retry} />
       ) : (

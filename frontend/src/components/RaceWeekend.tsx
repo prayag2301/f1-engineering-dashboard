@@ -9,6 +9,7 @@ import {
   countdown,
   currentWeekend,
   fetchSchedule,
+  isRaceDay,
   localTime,
   nextPollDelay,
   sessionStatus,
@@ -106,6 +107,9 @@ export default function RaceWeekend() {
   const { meeting, sessions } = weekend;
   const live = sessions.find((s) => sessionStatus(s, now) === "live");
   const next = sessions.find((s) => sessionStatus(s, now) === "upcoming");
+  const race = sessions.find((s) => s.session_name === "Race");
+  const raceUpcoming = race && sessionStatus(race, now) === "upcoming";
+  const lightsOut = raceUpcoming && isRaceDay(race, now);
   return (
     <section className="d-weekend" aria-label="Race weekend">
       <div className="d-weekend-head">
@@ -120,7 +124,9 @@ export default function RaceWeekend() {
             {meeting.circuit_short_name} · {meeting.country_name}
           </p>
         </div>
-        <div className={`d-weekend-clock${live ? " is-live" : ""}`}>
+        <div
+          className={`d-weekend-clock${live ? " is-live" : ""}${lightsOut && !live ? " is-race-day" : ""}`}
+        >
           {live ? (
             <>
               <span>
@@ -129,11 +135,22 @@ export default function RaceWeekend() {
               <strong>{countdown(Date.parse(live.date_end) - now)}</strong>
               <small>Scheduled to end</small>
             </>
+          ) : lightsOut ? (
+            <>
+              <span>RACE DAY · Lights out in</span>
+              <strong>{countdown(Date.parse(race.date_start) - now)}</strong>
+              <small>{localTime(race.date_start)} your time</small>
+            </>
           ) : next ? (
             <>
               <span>{next.session_name} starts in</span>
               <strong>{countdown(Date.parse(next.date_start) - now)}</strong>
-              <small>{localTime(next.date_start)} your time</small>
+              <small>
+                {localTime(next.date_start)} your time
+                {raceUpcoming && next !== race && (
+                  <> · Race in {countdown(Date.parse(race.date_start) - now)}</>
+                )}
+              </small>
             </>
           ) : (
             <>

@@ -225,6 +225,12 @@
   color: #85959f;
   font-size: 10px;
 }
+.d-weekend-clock.is-race-day span {
+  color: #c9efe3;
+}
+.d-weekend-clock.is-race-day strong {
+  font-size: 40px;
+}
 .d-weekend-clock.is-live span {
   color: #ff6b74;
 }
@@ -309,6 +315,62 @@
 }
 .d-weekend button:disabled {
   opacity: 0.4;
+}
+.d-standings {
+  margin-bottom: 30px;
+}
+.d-standings-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.d-table.d-standings-table th,
+.d-table.d-standings-table td {
+  padding: 10px 16px;
+}
+.d-standings-table td:first-child,
+.d-standings-table th:first-child {
+  width: 36px;
+  color: #85959f;
+  font-variant-numeric: tabular-nums;
+}
+.d-standings-table td:nth-child(n + 3),
+.d-standings-table th:nth-child(n + 3) {
+  text-align: right;
+  width: 48px;
+  font-variant-numeric: tabular-nums;
+}
+.d-standings-table td small {
+  display: block;
+  margin: 3px 0 0 13px;
+  font-size: 10px;
+  color: #738994;
+}
+.d-standings-table b {
+  font-weight: 500;
+}
+.d-standings details {
+  border-top: 1px solid var(--line);
+}
+.d-standings summary {
+  padding: 10px 16px;
+  font-size: 10px;
+  color: #b8e1d6;
+  cursor: pointer;
+  background: #121b22;
+}
+.d-standings-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 0;
+  font-size: 10px;
+  color: #85959f;
+}
+.d-standings-foot button {
+  font-size: 10px;
+  padding: 4px 10px;
 }
 .d-grid-cars {
   display: grid;
@@ -1087,6 +1149,9 @@
   }
 }
 @media (max-width: 800px) {
+  .d-standings-grid {
+    grid-template-columns: 1fr;
+  }
   .d-weekend-head {
     flex-direction: column;
   }
