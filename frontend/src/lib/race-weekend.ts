@@ -43,6 +43,7 @@ export interface Weekend {
   sprint: boolean;
   sessions: Session[];
   raceWeek: boolean;
+  previous?: Meeting;
 }
 
 export class RateLimited extends Error {
@@ -81,6 +82,7 @@ export function currentWeekend(
     sessions,
     // Race week runs from the Monday before the first session.
     raceWeek: now >= time(meeting.date_start) - 4 * 86_400_000,
+    previous: races[index - 1],
   };
 }
 

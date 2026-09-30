@@ -526,6 +526,7 @@ test("race weekend skips testing and cancelled rounds and derives session status
   expect(weekend.round).toBe(2);
   expect(weekend.sprint).toBe(true);
   expect(weekend.raceWeek).toBe(true);
+  expect(weekend.previous?.meeting_name).toBe("Australian Grand Prix");
   expect(
     weekend.sessions.map((s) => sessionStatus(s, at("2026-09-25T12:30:00Z"))),
   ).toEqual(["finished", "finished", "finished", "live", "upcoming"]);
@@ -629,4 +630,58 @@ test("dashboard shows both championships and keeps retrying quietly", async ({
   await page.reload();
   await expect(section).toContainText("Still updating the standings");
   await expect(section.getByRole("button", { name: "Retry" })).toBeVisible();
+});
+
+test("home highlights configurations from the current or previous Grand Prix", async ({
+  page,
+}) => {
+  const data = await snapshot(page);
+  const madrid = (
+    Object.values(data.versions).flat() as { configuration_event: string }[]
+  ).filter((v) => v.configuration_event.startsWith("Spanish Grand Prix"));
+  await page.route("https://api.openf1.org/v1/*", (route) =>
+    route.fulfill({
+      json: route.request().url().includes("/meetings")
+        ? [
+            {
+              ...openF1.meetings[3],
+              meeting_key: 9,
+              meeting_name: "Spanish Grand Prix",
+              date_start: "2026-09-11T11:30:00Z",
+              date_end: "2026-09-13T15:00:00Z",
+            },
+            openF1.meetings[3],
+          ]
+        : openF1.sessions,
+    }),
+  );
+  await page.clock.setFixedTime(new Date("2026-09-22T12:00:00Z"));
+  await page.goto(`${prefix}/`);
+  const block = page.getByRole("region", {
+    name: "Changes from the Spanish Grand Prix",
+  });
+  await expect(
+    block.getByRole("heading", { name: "From the Spanish Grand Prix" }),
+  ).toBeVisible();
+  await expect(block.locator(".d-release-row")).toHaveCount(
+    Math.min(3, madrid.length),
+  );
+  await block.getByRole("link", { name: `All ${madrid.length}` }).click();
+  await expect(page.getByLabel("Event / configuration")).toHaveValue(
+    "Spanish Grand Prix / Madrid Friday practice",
+  );
+  await expect(page.locator(".d-release-row")).toHaveCount(madrid.length);
+});
+
+test("home hides the Grand Prix block when nothing matches", async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date("2026-09-25T12:30:00Z"));
+  await page.goto(`${prefix}/`);
+  await expect(
+    page.getByRole("heading", { name: "Azerbaijan Grand Prix" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^From the / })).toHaveCount(
+    0,
+  );
 });

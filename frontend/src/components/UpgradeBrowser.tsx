@@ -17,6 +17,7 @@ export default function UpgradeBrowser() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("type") === "reports") setKind("reports");
     setComponent(params.get("component") ?? "all");
+    setEvent(params.get("event") ?? "all");
   }, []);
   const events = [
     ...new Set(

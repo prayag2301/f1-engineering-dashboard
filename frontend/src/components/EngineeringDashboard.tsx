@@ -23,6 +23,17 @@ import {
 export default function EngineeringDashboard() {
   const { data, error, retry } = useDashboardData();
   const [feedTeam, setFeedTeam] = useState("all");
+  const [meetings, setMeetings] = useState<string[]>([]);
+  // Configurations observed at the current or previous Grand Prix.
+  const fromWeekend = meetings
+    .map((name) => ({
+      name,
+      versions:
+        data?.versions.filter(
+          (v) => v.configuration_event.split(" / ")[0] === name,
+        ) ?? [],
+    }))
+    .find((m) => m.versions.length);
   const feed =
     data?.versions.filter(
       (v) => feedTeam === "all" || v.team_key === feedTeam,
@@ -38,7 +49,7 @@ export default function EngineeringDashboard() {
           Compare cars <span aria-hidden="true">↗</span>
         </Link>
       </PageHeading>
-      <RaceWeekend />
+      <RaceWeekend onMeetings={setMeetings} />
       <Standings
         accents={Object.fromEntries(
           Object.entries(data?.catalog.teams ?? {}).map(([key, info]) => [
@@ -128,6 +139,28 @@ export default function EngineeringDashboard() {
               })}
             </div>
           </section>
+
+          {fromWeekend && (
+            <section
+              className="d-log"
+              aria-label={`Changes from the ${fromWeekend.name}`}
+            >
+              <SectionHeading
+                title={`From the ${fromWeekend.name}`}
+                href={`/upgrades?event=${encodeURIComponent(fromWeekend.versions[0].configuration_event)}`}
+                action={`All ${fromWeekend.versions.length}`}
+              />
+              <div className="d-panel">
+                {fromWeekend.versions.slice(0, 3).map((version) => (
+                  <ReleaseCard
+                    key={version.id}
+                    version={version}
+                    catalog={data.catalog}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
 
           <div className="d-log">
             <section>

@@ -19,7 +19,12 @@ import {
 
 const RETRY_COOLDOWN_MS = 10_000;
 
-export default function RaceWeekend() {
+export default function RaceWeekend({
+  onMeetings,
+}: {
+  // Receives the current and previous Grand Prix names, newest first.
+  onMeetings?: (names: string[]) => void;
+}) {
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [updating, setUpdating] = useState(false);
   const [now, setNow] = useState<number | null>(null);
@@ -78,8 +83,18 @@ export default function RaceWeekend() {
     };
   }, [attempt]);
 
+  const weekend =
+    schedule && now !== null ? currentWeekend(schedule, now) : null;
+  const meetingNames = weekend
+    ? [weekend.meeting.meeting_name, weekend.previous?.meeting_name]
+        .filter(Boolean)
+        .join("|")
+    : "";
+  useEffect(() => {
+    onMeetings?.(meetingNames ? meetingNames.split("|") : []);
+  }, [meetingNames, onMeetings]);
+
   if (now === null) return null;
-  const weekend = schedule && currentWeekend(schedule, now);
   const retry = (
     <button
       type="button"
@@ -185,7 +200,7 @@ export default function RaceWeekend() {
         ) : (
           <span>
             Times from OpenF1 · refreshed{" "}
-            {new Date(schedule.fetchedAt).toLocaleTimeString(undefined, {
+            {new Date(schedule?.fetchedAt ?? now).toLocaleTimeString(undefined, {
               hour: "2-digit",
               minute: "2-digit",
             })}
