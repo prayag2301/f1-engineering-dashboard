@@ -14,8 +14,9 @@ export default function UpgradeBrowser() {
   const [event, setEvent] = useState("all");
   const [kind, setKind] = useState("all");
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("type") === "reports")
-      setKind("reports");
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("type") === "reports") setKind("reports");
+    setComponent(params.get("component") ?? "all");
   }, []);
   const events = [
     ...new Set(

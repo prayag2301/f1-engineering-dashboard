@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { collectEvidence, teamName } from "@/lib/dashboard";
@@ -13,6 +13,11 @@ export default function EvidenceBrowser() {
   const [component, setComponent] = useState("all");
   const [type, setType] = useState("all");
   const [query, setQuery] = useState("");
+  useEffect(() => {
+    setComponent(
+      new URLSearchParams(window.location.search).get("component") ?? "all",
+    );
+  }, []);
   const evidence = data ? collectEvidence(data.versions) : [];
   const types = [...new Set(evidence.map((e) => e.source.source_type))];
   // Apply constructor and component filters to the same release relationship.

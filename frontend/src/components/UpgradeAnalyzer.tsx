@@ -3,13 +3,26 @@
 import { useState } from "react";
 import Link from "next/link";
 import { analyzeDescription } from "@/lib/upgrade-analysis";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { changedComponents, teamName } from "@/lib/dashboard";
 import { EmptyState, PageHeading } from "./DashboardUI";
 
 export default function UpgradeAnalyzer() {
   const [description, setDescription] = useState("");
   const [detail, setDetail] = useState("");
-  const [effect, setEffect] = useState("");
-  const [source, setSource] = useState("");
+  const { data } = useDashboardData();
+  // Constructors with a published change to an archive component.
+  const teamsChanging = (component: string) => [
+    ...new Set(
+      data?.versions
+        .filter(
+          (v) =>
+            changedComponents(v).includes(component) ||
+            v.manifest.changes.some((c) => c.component === component),
+        )
+        .map((v) => teamName(v.team_key)),
+    ),
+  ];
   const [result, setResult] = useState<ReturnType<
     typeof analyzeDescription
   > | null>(null);
@@ -59,8 +72,6 @@ export default function UpgradeAnalyzer() {
                 "Revised front wing endplate geometry to alter outwash and improve downstream flow consistency.",
               );
               setDetail("");
-              setEffect("");
-              setSource("");
               setResult(null);
             }}
           >
@@ -77,26 +88,6 @@ export default function UpgradeAnalyzer() {
               onChange={(e) => edit(setDetail, e.target.value)}
             />
           </label>
-          <div className="d-form-row">
-            <label htmlFor="expected-effect">
-              Claimed effect <span className="d-optional">Optional</span>
-              <input
-                id="expected-effect"
-                placeholder="e.g. More stable front balance"
-                value={effect}
-                onChange={(e) => edit(setEffect, e.target.value)}
-              />
-            </label>
-            <label htmlFor="source-reference">
-              Source <span className="d-optional">Optional</span>
-              <input
-                id="source-reference"
-                placeholder="Publisher or reference URL"
-                value={source}
-                onChange={(e) => edit(setSource, e.target.value)}
-              />
-            </label>
-          </div>
           <button
             className="button primary"
             type="submit"
@@ -105,8 +96,8 @@ export default function UpgradeAnalyzer() {
             Analyze upgrade <span aria-hidden="true">↗</span>
           </button>
           <p className="d-form-note">
-            Interprets keywords in your text locally. It does not fetch the
-            source, validate a claim, or save an upgrade.
+            Interprets keywords in your text locally. It does not validate a
+            claim or save an upgrade.
           </p>
         </form>
         <section
@@ -170,6 +161,28 @@ export default function UpgradeAnalyzer() {
                     <p>{zone.intent}</p>
                     <h3>What to investigate</h3>
                     <p>{zone.check}</p>
+                    {zone.component && data && (
+                      <>
+                        <h3>In the archive</h3>
+                        <p>
+                          {teamsChanging(zone.component).length
+                            ? `Published changes: ${teamsChanging(zone.component).join(", ")}.`
+                            : "No published changes to this part yet."}{" "}
+                          <Link
+                            className="text-link"
+                            href={`/upgrades?component=${zone.component}`}
+                          >
+                            See changes →
+                          </Link>{" "}
+                          <Link
+                            className="text-link"
+                            href={`/evidence?component=${zone.component}`}
+                          >
+                            See sources →
+                          </Link>
+                        </p>
+                      </>
+                    )}
                   </article>
                 ))
               ) : (
@@ -177,29 +190,6 @@ export default function UpgradeAnalyzer() {
                   Name a specific assembly, such as the front wing, suspension,
                   or cooling inlet, and describe the visible change.
                 </EmptyState>
-              )}
-              {(effect || source) && (
-                <div className="d-analysis-card">
-                  <h3>Your context</h3>
-                  {effect && (
-                    <p>
-                      <span className="d-small">
-                        CLAIMED EFFECT · UNVERIFIED
-                      </span>
-                      <br />
-                      {effect}
-                    </p>
-                  )}
-                  {source && (
-                    <p>
-                      <span className="d-small">
-                        SOURCE PROVIDED · NOT CHECKED
-                      </span>
-                      <br />
-                      {source}
-                    </p>
-                  )}
-                </div>
               )}
             </>
           )}

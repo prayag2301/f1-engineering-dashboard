@@ -308,6 +308,38 @@ test("analyzer matches complete technical terms without spurious ERS matches", (
   expect(analyzeDescription("Revised floor edge", "")[0].label).toBe(
     "Floor edge",
   );
+  // Hyphenated spellings and 2026 vocabulary.
+  expect(analyzeDescription("New front-wing flaps", "")[0].label).toBe(
+    "Front wing",
+  );
+  expect(analyzeDescription("Revised MGU-K deployment", "")[0].label).toBe(
+    "Power unit",
+  );
+  expect(
+    analyzeDescription("New X-mode rear wing flap", "").map((x) => x.label),
+  ).toEqual(expect.arrayContaining(["Active aero", "Rear wing"]));
+  expect(analyzeDescription("Revised halo fairing", "")[0].label).toBe(
+    "Halo & mirrors",
+  );
+  expect(analyzeDescription("Lower DRS drag", "")).toHaveLength(0);
+});
+
+test("analyzer links matched components to archive changes and sources", async ({
+  page,
+}) => {
+  await page.goto(`${prefix}/analyze/`);
+  await expect(page.getByLabel("Claimed effect")).toHaveCount(0);
+  await page
+    .getByLabel("Upgrade description", { exact: false })
+    .fill("Revised floor edge");
+  await page.getByRole("button", { name: "Analyze upgrade" }).click();
+  const card = page.locator(".d-analysis-card").first();
+  await expect(card).toContainText("Published changes:");
+  await card.getByRole("link", { name: "See changes" }).click();
+  await expect(
+    page.getByRole("combobox", { name: "Component", exact: true }),
+  ).toHaveValue("floor");
+  await expect(page.locator(".d-release-row").first()).toBeVisible();
 });
 
 test("performance charts describe activity and never invent measured gains", async ({

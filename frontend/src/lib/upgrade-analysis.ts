@@ -4,7 +4,8 @@ const zones = [
   {
     label: "Front wing",
     category: "Aerodynamics",
-    terms: ["front wing", "outwash", "endplate"],
+    component: "front_wing",
+    terms: ["front wing", "outwash", "endplate", "mainplane"],
     intent:
       "Front-wing changes can alter front load and the flow reaching the wheels and floor.",
     check:
@@ -13,7 +14,8 @@ const zones = [
   {
     label: "Rear wing",
     category: "Aerodynamics",
-    terms: ["rear wing", "beam wing", "drs", "gurney"],
+    component: "rear_wing",
+    terms: ["rear wing", "beam wing", "gurney"],
     intent:
       "Rear-wing changes can shift the balance between rear aerodynamic load and drag.",
     check:
@@ -22,6 +24,7 @@ const zones = [
   {
     label: "Floor edge",
     category: "Floor",
+    component: "floor",
     terms: ["floor edge", "edge wing", "edge profile"],
     intent:
       "Floor-edge geometry can change the flow structures along the underfloor boundary.",
@@ -31,7 +34,16 @@ const zones = [
   {
     label: "Floor & diffuser",
     category: "Floor",
-    terms: ["floor", "underfloor", "diffuser", "tunnel", "ground effect"],
+    component: "floor",
+    terms: [
+      "floor",
+      "underfloor",
+      "diffuser",
+      "tunnel",
+      "ground effect",
+      "fence",
+      "strake",
+    ],
     intent:
       "Underfloor and diffuser revisions can alter pressure distribution and the sensitivity of aerodynamic load to the car's attitude.",
     check:
@@ -40,6 +52,7 @@ const zones = [
   {
     label: "Suspension",
     category: "Mechanical",
+    component: "suspension",
     terms: [
       "suspension",
       "wishbone",
@@ -57,7 +70,16 @@ const zones = [
   {
     label: "Sidepods & cooling",
     category: "Cooling",
-    terms: ["sidepod", "inlet", "radiator", "cooling", "louvre", "thermal"],
+    component: "sidepods",
+    terms: [
+      "sidepod",
+      "inlet",
+      "radiator",
+      "cooling",
+      "louvre",
+      "thermal",
+      "coke bottle",
+    ],
     intent:
       "Inlet and sidepod changes can affect cooling flow and the external flow path toward the rear of the car.",
     check:
@@ -66,7 +88,8 @@ const zones = [
   {
     label: "Engine cover",
     category: "Bodywork",
-    terms: ["engine cover", "airbox", "spine", "bodywork"],
+    component: "engine_cover",
+    terms: ["engine cover", "airbox", "spine", "bodywork", "chimney"],
     intent:
       "Engine-cover surfaces can change the flow around the rear bodywork; outlets can also change cooling capacity.",
     check:
@@ -84,6 +107,7 @@ const zones = [
   {
     label: "Nose",
     category: "Aerodynamics",
+    component: "nose",
     terms: ["nose", "nosecone"],
     intent:
       "Nose geometry helps define the flow approaching the central front-wing and chassis region.",
@@ -91,9 +115,45 @@ const zones = [
       "Inspect the wing attachment and visible cross-section; a livery line alone may not mark a geometric change.",
   },
   {
+    label: "Active aero",
+    category: "Aerodynamics",
+    terms: [
+      "active aero",
+      "x mode",
+      "z mode",
+      "straight line mode",
+      "corner mode",
+      "movable wing",
+      "moveable wing",
+    ],
+    intent:
+      "2026 active aero switches both wings between a high-load corner mode and a low-drag straight-line mode; changes can alter the drag saving and the transition between modes.",
+    check:
+      "Compare straight-line speed with the wings open against corner balance with them closed, and where each mode is permitted on the lap.",
+  },
+  {
+    label: "Halo & mirrors",
+    category: "Bodywork",
+    component: "halo",
+    terms: ["halo", "mirror"],
+    intent:
+      "Halo fairings and mirror housings are small surfaces that can still condition the flow reaching the airbox, sidepods and rear wing.",
+    check:
+      "Confirm whether the structure or only its fairing changed, and compare the flow toward the airbox and engine cover.",
+  },
+  {
     label: "Power unit",
     category: "Power unit",
-    terms: ["power unit", "turbo", "ers", "energy store", "combustion"],
+    terms: [
+      "power unit",
+      "turbo",
+      "ers",
+      "mgu k",
+      "mguk",
+      "energy store",
+      "battery",
+      "combustion",
+    ],
     intent:
       "Power-unit claims may concern output, energy deployment or thermal management; exterior geometry cannot establish those changes.",
     check:
@@ -101,8 +161,11 @@ const zones = [
   },
 ];
 
+// Spaces in a term also match hyphens, so "front wing" finds "front-wing".
 function matches(text: string, term: string) {
-  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escaped = term
+    .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    .replace(/ /g, "[\\s-]+");
   return new RegExp(`\\b${escaped}s?\\b`, "i").test(text);
 }
 
