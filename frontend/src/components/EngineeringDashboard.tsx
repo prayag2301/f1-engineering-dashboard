@@ -10,6 +10,7 @@ import {
   upgradeCount,
 } from "@/lib/dashboard";
 import { dateLabel, type TeamKey } from "@/lib/releases";
+import RaceWeekend from "./RaceWeekend";
 import {
   DataState,
   EmptyState,
@@ -40,6 +41,7 @@ export default function EngineeringDashboard() {
           Compare cars <span aria-hidden="true">↗</span>
         </Link>
       </PageHeading>
+      <RaceWeekend />
       {!data ? (
         <DataState error={error} retry={retry} />
       ) : (

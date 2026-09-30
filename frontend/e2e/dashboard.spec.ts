@@ -1,9 +1,110 @@
 import { test, expect, type Page } from "@playwright/test";
 import { analyzeDescription } from "../src/lib/upgrade-analysis";
+import {
+  currentWeekend,
+  nextPollDelay,
+  sessionStatus,
+  IDLE_POLL_MS,
+  RACE_WEEK_POLL_MS,
+} from "../src/lib/race-weekend";
 
 const prefix = process.env.NEXT_PUBLIC_BASE_PATH ?? "/f1-engineering-dashboard";
 
-test.beforeEach(({ page }) => {
+const meeting = (
+  key: number,
+  name: string,
+  start: string,
+  end: string,
+  cancelled = false,
+) => ({
+  meeting_key: key,
+  meeting_name: name,
+  location: "Baku",
+  country_name: "Azerbaijan",
+  circuit_short_name: "Baku",
+  gmt_offset: "04:00:00",
+  date_start: start,
+  date_end: end,
+  is_cancelled: cancelled,
+});
+const session = (
+  key: number,
+  meeting_key: number,
+  name: string,
+  start: string,
+  end: string,
+) => ({
+  session_key: key,
+  meeting_key,
+  session_name: name,
+  date_start: start,
+  date_end: end,
+  gmt_offset: "04:00:00",
+  is_cancelled: false,
+});
+const openF1 = {
+  meetings: [
+    meeting(
+      1,
+      "Pre-Season Testing",
+      "2026-02-11T07:00:00Z",
+      "2026-02-13T16:00:00Z",
+    ),
+    meeting(
+      2,
+      "Australian Grand Prix",
+      "2026-03-06T01:30:00Z",
+      "2026-03-08T06:00:00Z",
+    ),
+    meeting(
+      3,
+      "Bahrain Grand Prix",
+      "2026-04-10T11:30:00Z",
+      "2026-04-12T17:00:00Z",
+      true,
+    ),
+    meeting(
+      4,
+      "Azerbaijan Grand Prix",
+      "2026-09-24T08:30:00Z",
+      "2026-09-26T13:00:00Z",
+    ),
+  ],
+  sessions: [
+    session(
+      40,
+      4,
+      "Practice 1",
+      "2026-09-24T08:30:00Z",
+      "2026-09-24T09:30:00Z",
+    ),
+    session(
+      41,
+      4,
+      "Sprint Qualifying",
+      "2026-09-24T12:30:00Z",
+      "2026-09-24T13:14:00Z",
+    ),
+    session(42, 4, "Sprint", "2026-09-25T08:30:00Z", "2026-09-25T09:30:00Z"),
+    session(
+      43,
+      4,
+      "Qualifying",
+      "2026-09-25T12:00:00Z",
+      "2026-09-25T13:00:00Z",
+    ),
+    session(44, 4, "Race", "2026-09-26T11:00:00Z", "2026-09-26T13:00:00Z"),
+  ],
+};
+
+test.beforeEach(async ({ page }) => {
+  await page.route("https://api.openf1.org/v1/*", (route) =>
+    route.fulfill({
+      json: route.request().url().includes("/meetings")
+        ? openF1.meetings
+        : openF1.sessions,
+    }),
+  );
   page.on("pageerror", (error) => {
     throw error;
   });
@@ -281,4 +382,51 @@ test("dashboard sections remain usable on mobile with no page overflow", async (
     .getByRole("link", { name: "Analyze", exact: true });
   await link.focus();
   await expect(link).toBeFocused();
+});
+
+test("race weekend skips testing and cancelled rounds and derives session status", () => {
+  const at = (iso: string) => Date.parse(iso);
+  const weekend = currentWeekend(openF1, at("2026-09-25T12:30:00Z"))!;
+  expect(weekend.meeting.meeting_name).toBe("Azerbaijan Grand Prix");
+  expect(weekend.round).toBe(2);
+  expect(weekend.sprint).toBe(true);
+  expect(weekend.raceWeek).toBe(true);
+  expect(
+    weekend.sessions.map((s) => sessionStatus(s, at("2026-09-25T12:30:00Z"))),
+  ).toEqual(["finished", "finished", "finished", "live", "upcoming"]);
+  expect(nextPollDelay(weekend, at("2026-09-25T12:30:00Z"))).toBe(
+    RACE_WEEK_POLL_MS,
+  );
+  const early = currentWeekend(openF1, at("2026-09-01T00:00:00Z"))!;
+  expect(early.raceWeek).toBe(false);
+  expect(nextPollDelay(early, at("2026-09-01T00:00:00Z"))).toBe(IDLE_POLL_MS);
+  // Still current on race evening, gone the day after.
+  expect(currentWeekend(openF1, at("2026-09-26T20:00:00Z"))).not.toBeNull();
+  expect(currentWeekend(openF1, at("2026-09-27T12:00:00Z"))).toBeNull();
+});
+
+test("race weekend panel shows the live session and keeps retrying quietly", async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date("2026-09-25T12:30:00Z"));
+  await page.goto(`${prefix}/`);
+  const panel = page.getByRole("region", { name: "Race weekend" });
+  await expect(
+    panel.getByRole("heading", { name: "Azerbaijan Grand Prix" }),
+  ).toBeVisible();
+  await expect(panel).toContainText("RACE WEEK · ROUND 02");
+  await expect(panel).toContainText("SPRINT");
+  await expect(panel).toContainText("LIVE · Qualifying");
+  await expect(panel.locator('[data-status="live"]')).toContainText(
+    "Qualifying",
+  );
+
+  await page.evaluate(() => localStorage.clear());
+  await page.route("https://api.openf1.org/v1/*", (route) =>
+    route.fulfill({ status: 503, body: "Unavailable" }),
+  );
+  await page.reload();
+  await expect(panel).toContainText("Still updating the race calendar");
+  await expect(panel.getByRole("button", { name: "Retry" })).toBeVisible();
+  await expect(panel.getByRole("alert")).toHaveCount(0);
 });
