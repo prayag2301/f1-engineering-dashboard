@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { analyzeDescription } from "../src/lib/upgrade-analysis";
 import { parseStandings } from "../src/lib/standings";
+import { gapLabel, lapTime, parseResults } from "../src/lib/session-results";
 import {
   countdown,
   isRaceDay,
@@ -177,6 +178,48 @@ const jolpica = {
   },
 };
 
+const result = (
+  position: number | null,
+  driver_number: number,
+  duration: number | (number | null)[] | null,
+  gap_to_leader: number | null,
+  extra = {},
+) => ({
+  position,
+  driver_number,
+  number_of_laps: 51,
+  duration,
+  gap_to_leader,
+  dnf: false,
+  dns: false,
+  dsq: false,
+  ...extra,
+});
+const drivers = [
+  [63, "RUS", "George", "Russell", "Mercedes", "00D7B6"],
+  [16, "LEC", "Charles", "Leclerc", "Ferrari", "ED1131"],
+  [3, "VER", "Max", "Verstappen", "Red Bull Racing", "4781D7"],
+].map(
+  ([number, name_acronym, first_name, last_name, team_name, team_colour]) => ({
+    driver_number: Number(number),
+    name_acronym: String(name_acronym),
+    first_name: String(first_name),
+    last_name: String(last_name),
+    team_name: String(team_name),
+    team_colour: String(team_colour),
+  }),
+);
+const results: Record<string, unknown[]> = {
+  // Practice 1: best laps.
+  "40": [result(1, 16, 97.528, 0), result(2, 63, 97.627, 0.099)],
+  // Qualifying: Q1–Q3.
+  "43": [
+    result(1, 63, [103.615, 103.462, 102.526], null),
+    result(2, 16, [104.36, 103.78, 103.363], null),
+    result(3, 3, [106.658, null, null], null),
+  ],
+};
+
 test.beforeEach(async ({ page }) => {
   await page.route("https://api.jolpi.ca/**", (route) =>
     route.fulfill({
@@ -185,13 +228,19 @@ test.beforeEach(async ({ page }) => {
         : jolpica.constructors,
     }),
   );
-  await page.route("https://api.openf1.org/v1/*", (route) =>
-    route.fulfill({
-      json: route.request().url().includes("/meetings")
+  await page.route("https://api.openf1.org/v1/*", (route) => {
+    const url = new URL(route.request().url());
+    const key = url.searchParams.get("session_key") ?? "";
+    return route.fulfill({
+      json: url.pathname.endsWith("/meetings")
         ? openF1.meetings
-        : openF1.sessions,
-    }),
-  );
+        : url.pathname.endsWith("/session_result")
+          ? (results[key] ?? [])
+          : url.pathname.endsWith("/drivers")
+            ? drivers
+            : openF1.sessions,
+    });
+  });
   page.on("pageerror", (error) => {
     throw error;
   });
@@ -552,6 +601,7 @@ test("race weekend panel shows the live session and keeps retrying quietly", asy
     panel.getByRole("heading", { name: "Azerbaijan Grand Prix" }),
   ).toBeVisible();
   await expect(panel).toContainText("RACE WEEK · ROUND 02");
+  await expect(panel).toContainText("Baku · Azerbaijan");
   await expect(panel).toContainText("SPRINT");
   await expect(panel).toContainText("LIVE · Qualifying");
   await expect(panel.locator('[data-status="live"]')).toContainText(
@@ -618,6 +668,12 @@ test("race weekend falls back to Jolpica while OpenF1 is locked for a live sessi
     panel.getByRole("heading", { name: "Bahrain Grand Prix in Malaysia" }),
   ).toBeVisible();
   await expect(panel).toContainText("Kuala Lumpur · Malaysia");
+  // Practice 1 is over but OpenF1 is locked and nothing was cached.
+  const results = panel.getByRole("region", { name: "Session results" });
+  await expect(results).toContainText("OpenF1 locks timing");
+  await expect(
+    results.getByRole("button", { name: "Practice 2 · Live" }),
+  ).toHaveAttribute("aria-pressed", "true");
   await expect(panel).toContainText("LIVE · Practice 2");
   await expect(panel).toContainText("Estimated end");
   await expect(panel.locator('[data-status="finished"]')).toContainText(
@@ -627,6 +683,75 @@ test("race weekend falls back to Jolpica while OpenF1 is locked for a live sessi
   await expect(panel).not.toContainText("track");
   await expect(panel).toContainText("times are from Jolpica");
   await expect(panel).not.toContainText("Still updating");
+});
+
+test("session results parse OpenF1 classifications", () => {
+  const race = parseResults(
+    [
+      result(null, 3, null, null, { dnf: true }),
+      result(2, 16, 5882.339, 0.196, { points: 18 }),
+      result(1, 63, 5882.143, 0, { points: 25 }),
+      result(3, 99, 5892.847, "+1 LAP" as unknown as number),
+    ],
+    drivers,
+    1,
+  );
+  expect(race.rows.map((r) => [r.position, r.code, r.status])).toEqual([
+    [1, "RUS", undefined],
+    [2, "LEC", undefined],
+    [3, "99", undefined],
+    [null, "VER", "DNF"],
+  ]);
+  expect(race.rows[0]).toMatchObject({
+    name: "George Russell",
+    colour: "#00D7B6",
+    points: 25,
+  });
+  expect(lapTime(97.528)).toBe("1:37.528");
+  expect(lapTime(5882.143)).toBe("1:38:02.143");
+  expect(gapLabel(0.196)).toBe("+0.196");
+  expect(gapLabel("+1 LAP")).toBe("+1 LAP");
+  expect(gapLabel(0)).toBe("");
+});
+
+test("race weekend shows the classification of each completed session", async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date("2026-09-25T14:00:00Z"));
+  await page.goto(`${prefix}/`);
+  const results = page.getByRole("region", { name: "Session results" });
+  await expect(results.getByRole("button")).toHaveText([
+    "Practice 1",
+    "Sprint Qualifying",
+    "Sprint",
+    "Qualifying",
+  ]);
+  const quali = results.getByRole("table", {
+    name: "Qualifying classification",
+  });
+  await expect(quali.locator("thead th")).toHaveText([
+    "Pos",
+    "Driver",
+    "Q1",
+    "Q2",
+    "Q3",
+    "Laps",
+  ]);
+  await expect(quali.locator("tbody tr").first()).toContainText(
+    "George Russell",
+  );
+  await expect(quali.locator("tbody tr").first()).toContainText("1:42.526");
+  await expect(results).toContainText("Classification from OpenF1");
+
+  await results.getByRole("button", { name: "Practice 1" }).click();
+  const practice = results.getByRole("table", {
+    name: "Practice 1 classification",
+  });
+  await expect(practice.locator("tbody tr").nth(1)).toContainText("1:37.627");
+  await expect(practice.locator("tbody tr").nth(1)).toContainText("+0.099");
+
+  await results.getByRole("button", { name: "Sprint", exact: true }).click();
+  await expect(results).toContainText("Waiting for OpenF1");
 });
 
 test("countdown keeps seconds and race day follows the circuit's date", () => {

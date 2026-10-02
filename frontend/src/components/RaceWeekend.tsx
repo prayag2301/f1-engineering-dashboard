@@ -16,6 +16,7 @@ import {
   trackTime,
   type Schedule,
 } from "@/lib/race-weekend";
+import SessionResults from "./SessionResults";
 
 const RETRY_COOLDOWN_MS = 10_000;
 
@@ -141,7 +142,7 @@ export default function RaceWeekend({
           </p>
           <h2>{meeting.meeting_name}</h2>
           <p className="d-small">
-            {meeting.circuit_short_name} · {meeting.country_name}
+            {meeting.location} · {meeting.country_name}
           </p>
         </div>
         <div
@@ -201,6 +202,7 @@ export default function RaceWeekend({
           );
         })}
       </ol>
+      <SessionResults sessions={sessions} now={now} locked={fallback} />
       <div className="d-weekend-foot">
         {updating ? (
           <span role="status">Still updating session times… {retry}</span>

@@ -3,7 +3,7 @@
 // requests, so the fastest cadence (60 s) stays well inside that budget.
 // While any session is live OpenF1 refuses anonymous requests (a 401 without a
 // CORS header, so browsers see a network error); Jolpica's calendar covers it.
-const OPENF1 = "https://api.openf1.org/v1";
+export const OPENF1 = "https://api.openf1.org/v1";
 const JOLPICA = "https://api.jolpi.ca/ergast/f1";
 const CACHE_KEY = "f1-race-weekend";
 export const SEASON = 2026;
@@ -105,7 +105,10 @@ export function nextPollDelay(
   return now >= start ? RACE_WEEK_POLL_MS : IDLE_POLL_MS;
 }
 
-async function getJSON<T>(url: string, signal?: AbortSignal): Promise<T> {
+export async function getJSON<T>(
+  url: string,
+  signal?: AbortSignal,
+): Promise<T> {
   const response = await fetch(url, { signal });
   if (response.status === 429) {
     const seconds = Number(response.headers.get("Retry-After"));
