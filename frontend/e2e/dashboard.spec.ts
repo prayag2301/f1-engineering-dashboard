@@ -6,6 +6,7 @@ import {
   isRaceDay,
   currentWeekend,
   nextPollDelay,
+  parseJolpicaSchedule,
   sessionStatus,
   IDLE_POLL_MS,
   RACE_WEEK_POLL_MS,
@@ -561,10 +562,71 @@ test("race weekend panel shows the live session and keeps retrying quietly", asy
   await page.route("https://api.openf1.org/v1/*", (route) =>
     route.fulfill({ status: 503, body: "Unavailable" }),
   );
+  await page.route(isJolpicaSchedule, (route) =>
+    route.fulfill({ status: 503, body: "Unavailable" }),
+  );
   await page.reload();
   await expect(panel).toContainText("Still updating the race calendar");
   await expect(panel.getByRole("button", { name: "Retry" })).toBeVisible();
   await expect(panel.getByRole("alert")).toHaveCount(0);
+});
+
+const isJolpicaSchedule = (url: URL) =>
+  url.host === "api.jolpi.ca" && url.pathname.endsWith("/2026.json");
+const malaysia = {
+  round: "16",
+  raceName: "Bahrain Grand Prix in Malaysia",
+  Circuit: { Location: { locality: "Kuala Lumpur", country: "Malaysia" } },
+  date: "2026-10-04",
+  time: "07:00:00Z",
+  FirstPractice: { date: "2026-10-02", time: "04:30:00Z" },
+  SecondPractice: { date: "2026-10-02", time: "08:00:00Z" },
+  ThirdPractice: { date: "2026-10-03", time: "04:30:00Z" },
+  Qualifying: { date: "2026-10-03", time: "08:00:00Z" },
+};
+
+test("race weekend falls back to Jolpica while OpenF1 is locked for a live session", async ({
+  page,
+}) => {
+  const at = Date.parse("2026-10-02T08:15:00Z");
+  const schedule = parseJolpicaSchedule([malaysia], at);
+  const weekend = currentWeekend(schedule, at)!;
+  expect(weekend.sessions.map((s) => [s.session_name, s.date_start])).toEqual([
+    ["Practice 1", "2026-10-02T04:30:00.000Z"],
+    ["Practice 2", "2026-10-02T08:00:00.000Z"],
+    ["Practice 3", "2026-10-03T04:30:00.000Z"],
+    ["Qualifying", "2026-10-03T08:00:00.000Z"],
+    ["Race", "2026-10-04T07:00:00.000Z"],
+  ]);
+  // Waits out the live session instead of polling the locked API.
+  expect(nextPollDelay(weekend, at, "jolpica")).toBe(45 * 60_000);
+  expect(nextPollDelay(weekend, at, "openf1")).toBe(RACE_WEEK_POLL_MS);
+
+  await page.route("https://api.openf1.org/v1/*", (route) =>
+    route.fulfill({
+      status: 401,
+      json: { detail: "Live F1 session in progress." },
+    }),
+  );
+  await page.route(isJolpicaSchedule, (route) =>
+    route.fulfill({ json: { MRData: { RaceTable: { Races: [malaysia] } } } }),
+  );
+  await page.clock.setFixedTime(new Date(at));
+  await page.goto(`${prefix}/`);
+  const panel = page.getByRole("region", { name: "Race weekend" });
+  await expect(
+    panel.getByRole("heading", { name: "Bahrain Grand Prix in Malaysia" }),
+  ).toBeVisible();
+  await expect(panel).toContainText("Kuala Lumpur · Malaysia");
+  await expect(panel).toContainText("LIVE · Practice 2");
+  await expect(panel).toContainText("Estimated end");
+  await expect(panel.locator('[data-status="finished"]')).toContainText(
+    "Practice 1",
+  );
+  await expect(panel.locator(".d-weekend-sessions li")).toHaveCount(5);
+  await expect(panel).not.toContainText("track");
+  await expect(panel).toContainText("times are from Jolpica");
+  await expect(panel).not.toContainText("Still updating");
 });
 
 test("countdown keeps seconds and race day follows the circuit's date", () => {

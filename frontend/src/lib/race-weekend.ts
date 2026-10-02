@@ -1,7 +1,10 @@
-// Race-weekend schedule from OpenF1's free, CORS-enabled REST API.
+// Race-weekend schedule from OpenF1's free REST API.
 // Free tier: 30 requests/minute and 3/second per client. One refresh costs two
 // requests, so the fastest cadence (60 s) stays well inside that budget.
-const API = "https://api.openf1.org/v1";
+// While any session is live OpenF1 refuses anonymous requests (a 401 without a
+// CORS header, so browsers see a network error); Jolpica's calendar covers it.
+const OPENF1 = "https://api.openf1.org/v1";
+const JOLPICA = "https://api.jolpi.ca/ergast/f1";
 const CACHE_KEY = "f1-race-weekend";
 export const SEASON = 2026;
 export const RACE_WEEK_POLL_MS = 60_000;
@@ -33,6 +36,7 @@ export interface Schedule {
   meetings: Meeting[];
   sessions: Session[];
   fetchedAt: number;
+  source?: "openf1" | "jolpica";
 }
 
 export type SessionStatus = "upcoming" | "live" | "finished" | "cancelled";
@@ -86,30 +90,122 @@ export function currentWeekend(
   };
 }
 
-export function nextPollDelay(weekend: Weekend | null, now: number) {
+export function nextPollDelay(
+  weekend: Weekend | null,
+  now: number,
+  source?: Schedule["source"],
+) {
   if (!weekend) return IDLE_POLL_MS;
+  // OpenF1 stays locked until the live session ends, so check back then.
+  const live =
+    source === "jolpica" &&
+    weekend.sessions.find((s) => sessionStatus(s, now) === "live");
+  if (live) return Math.max(RACE_WEEK_POLL_MS, time(live.date_end) - now);
   const start = time(weekend.meeting.date_start) - 86_400_000;
   return now >= start ? RACE_WEEK_POLL_MS : IDLE_POLL_MS;
 }
 
-async function getJSON<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(`${API}/${path}`, { signal });
+async function getJSON<T>(url: string, signal?: AbortSignal): Promise<T> {
+  const response = await fetch(url, { signal });
   if (response.status === 429) {
     const seconds = Number(response.headers.get("Retry-After"));
     throw new RateLimited(seconds > 0 ? seconds * 1000 : RACE_WEEK_POLL_MS * 2);
   }
-  if (!response.ok) throw new Error(`OpenF1 responded ${response.status}.`);
+  if (!response.ok)
+    throw new Error(`${new URL(url).host} responded ${response.status}.`);
   return response.json();
 }
 
-export async function fetchSchedule(signal?: AbortSignal): Promise<Schedule> {
+async function fetchOpenF1(signal?: AbortSignal): Promise<Schedule> {
   const [meetings, sessions] = await Promise.all([
-    getJSON<Meeting[]>(`meetings?year=${SEASON}`, signal),
-    getJSON<Session[]>(`sessions?year=${SEASON}`, signal),
+    getJSON<Meeting[]>(`${OPENF1}/meetings?year=${SEASON}`, signal),
+    getJSON<Session[]>(`${OPENF1}/sessions?year=${SEASON}`, signal),
   ]);
   if (!Array.isArray(meetings) || !Array.isArray(sessions))
     throw new Error("Unexpected OpenF1 response.");
-  const schedule = { meetings, sessions, fetchedAt: Date.now() };
+  return { meetings, sessions, fetchedAt: Date.now(), source: "openf1" };
+}
+
+type Slot = { date: string; time?: string };
+// Jolpica lists start times only, so typical lengths stand in for end times.
+const JOLPICA_SESSIONS = [
+  ["FirstPractice", "Practice 1", 60],
+  ["SecondPractice", "Practice 2", 60],
+  ["ThirdPractice", "Practice 3", 60],
+  ["SprintQualifying", "Sprint Qualifying", 45],
+  ["Sprint", "Sprint", 60],
+  ["Qualifying", "Qualifying", 60],
+] as const;
+export type JolpicaRace = Slot & {
+  round: string;
+  raceName: string;
+  Circuit: { Location: { locality: string; country: string } };
+} & Partial<Record<(typeof JOLPICA_SESSIONS)[number][0], Slot>>;
+
+// ponytail: Jolpica has no circuit UTC offset, so track times are hidden and
+// race day falls back to the UTC date; add a circuit offset table if that matters.
+export function parseJolpicaSchedule(
+  races: JolpicaRace[],
+  fetchedAt: number,
+): Schedule {
+  const meetings: Meeting[] = [];
+  const sessions: Session[] = [];
+  for (const race of races) {
+    const key = Number(race.round);
+    const own = [
+      ...JOLPICA_SESSIONS.map(([field, name, minutes]) => ({
+        slot: race[field],
+        name,
+        minutes,
+      })),
+      { slot: race as Slot, name: "Race", minutes: 120 },
+    ]
+      .filter(({ slot }) => slot?.time)
+      .map(({ slot, name, minutes }, i) => {
+        const start = Date.parse(`${slot!.date}T${slot!.time}`);
+        return {
+          session_key: key * 10 + i,
+          session_name: name,
+          meeting_key: key,
+          date_start: new Date(start).toISOString(),
+          date_end: new Date(start + minutes * 60_000).toISOString(),
+          gmt_offset: "",
+        };
+      })
+      .sort((a, b) => time(a.date_start) - time(b.date_start));
+    if (!own.length) continue;
+    sessions.push(...own);
+    meetings.push({
+      meeting_key: key,
+      meeting_name: race.raceName,
+      location: race.Circuit.Location.locality,
+      country_name: race.Circuit.Location.country,
+      circuit_short_name: race.Circuit.Location.locality,
+      gmt_offset: "",
+      date_start: own[0].date_start,
+      date_end: own[own.length - 1].date_end,
+    });
+  }
+  return { meetings, sessions, fetchedAt, source: "jolpica" };
+}
+
+async function fetchJolpica(signal?: AbortSignal): Promise<Schedule> {
+  const data = await getJSON<{
+    MRData?: { RaceTable?: { Races?: JolpicaRace[] } };
+  }>(`${JOLPICA}/${SEASON}.json?limit=100`, signal);
+  const races = data?.MRData?.RaceTable?.Races;
+  if (!Array.isArray(races)) throw new Error("Unexpected Jolpica response.");
+  return parseJolpicaSchedule(races, Date.now());
+}
+
+export async function fetchSchedule(signal?: AbortSignal): Promise<Schedule> {
+  let schedule: Schedule;
+  try {
+    schedule = await fetchOpenF1(signal);
+  } catch (error) {
+    if (signal?.aborted) throw error;
+    schedule = await fetchJolpica(signal);
+  }
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(schedule));
   } catch {}

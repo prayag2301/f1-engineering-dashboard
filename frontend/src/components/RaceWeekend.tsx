@@ -53,7 +53,11 @@ export default function RaceWeekend({
         setSchedule(next);
         setUpdating(false);
         failures = 0;
-        delay = nextPollDelay(currentWeekend(next, Date.now()), Date.now());
+        delay = nextPollDelay(
+          currentWeekend(next, Date.now()),
+          Date.now(),
+          next.source,
+        );
       } catch (error) {
         if (controller.signal.aborted) return;
         setUpdating(true);
@@ -120,6 +124,7 @@ export default function RaceWeekend({
     );
 
   const { meeting, sessions } = weekend;
+  const fallback = schedule?.source === "jolpica";
   const live = sessions.find((s) => sessionStatus(s, now) === "live");
   const next = sessions.find((s) => sessionStatus(s, now) === "upcoming");
   const race = sessions.find((s) => s.session_name === "Race");
@@ -148,7 +153,7 @@ export default function RaceWeekend({
                 <i aria-hidden="true" /> LIVE · {live.session_name}
               </span>
               <strong>{countdown(Date.parse(live.date_end) - now)}</strong>
-              <small>Scheduled to end</small>
+              <small>{fallback ? "Estimated end" : "Scheduled to end"}</small>
             </>
           ) : lightsOut ? (
             <>
@@ -184,10 +189,12 @@ export default function RaceWeekend({
               <b>{session.session_name}</b>
               <span>
                 {localTime(session.date_start)}
-                <small>
-                  {" "}
-                  · {trackTime(session.date_start, session.gmt_offset)} track
-                </small>
+                {session.gmt_offset && (
+                  <small>
+                    {" "}
+                    · {trackTime(session.date_start, session.gmt_offset)} track
+                  </small>
+                )}
               </span>
               <em>{status}</em>
             </li>
@@ -199,7 +206,10 @@ export default function RaceWeekend({
           <span role="status">Still updating session times… {retry}</span>
         ) : (
           <span>
-            Times from OpenF1 · refreshed{" "}
+            {fallback
+              ? "OpenF1 is locked during live sessions, so times are from Jolpica with estimated end times"
+              : "Times from OpenF1"}{" "}
+            · refreshed{" "}
             {new Date(schedule?.fetchedAt ?? now).toLocaleTimeString(undefined, {
               hour: "2-digit",
               minute: "2-digit",
