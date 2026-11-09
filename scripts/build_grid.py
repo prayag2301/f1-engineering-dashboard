@@ -19,7 +19,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--blender", default="blender")
     parser.add_argument("--device", choices=["CPU", "METAL"], default="CPU")
-    parser.add_argument("--samples", type=int, default=64)
+    parser.add_argument("--samples", type=int, default=80)
     parser.add_argument("--jobs", type=int, choices=[1, 2], default=1)
     parser.add_argument("--geometry-only", action="store_true")
     args = parser.parse_args()

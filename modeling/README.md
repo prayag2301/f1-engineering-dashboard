@@ -102,3 +102,59 @@ and normal publication still follow.
 
 See [weekly intake](../docs/weekly-updates.md) for local scheduling and the
 portable GitHub Actions report.
+
+## Construction detail pass (2026.7)
+
+New builds include open rim barrels, recessed brake rotors and calipers, rotor
+mounting hardware and valve stems. Cockpits gain a display, grips, buttons,
+shoulder harnesses and a buckle; exhaust outlets gain a dark recessed aperture.
+These are generic estimated construction details, not verified team internals
+or evidence of a race upgrade. Rotor ventilation marks are surface details,
+not simulated cooling passages. They are actual GLB meshes with the existing
+assembly IDs, so the browser receives the same detail as the studio scene.
+Vent marks are batched per wheel to limit added browser draw calls.
+
+Only `chassis`, `engine_cover` and `wheels` change in this pass. A reconstruction
+draft must declare all three revisions; the eight other assemblies retain their
+existing hashes. Earlier scenes and published snapshots are not regenerated.
+The all-grid geometry check verifies exported detail, watertight open sleeves,
+component identity and the existing surface/contact checks.
+
+The default sample ceiling increases by 25%: native/builder jobs use 80 instead
+of 64, and Docker worker jobs use 160 instead of 128. Existing explicit sample
+overrides remain effective. Adaptive sampling makes actual time depend on the
+view and hardware; a sample increase is not itself a measured time increase.
+Rebuild the API and worker images together before creating reconstruction drafts.
+
+On 7 November the sequential Docker CPU pilot measured 151.85 seconds for the
+unchanged McLaren at 32 samples, 161.77 seconds for the detail pass at the same
+32 samples (+6.54%), and 194.25 seconds with detail and 40 samples (+27.93%
+against baseline). Each run built geometry, GLB, the editable scene and four
+1080p previews. This is one run per setting, not a full 4K timing guarantee.
+The resulting GLB has 226,384 triangles (+7.83%), 244 mesh nodes (from 191)
+and 6,013,036 bytes (+10.06%). The existing website viewer loaded the new GLB
+and measured 59.85 FPS (479 frames over 8.0031 seconds) at 1920×1080 on Apple M1
+Metal. This single local run may overlap Docker geometry checks and is not a
+cross-device performance guarantee.
+See [the benchmark record](../data/references/detail-benchmark-2026-11-07.json).
+The review artifacts are in `data/releases/detail-2026-7/quality/`; they are
+unpublished 40-sample previews, not completed 160-sample publication renders.
+
+### Repeatable wing realism review (2026.9)
+
+The McLaren and Racing Bulls pilot corrections add curved upper endplate rims,
+crowned front footplates, revised lower rear-endplate stations, and rear pylon
+mounting shoes/fasteners. These remain exterior estimates from the saved
+September photographs; no observation dates or published pointers change.
+
+Use the same fixture for both frozen scenes:
+
+```sh
+blender --background --python-exit-code 1 --python scripts/render_wing_review.py -- --scene PATH/source.blend --output NEW_REVIEW_DIRECTORY
+```
+
+The fixture emits neutral front/rear wing PNGs at fixed 1280×720 cameras and
+48 samples. It refuses to overwrite reviewed images and does not save changes
+to the input scene. Full render sampling is unchanged. Matching images support
+visual comparison; they do not establish full 4K quality or the combined runtime
+budget. Pilot artifacts are in `data/releases/realism-2026-9/`.

@@ -1,0 +1,137 @@
+{
+  "checked_at": "2026-11-07",
+  "environment": "Existing Docker worker image, Debian Blender 4.3.2, CPU; sequential builds on same host",
+  "workload": "McLaren Madrid baseline; geometry, GLB, editable scene and four 1920x1080 previews; Cycles adaptive threshold 0.035; seed 17",
+  "runs": {
+    "baseline": {
+      "preview_build_seconds": 151.84536019400002,
+      "samples": 32,
+      "render_and_save_seconds": 139.24,
+      "geometry_export_setup_and_other_seconds": 12.605360194000014,
+      "validation": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 209940,
+        "glb_bytes": 5463080,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "mesh_nodes": 191,
+      "builder_sha256": "ebcbdbc714e82e1f720022b583735942419ab2b4d1b62fcd3cb38f42f340a007",
+      "glb_sha256": "2df1c9921564da90eee1b54cc45a5868f6bd07b2b9f0e9cdabb585c9cd47b7f1"
+    },
+    "revised": {
+      "preview_build_seconds": 161.77326824099998,
+      "samples": 32,
+      "render_and_save_seconds": 153.23000000000002,
+      "geometry_export_setup_and_other_seconds": 8.543268240999964,
+      "validation": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 226384,
+        "glb_bytes": 6013036,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "mesh_nodes": 244,
+      "builder_sha256": "da41127ad6aca2dbb102785c8a6569a2def8d641d2dd18a107266f84c75c8d1b",
+      "glb_sha256": "dacd5a0bf4ad810365a5fb5b8e68197ffa073e4ca6b803acb656f91bf79def67"
+    },
+    "quality": {
+      "preview_build_seconds": 194.251322339,
+      "samples": 40,
+      "render_and_save_seconds": 184.07,
+      "geometry_export_setup_and_other_seconds": 10.181322339000019,
+      "validation": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 226384,
+        "glb_bytes": 6013036,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "mesh_nodes": 244,
+      "builder_sha256": "a6df8622a2c068c7c35d6f3b5e5e85de6862718e809e288dec14391f16f8b852",
+      "glb_sha256": "78a6b3a2e8055536a579c99f93b9b5dd5b804a87d3907d883e0031d4911da897"
+    }
+  },
+  "detail_only_increase_percent": 6.53817017149283,
+  "quality_budget_increase_percent": 27.927071390802773,
+  "changed_components": [
+    "chassis",
+    "engine_cover",
+    "wheels"
+  ],
+  "limits": [
+    "Single sequential run per setting, not repeated statistical benchmarking",
+    "Preview workload scaled from 32 to 40 samples; full 4K release runtime not measured",
+    "Not published; browser FPS is one local Metal run and may overlap Docker geometry smoke, not a cross-device performance guarantee"
+  ],
+  "artifacts": "data/releases/detail-2026-7/quality/",
+  "website_viewer": {
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+    "drawingBuffer": [
+      1920,
+      1080
+    ],
+    "frames": 479,
+    "seconds": 8.003100000023842,
+    "fps": 59.85180742444465,
+    "animationTicks": 481,
+    "team": "mclaren",
+    "version_id": "cfb61978-d2e8-41ac-b66d-ec4765813acb"
+  },
+  "website_viewer_artifacts": "data/releases/detail-2026-7/viewer/",
+  "verification": {
+    "service_tests_passed": 52,
+    "blender_grid_cases_passed": 12,
+    "grid_log": "data/releases/detail-2026-7/grid-detail-check.log",
+    "checks": [
+      "Eleven constructors export detail under existing component IDs",
+      "Wheel sleeves are watertight, positively oriented and retain open bores",
+      "All 26 suspension mounts contact each exported shell",
+      "Front-wing-only revision preserves all ten other assemblies",
+      "McLaren detail pass changes only chassis, engine_cover and wheels",
+      "Four preview dimensions and GLB validation passed"
+    ]
+  }
+}

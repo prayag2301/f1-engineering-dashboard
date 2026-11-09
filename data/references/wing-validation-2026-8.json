@@ -1,0 +1,96 @@
+{
+  "generator_version": "2026.8",
+  "decision": "not_approved_for_realism_release",
+  "scope": "McLaren and Racing Bulls pilot reconstruction review; all-grid technical checks reused from current implementation validation",
+  "technical_checks": {
+    "focused_tests_passed": 53,
+    "all_grid_geometry": "passed",
+    "grid_log": "data/releases/wings-2026-8/rebuilt-worker-check.log",
+    "reference_image_hashes": "4 of 4 match saved ledger",
+    "services": "API, database, Redis healthy; web, worker, scheduler running"
+  },
+  "visual_findings": [
+    {
+      "severity": "release_blocker",
+      "component": "front_wing",
+      "finding": "Neutral close-ups retain simple slab-like endplates; McLaren reference shows rolled upper edges and more developed outboard transitions and hardware. Current geometry does not meet the requested photographic realism.",
+      "reference": "data/raw/grid-2026-09-21/technical-2.webp"
+    },
+    {
+      "severity": "release_blocker",
+      "component": "rear_wing",
+      "finding": "Lower endplate transitions and pylon mounting detail remain simplified versus the Racing Bulls rear-assembly photograph. Distinct parameter values do not by themselves establish sufficient team-specific fidelity.",
+      "reference": "data/raw/grid-2026-09-21/technical-21.webp"
+    },
+    {
+      "severity": "limitation",
+      "component": "render",
+      "finding": "Existing 40-sample previews show visible grain. Full 160-sample output has not been inspected; geometry changes are required independently of sampling."
+    }
+  ],
+  "timing_target": {
+    "status": "unverified",
+    "reason": "Earlier detail and wing measurements used different baselines and cannot establish the combined full-quality 20\u201330% increase."
+  },
+  "full_quality_batch": {
+    "directory": "data/releases/validation-2026-8",
+    "status": "stopped_at_visual_review_gate",
+    "completed_full_builds": 0,
+    "reason": "Do not spend full render budget on geometry that fails the requested realism criterion."
+  },
+  "publication": "No publication or current-pointer changes",
+  "next_acceptance_steps": [
+    "Refine front endplate rolled edges, outboard transitions and exposed attachments against saved references.",
+    "Refine rear endplate lower transitions and support mounting geometry.",
+    "Repeat attachment and clearance checks, then review neutral and complete-car views.",
+    "Run original 128-sample versus revised 160-sample four-view 4K builds sequentially and calculate total runtime increase."
+  ],
+  "pilots": {
+    "mclaren": {
+      "viewer": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "frames": 599,
+        "seconds": 8.003899999976158,
+        "fps": 74.83851622356406,
+        "animationTicks": 601,
+        "team": "mclaren",
+        "version_id": "cfb61978-d2e8-41ac-b66d-ec4765813acb"
+      },
+      "reviewed_asset_hashes": {
+        "car.glb": "f8307f558943671cf5164db189e333a9d1393a382c53b9320569648c4a624151",
+        "preview_front.png": "298cee88c14063e6626eee2aca2f75a18c75ece550b204d91553fcdb036707b0",
+        "preview_side.png": "20030c88f5b3fe111935b21ee81935df879f8590317c5331c384394529f62544",
+        "preview_rear.png": "5e9fa86e7a033efab1748fdc4e4071e0d3d10315f743ad3007b110a1121306ad",
+        "neutral_front_wing.png": "2d47c8ea8892b0eff8a3bcc2563bd56bec9b2a51c89325d3ac7879644e129f80",
+        "neutral_rear_wing.png": "4730509f5c2dc45e839bcf07f47c09ba96ce3921d06d2d51028ae52bed72ffcc"
+      }
+    },
+    "racing_bulls": {
+      "viewer": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "frames": 600,
+        "seconds": 8.013699999928475,
+        "fps": 74.8717820738679,
+        "animationTicks": 601,
+        "team": "racing_bulls",
+        "version_id": "22bc2b98-d7c8-4f73-8587-db81039866ca"
+      },
+      "reviewed_asset_hashes": {
+        "car.glb": "2989634b83df0dce8ad78b85ce2595ba55885b24bfe0c711be19f68a8921ff9b",
+        "preview_front.png": "a623d1ae720d1b6660e3229f77ec90a67ef1a83285bc6eb412521cdd75d31777",
+        "preview_side.png": "5f5052bd82a9b8a0a419174e282699aa85f850ec495655563a9f904962cbf755",
+        "preview_rear.png": "72a8cf08da15b1203d84be1421ceaf93fcc251f3edea753adfa68cb170eb7a90",
+        "neutral_front_wing.png": "c92db339f0dc2739f16b6db506280e23cbed4535d48dd8acefcd8433c7257ea0",
+        "neutral_rear_wing.png": "f022ec19f0fbb65fc5db9b73c7a5fbe948871f38d47ad3e0d0ff754f9898cec9"
+      }
+    }
+  }
+}

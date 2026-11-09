@@ -166,6 +166,7 @@ def test_launch_correction_preserves_other_revisions_and_rejects_later_event(
         "rear_wing",
         "suspension",
         "diffuser",
+        "wheels",
     }
     assert version.configuration_kind == "reconstruction"
     assert version.candidate_ids == []

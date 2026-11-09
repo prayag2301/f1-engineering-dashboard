@@ -11,6 +11,8 @@ PyMuPDF==1.24.3
 trimesh[easy]>=4.0.0
 numpy>=1.26.0
 celery[redis]==5.4.0
+# Newer Kombu requires redis-py >=6, while Celery 5.4 requires redis-py <6.
+kombu==5.3.7
 beautifulsoup4==4.12.3
 Pillow>=10.3.0
 itsdangerous==2.2.0

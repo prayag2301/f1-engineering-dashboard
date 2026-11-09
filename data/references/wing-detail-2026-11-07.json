@@ -1,0 +1,44 @@
+{
+  "reviewed_at": "2026-11-07",
+  "purpose": "Front and rear wing reconstruction detail passes; September pilot configurations, not November race upgrades",
+  "references": [
+    {
+      "team": "mclaren",
+      "file": "data/raw/grid-2026-09-21/technical-2.webp",
+      "url": "https://cdn-7.motorsport.com/images/mgl/6VyKmKGY/s1100/dettaglio-tecnico-mclaren-mcl4.webp",
+      "observed_at": "2026-09-10",
+      "sha256": "ff2c58675f3a6f545195aa76af20532d0b06fed8051110125cfcaf9e8753c5d8",
+      "observation": "Complete detached front assembly: swept flap outlines, exposed slot brackets, high narrow endplates with curled upper edge, contoured outboard foot. Exact sections and slot dimensions are estimates."
+    },
+    {
+      "team": "mclaren",
+      "file": "data/raw/grid-2026-09-21/technical-0.webp",
+      "url": "https://cdn-4.motorsport.com/images/mgl/01QNkNv0/s1100/dettaglio-tecnico-mclaren-mcl4.webp",
+      "observed_at": "2026-09-10",
+      "sha256": "cadd12d12167bf15784e6d0341d7848258e906a469c710c8becfa8b940b630de",
+      "observation": "Rear mainplane has a shallow central bowl and visible central actuator fairing. Supports are partly obscured; dimensions and concealed mechanism remain unresolved."
+    },
+    {
+      "team": "racing_bulls",
+      "file": "data/raw/grid-2026-09-21/technical-21.webp",
+      "url": "https://cdn-4.motorsport.com/images/mgl/YP74B4B2/s1100/dettaglio-tecnico-racing-bulls.webp",
+      "observed_at": "2026-09-10",
+      "sha256": "687e0e1bb2adffa6bf02247f8718c7f7fb763d851ea987c318233adff705b79a",
+      "observation": "Rear assembly: central bowl, narrow paired supports, inward-tapered lower endplates and exposed upper flap edges. Exact profiles and actuation internals unresolved."
+    },
+    {
+      "team": "racing_bulls",
+      "file": "data/raw/grid-2026-09-21/racing-bulls-3.webp",
+      "url": "https://cdn-5.motorsport.com/images/mgl/0R7BZqZ2/s1100/arvid-lindblad-racing-bulls.webp",
+      "observed_at": "2026-09-11",
+      "sha256": "1b57dcf97d33a9294c1b95fc44fbac184539cc40ba850c5727d032e83b9a9b0d",
+      "observation": "On-track front three-quarter: broad upper-flap silhouette, outboard transition and endplate outline; rear silhouette provides a secondary check."
+    }
+  ],
+  "limitations": [
+    "Numerical stations are authored exterior estimates, not measured factory dimensions.",
+    "Paddock photographs do not alone prove race fitment; September track photographs provide configuration cross-checks.",
+    "No aerodynamic performance or regulatory compliance certification.",
+    "Other constructors retain their existing wing silhouettes unless separately reviewed."
+  ]
+}

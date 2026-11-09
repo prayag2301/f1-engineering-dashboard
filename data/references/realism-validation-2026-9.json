@@ -1,0 +1,185 @@
+{
+  "generator_version": "2026.9",
+  "status": "targeted_realism_fixes_implemented_and_reviewed",
+  "scope": "McLaren and Racing Bulls front/rear wings; September exterior reconstructions",
+  "changes": [
+    "Rolled front-endplate upper edges with team-specific curvature",
+    "Crowned front outboard footplates",
+    "Distinct lower rear-endplate transition stations",
+    "Rear pylon mounting shoes and exposed fasteners"
+  ],
+  "tests": {
+    "focused_passed": 53,
+    "warnings": "11 existing Pydantic deprecations",
+    "final_pilot_checks": [
+      "GLB validation",
+      "24 wing attachment anchors per car",
+      "flap clearance",
+      "only front_wing/rear_wing hashes changed from 2026.8"
+    ]
+  },
+  "pilots": {
+    "mclaren": {
+      "validation": {
+        "geometry": {
+          "bounds_m": [
+            [
+              -0.9743999242782597,
+              0.0005814731121063232,
+              -2.549999952316284
+            ],
+            [
+              0.9743999540805817,
+              1.0739999413490295,
+              2.3259999454021454
+            ]
+          ],
+          "triangles": 241552,
+          "glb_bytes": 6344572,
+          "component_count": 11,
+          "textures": 1,
+          "wheelbase_m": 3.4000003337860107,
+          "regulation_reference": "fia-2026-c-issue20",
+          "coordinate_system": "metres; Y-up; nose -Z"
+        },
+        "changed_components": [
+          "front_wing",
+          "rear_wing"
+        ],
+        "attachments": 24
+      },
+      "artifacts": {
+        "car.glb": {
+          "path": "data/releases/realism-2026-9/mclaren/car.glb",
+          "sha256": "22755cc565e7d7fea68939511e254531633822869dc86cee5f6836fac0428dd9"
+        },
+        "source.blend": {
+          "path": "data/releases/realism-2026-9/mclaren/source.blend",
+          "sha256": "151f1b59bf5596155283044460e619923c20c28575c8fcb2c317bbc77d876378"
+        },
+        "geometry.json": {
+          "path": "data/releases/realism-2026-9/mclaren/geometry.json",
+          "sha256": "401a5e53ef02a9a2bcbf1f1283f6fc6a82ecddd0d9fe88ef93c203d86f865b73"
+        },
+        "validation.json": {
+          "path": "data/releases/realism-2026-9/mclaren/validation.json",
+          "sha256": "82dcfb0e84b93a8b7068b084d6d478d25c829dc3d08f826ba0cfeb1304341544"
+        },
+        "before/neutral_front_wing.png": {
+          "path": "data/releases/realism-2026-9/mclaren/before/neutral_front_wing.png",
+          "sha256": "d440e019abdcc4d36b5edf10a4975318d90fdccf3c94ec8eb4fab5a6ee1f659b"
+        },
+        "before/neutral_rear_wing.png": {
+          "path": "data/releases/realism-2026-9/mclaren/before/neutral_rear_wing.png",
+          "sha256": "d9cc3e6123506eb9f2496566ef3915d4d184232ededf343275becc0fa772e9c8"
+        },
+        "after/neutral_front_wing.png": {
+          "path": "data/releases/realism-2026-9/mclaren/after/neutral_front_wing.png",
+          "sha256": "84bb67ccf526f1d8f3e04d63d488869656da59103cc09de1e5161f6c32c11d13"
+        },
+        "after/neutral_rear_wing.png": {
+          "path": "data/releases/realism-2026-9/mclaren/after/neutral_rear_wing.png",
+          "sha256": "67ec21f226562474804ba503ff8f7917785c8a17512c19e89205b2746ffe23ab"
+        }
+      }
+    },
+    "racing_bulls": {
+      "validation": {
+        "geometry": {
+          "bounds_m": [
+            [
+              -0.9743999242782597,
+              0.0005814731121063232,
+              -2.549999952316284
+            ],
+            [
+              0.9743999540805817,
+              1.0739999413490295,
+              2.3259999454021454
+            ]
+          ],
+          "triangles": 241560,
+          "glb_bytes": 6366008,
+          "component_count": 11,
+          "textures": 1,
+          "wheelbase_m": 3.4000003337860107,
+          "regulation_reference": "fia-2026-c-issue20",
+          "coordinate_system": "metres; Y-up; nose -Z"
+        },
+        "changed_components": [
+          "front_wing",
+          "rear_wing"
+        ],
+        "attachments": 24
+      },
+      "artifacts": {
+        "car.glb": {
+          "path": "data/releases/realism-2026-9/racing_bulls/car.glb",
+          "sha256": "58033f7850194eae823af90e5df90934d8fe2030c094c059dbde23cf053877db"
+        },
+        "source.blend": {
+          "path": "data/releases/realism-2026-9/racing_bulls/source.blend",
+          "sha256": "737c1f33030c2c4cae10dc4266deaf5170eec5edf458a11165b26bdb6cb5a742"
+        },
+        "geometry.json": {
+          "path": "data/releases/realism-2026-9/racing_bulls/geometry.json",
+          "sha256": "965c16a889fb35264ff2fd14060a139551df1e9a47b994c8e7eaa8631ec43bc9"
+        },
+        "validation.json": {
+          "path": "data/releases/realism-2026-9/racing_bulls/validation.json",
+          "sha256": "6b61a6619eb426c8ebb97b1043394538c404e0a11de587dfd831b2fe95a10fc1"
+        },
+        "before/neutral_front_wing.png": {
+          "path": "data/releases/realism-2026-9/racing_bulls/before/neutral_front_wing.png",
+          "sha256": "6d3cc49621ebfdd28e28d77cb12ff664a0452ae35e08c015b14da08e05a49b9d"
+        },
+        "before/neutral_rear_wing.png": {
+          "path": "data/releases/realism-2026-9/racing_bulls/before/neutral_rear_wing.png",
+          "sha256": "3ea7cb7580ebccb62c85caf6e1dd80244a6b1b875b6effa383bafd1f9092ded9"
+        },
+        "after/neutral_front_wing.png": {
+          "path": "data/releases/realism-2026-9/racing_bulls/after/neutral_front_wing.png",
+          "sha256": "f0519c13f3b35e76c3f51bb7e35fbe19f6902684db0330158832c1ab807d2bef"
+        },
+        "after/neutral_rear_wing.png": {
+          "path": "data/releases/realism-2026-9/racing_bulls/after/neutral_rear_wing.png",
+          "sha256": "26372f9fdfcc845c77770391a17d0cf1b6a99aa50961b8476299ece8913c0f85"
+        }
+      }
+    }
+  },
+  "limits": [
+    "No full 4K render or combined 20\u201330 percent build-time validation",
+    "Not factory CAD; exact dimensions and concealed hardware remain estimates",
+    "No publication or running-image update to 2026.9",
+    "Neutral close-ups validate targeted improvements, not complete-car photographic fidelity"
+  ],
+  "viewer": {
+    "viewer-baseline-idle": {
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+      "drawingBuffer": [
+        1920,
+        1080
+      ],
+      "frames": 599,
+      "seconds": 8.000100000023842,
+      "fps": 74.87406407397593,
+      "animationTicks": 600,
+      "team": "mclaren",
+      "version_id": "cfb61978-d2e8-41ac-b66d-ec4765813acb"
+    },
+    "viewer-mclaren-idle": {
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+      "drawingBuffer": [
+        1920,
+        1080
+      ],
+      "frames": 599,
+      "seconds": 8.0015,
+      "fps": 74.86096356933075,
+      "animationTicks": 600,
+      "team": "mclaren",
+      "version_id": "cfb61978-d2e8-41ac-b66d-ec4765813acb"
+    }
+  }
+}

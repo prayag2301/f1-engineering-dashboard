@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generator_version": "2026.6",
+  "generator_version": "2026.9",
   "components": {
     "chassis": {
       "label": "Chassis & cockpit",
@@ -187,10 +187,11 @@
         "rear_wing": "SF-26 January launch exterior: a deeper spoon-shaped mainplane, individually contoured slotted flaps and swept lower endplate supports follow the front and rear-quarter launch views. Pylons are thin blade surfaces. Exact profiles, actuator details and deflection are estimates; this does not reconstruct a Monza low-drag wing. Detail pass 2026.5: Dated launch airfoil outlines retained with thin slot separators and hinge barrels derived from the same section coordinates. Launch rear-quarter and overhead views support the slotted arrangement. Small support dimensions and hinge construction are estimates; September Mercedes winglet revisions are not backdated into this configuration.",
         "suspension": "Exterior coherence correction: inboard ends seat 4 mm into each team's evaluated body shell; closed flattened wishbone fairings and wheel uprights replace floating round rods. The front axle-like bar is removed. Launch views and September 11 front photography support the general arrangement; hardpoints, fairing sections and concealed joints are estimates. This does not reconstruct Ferrari's Madrid rear-fairing upgrade.",
         "diffuser": "Exterior coherence correction: continuous curved expansion skin, joined outlet walls and a thin laminate return replace a rounded sparse quad with disconnected flat strakes. The visible rear opening is checked against launch rear-quarter imagery. Channel count, internal shape and exact outlet section remain estimates; no newly evidenced diffuser upgrade is claimed.",
-        "chassis": "SF-26 launch reconstruction: the dark inner cockpit tub now remains visible within the painted survival-cell opening. This corrects the previously obscured seat; it does not establish a real-world chassis upgrade. Hidden cockpit details and dimensions remain estimates.",
+        "chassis": "SF-26 launch reconstruction: the dark inner cockpit tub now remains visible within the painted survival-cell opening. This corrects the previously obscured seat; it does not establish a real-world chassis upgrade. Hidden cockpit details and dimensions remain estimates. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "sidepods": "SF-26 launch reconstruction: broad forward-facing mouths, full upper shoulders and a later inward taper. The model separates the recessed inlet from the undercut body surface. Photograph comparison supports these exterior features; section dimensions and internal ducts remain estimates.",
-        "engine_cover": "SF-26 launch reconstruction: triangular airbox opening above broader white shoulders and a long dorsal fin. Small shoulder cooling reliefs are illustrative; their count, depth and hidden cooling layout are not established by the gallery.",
-        "nose": "SF-26 launch reconstruction: a broad, flattened taper approaching the front wing. Compare its shoulders and tip against the slimmer W17 model in neutral surface mode. Exact sections and attachment dimensions are estimated from the launch views."
+        "engine_cover": "SF-26 launch reconstruction: triangular airbox opening above broader white shoulders and a long dorsal fin. Small shoulder cooling reliefs are illustrative; their count, depth and hidden cooling layout are not established by the gallery. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
+        "nose": "SF-26 launch reconstruction: a broad, flattened taper approaching the front wing. Compare its shoulders and tip against the slimmer W17 model in neutral surface mode. Exact sections and attachment dimensions are estimated from the launch views.",
+        "wheels": "Original exterior reconstruction from launch views. Broad inlet mouths, red sidepods and nose, white upper cockpit/engine cover, and narrow rear bodywork are visible. Unseen internal surfaces and exact section dimensions are estimated. Sponsor artwork is not included. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages."
       },
       "parameters": {
         "nose": {
@@ -245,10 +246,11 @@
         "rear_wing": "W17 January presentation exterior: a shallower mainplane bowl, more uniform upper-flap height and straighter lower endplate sweep than the Ferrari reconstruction. Each slotted element is a separate closed surface. Hidden mechanisms and exact sections remain estimates. The Madrid central-winglet span reduction in the September 11 FIA submission is recorded separately, not backdated into this launch model. Detail pass 2026.5: Dated launch airfoil outlines retained with thin slot separators and hinge barrels derived from the same section coordinates. Launch rear-quarter and overhead views support the slotted arrangement. Small support dimensions and hinge construction are estimates; September Mercedes winglet revisions are not backdated into this configuration.",
         "suspension": "Exterior coherence correction: inboard ends seat 4 mm into each team's evaluated body shell; closed flattened wishbone fairings and wheel uprights replace floating round rods. The front axle-like bar is removed. Launch views and September 11 front photography support the general arrangement; hardpoints, fairing sections and concealed joints are estimates. This does not reconstruct Ferrari's Madrid rear-fairing upgrade.",
         "diffuser": "Exterior coherence correction: continuous curved expansion skin, joined outlet walls and a thin laminate return replace a rounded sparse quad with disconnected flat strakes. The visible rear opening is checked against launch rear-quarter imagery. Channel count, internal shape and exact outlet section remain estimates; no newly evidenced diffuser upgrade is claimed.",
-        "chassis": "W17 launch reconstruction: the dark inner cockpit tub now remains visible within the survival-cell opening. This corrects the previously obscured seat; it does not establish a real-world chassis upgrade. Hidden cockpit details and dimensions remain estimates.",
+        "chassis": "W17 launch reconstruction: the dark inner cockpit tub now remains visible within the survival-cell opening. This corrects the previously obscured seat; it does not establish a real-world chassis upgrade. Hidden cockpit details and dimensions remain estimates. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "sidepods": "W17 presentation-render reconstruction: shallow high inlet slots, undercut shoulders and a relatively flat upper deck with shallow channels and a raised rear body profile. These contours follow the January 22 official renders, not a verified on-track configuration. Section dimensions, channel depth and concealed radiator geometry remain estimates.",
-        "engine_cover": "W17 presentation-render reconstruction: a rounded airbox opening with a central divider, a narrow dark spine and a higher, flat-sided dorsal fin over the raised rear deck. The official launch renders establish this visible outline; on-track correspondence, hidden surfaces and exact dimensions are unconfirmed.",
-        "nose": "W17 launch reconstruction: a slimmer, straighter nose taper with silver upper paint and a turquoise edge line. Neutral surface mode removes the paint line to expose the modeled contour. Exact nose sections and attachments remain visual estimates."
+        "engine_cover": "W17 presentation-render reconstruction: a rounded airbox opening with a central divider, a narrow dark spine and a higher, flat-sided dorsal fin over the raised rear deck. The official launch renders establish this visible outline; on-track correspondence, hidden surfaces and exact dimensions are unconfirmed. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
+        "nose": "W17 launch reconstruction: a slimmer, straighter nose taper with silver upper paint and a turquoise edge line. Neutral surface mode removes the paint line to expose the modeled contour. Exact nose sections and attachments remain visual estimates.",
+        "wheels": "Original exterior reconstruction from the W17 launch. Silver forward bodywork, black rear bodywork, and a low turquoise flow line follow the official livery description. Fine inlet sections and hidden surfaces remain estimates. Sponsor artwork is not included. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages."
       },
       "parameters": {
         "nose": {
@@ -300,16 +302,16 @@
       ],
       "notes": "Papaya forward body and black side surfaces; high narrow inlet mouths, pronounced shoulder undercut and a descending rear ramp. Rounded airbox opening. Original exterior reconstruction from 11 September 2026 Madrid photographs, reviewed 21 September. Exact sections, hidden floor/diffuser geometry and suspension hardpoints remain authored estimates; sponsor artwork is omitted.",
       "component_notes": {
-        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "nose": "Photo-supported exterior: Papaya forward body and black side surfaces; high narrow inlet mouths, pronounced shoulder undercut and a descending rear ramp. Rounded airbox opening. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "front_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "front_wing": "September Madrid exterior reconstruction 2026.8: broad thin flap contours, tapered outer sections, raised inward-curving endplates and scalloped feet estimated from technical-2 and dated track views. Separators attach to the evaluated scaled flap skins. Exact sections, thicknesses and small brackets remain estimates; no November upgrade geometry is asserted. Evidence: data/references/wing-detail-2026-11-07.json.",
         "sidepods": "Photo-supported exterior: Papaya forward body and black side surfaces; high narrow inlet mouths, pronounced shoulder undercut and a descending rear ramp. Rounded airbox opening. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "engine_cover": "Photo-supported exterior: Papaya forward body and black side surfaces; high narrow inlet mouths, pronounced shoulder undercut and a descending rear ramp. Rounded airbox opening. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "engine_cover": "Photo-supported exterior: Papaya forward body and black side surfaces; high narrow inlet mouths, pronounced shoulder undercut and a descending rear ramp. Rounded airbox opening. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
         "floor": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "diffuser": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "rear_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "rear_wing": "September Madrid exterior reconstruction 2026.8: shallow central bowl, tapered flap sections, shaped lower endplate transitions, twin supports and visible central actuator fairing estimated from technical-0. Exact sections, thicknesses, support dimensions and internal actuator mechanism remain unresolved; no November upgrade geometry is asserted. Evidence: data/references/wing-detail-2026-11-07.json.",
         "suspension": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages.",
         "halo": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim."
       },
       "parameters": {
@@ -411,6 +413,458 @@
         "primary": "#ff8700",
         "upper": "#17191d",
         "accent": "#ff8700"
+      },
+      "wing_profiles": {
+        "front_wing": {
+          "mainplane": [
+            [
+              0,
+              -2.55,
+              0.09,
+              0.198,
+              0.027,
+              0.016,
+              0.006
+            ],
+            [
+              0.16,
+              -2.54,
+              0.095,
+              0.202,
+              0.03,
+              0.017,
+              0.006
+            ],
+            [
+              0.43,
+              -2.49,
+              0.113,
+              0.195,
+              0.03,
+              0.016,
+              0.006
+            ],
+            [
+              0.68,
+              -2.425,
+              0.12,
+              0.178,
+              0.025,
+              0.015,
+              0.005
+            ],
+            [
+              0.8,
+              -2.405,
+              0.078,
+              0.185,
+              0.021,
+              0.012,
+              0.005
+            ],
+            [
+              0.865,
+              -2.39,
+              0.132,
+              0.17,
+              0.012,
+              0.011,
+              0.004
+            ],
+            [
+              0.9,
+              -2.38,
+              0.101,
+              0.16,
+              0.009,
+              0.009,
+              0.004
+            ]
+          ],
+          "slot_flap": [
+            [
+              0.13,
+              -2.36,
+              0.14,
+              0.16,
+              0.053,
+              0.021,
+              0.005
+            ],
+            [
+              0.32,
+              -2.33,
+              0.155,
+              0.154,
+              0.058,
+              0.021,
+              0.005
+            ],
+            [
+              0.56,
+              -2.27,
+              0.165,
+              0.136,
+              0.057,
+              0.02,
+              0.005
+            ],
+            [
+              0.73,
+              -2.245,
+              0.15,
+              0.105,
+              0.043,
+              0.017,
+              0.004
+            ],
+            [
+              0.8,
+              -2.24,
+              0.132,
+              0.09,
+              0.03,
+              0.012,
+              0.004
+            ]
+          ],
+          "upper_flap": [
+            [
+              0.135,
+              -2.225,
+              0.208,
+              0.14,
+              0.05,
+              0.022,
+              0.004
+            ],
+            [
+              0.36,
+              -2.2,
+              0.226,
+              0.15,
+              0.052,
+              0.024,
+              0.004
+            ],
+            [
+              0.58,
+              -2.16,
+              0.236,
+              0.125,
+              0.045,
+              0.02,
+              0.004
+            ],
+            [
+              0.74,
+              -2.17,
+              0.213,
+              0.085,
+              0.035,
+              0.013,
+              0.0035
+            ],
+            [
+              0.8,
+              -2.18,
+              0.19,
+              0.07,
+              0.025,
+              0.01,
+              0.003
+            ]
+          ],
+          "endplate": [
+            [
+              0,
+              0.8,
+              0.083,
+              -2.405,
+              0.8,
+              0.19,
+              -2.405
+            ],
+            [
+              0.24,
+              0.8,
+              0.089,
+              -2.32,
+              0.793,
+              0.315,
+              -2.32
+            ],
+            [
+              0.56,
+              0.8,
+              0.098,
+              -2.21,
+              0.79,
+              0.345,
+              -2.21
+            ],
+            [
+              0.82,
+              0.8,
+              0.111,
+              -2.11,
+              0.8,
+              0.337,
+              -2.11
+            ],
+            [
+              1,
+              0.8,
+              0.12,
+              -2.02,
+              0.8,
+              0.31,
+              -2.02
+            ]
+          ],
+          "foot": [
+            [
+              0,
+              0.8,
+              0.083,
+              -2.405,
+              0.9,
+              0.101,
+              -2.38
+            ],
+            [
+              0.22,
+              0.8,
+              0.086,
+              -2.33,
+              0.907,
+              0.148,
+              -2.31
+            ],
+            [
+              0.53,
+              0.8,
+              0.099,
+              -2.22,
+              0.91,
+              0.142,
+              -2.21
+            ],
+            [
+              0.78,
+              0.8,
+              0.112,
+              -2.12,
+              0.901,
+              0.124,
+              -2.105
+            ],
+            [
+              1,
+              0.8,
+              0.12,
+              -2.02,
+              0.884,
+              0.126,
+              -2.005
+            ]
+          ],
+          "reference_parameters": {
+            "chord": 0.2858,
+            "sweep": 0.093,
+            "camber": 0.0398
+          },
+          "upper_edge_roll": 0.027,
+          "foot_crown": 0.012
+        },
+        "rear_wing": {
+          "profiles": [
+            [
+              [
+                0,
+                1.85,
+                0.802,
+                0.232,
+                0.046,
+                0.019,
+                0.007
+              ],
+              [
+                0.24,
+                1.85,
+                0.809,
+                0.229,
+                0.045,
+                0.019,
+                0.007
+              ],
+              [
+                0.42,
+                1.845,
+                0.834,
+                0.218,
+                0.037,
+                0.018,
+                0.006
+              ],
+              [
+                0.505,
+                1.835,
+                0.852,
+                0.207,
+                0.027,
+                0.016,
+                0.005
+              ]
+            ],
+            [
+              [
+                0,
+                2.055,
+                0.859,
+                0.125,
+                0.044,
+                0.018,
+                0.005
+              ],
+              [
+                0.24,
+                2.053,
+                0.866,
+                0.124,
+                0.043,
+                0.019,
+                0.005
+              ],
+              [
+                0.42,
+                2.04,
+                0.888,
+                0.119,
+                0.034,
+                0.016,
+                0.004
+              ],
+              [
+                0.505,
+                2.025,
+                0.901,
+                0.108,
+                0.025,
+                0.013,
+                0.004
+              ]
+            ],
+            [
+              [
+                0,
+                2.164,
+                0.914,
+                0.125,
+                0.043,
+                0.018,
+                0.004
+              ],
+              [
+                0.24,
+                2.159,
+                0.921,
+                0.124,
+                0.042,
+                0.019,
+                0.004
+              ],
+              [
+                0.42,
+                2.14,
+                0.94,
+                0.119,
+                0.033,
+                0.016,
+                0.004
+              ],
+              [
+                0.505,
+                2.119,
+                0.943,
+                0.108,
+                0.028,
+                0.013,
+                0.0035
+              ]
+            ]
+          ],
+          "endplate": [
+            [
+              0,
+              0.35,
+              0.29,
+              1.84,
+              0.385,
+              0.32,
+              1.96
+            ],
+            [
+              0.16,
+              0.371,
+              0.395,
+              1.845,
+              0.414,
+              0.42,
+              2.065
+            ],
+            [
+              0.32,
+              0.434,
+              0.52,
+              1.855,
+              0.48,
+              0.55,
+              2.185
+            ],
+            [
+              0.46,
+              0.489,
+              0.615,
+              1.85,
+              0.504,
+              0.64,
+              2.28
+            ],
+            [
+              0.58,
+              0.502,
+              0.7,
+              1.85,
+              0.506,
+              0.72,
+              2.32
+            ],
+            [
+              0.78,
+              0.502,
+              0.86,
+              1.83,
+              0.506,
+              0.865,
+              2.31
+            ],
+            [
+              1,
+              0.502,
+              0.98,
+              1.835,
+              0.506,
+              0.985,
+              2.285
+            ]
+          ],
+          "pylon_half_spacing": 0.105,
+          "reference_parameters": {
+            "chord": 0.301,
+            "camber": 0.0502
+          }
+        }
       }
     },
     "red_bull": {
@@ -431,16 +885,16 @@
       ],
       "notes": "Dark blue body with yellow nose tip; narrow nose, shallow inlet mouth and a strongly tapering rear body. Rounded airbox opening. Original exterior reconstruction from 11 September 2026 Madrid photographs, reviewed 21 September. Exact sections, hidden floor/diffuser geometry and suspension hardpoints remain authored estimates; sponsor artwork is omitted.",
       "component_notes": {
-        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "nose": "Photo-supported exterior: Dark blue body with yellow nose tip; narrow nose, shallow inlet mouth and a strongly tapering rear body. Rounded airbox opening. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "front_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "sidepods": "Photo-supported exterior: Dark blue body with yellow nose tip; narrow nose, shallow inlet mouth and a strongly tapering rear body. Rounded airbox opening. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "engine_cover": "Photo-supported exterior: Dark blue body with yellow nose tip; narrow nose, shallow inlet mouth and a strongly tapering rear body. Rounded airbox opening. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "engine_cover": "Photo-supported exterior: Dark blue body with yellow nose tip; narrow nose, shallow inlet mouth and a strongly tapering rear body. Rounded airbox opening. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
         "floor": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "diffuser": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "rear_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "suspension": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages.",
         "halo": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim."
       },
       "parameters": {
@@ -562,16 +1016,16 @@
       ],
       "notes": "Green body with lime accents; elevated inlet shoulders, deep undercut and a triangular airbox. The rear of the visible shoulder descends steeply. Original exterior reconstruction from 11 September 2026 Madrid photographs, reviewed 21 September. Exact sections, hidden floor/diffuser geometry and suspension hardpoints remain authored estimates; sponsor artwork is omitted.",
       "component_notes": {
-        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "nose": "Photo-supported exterior: Green body with lime accents; elevated inlet shoulders, deep undercut and a triangular airbox. The rear of the visible shoulder descends steeply. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "front_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "sidepods": "Photo-supported exterior: Green body with lime accents; elevated inlet shoulders, deep undercut and a triangular airbox. The rear of the visible shoulder descends steeply. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "engine_cover": "Photo-supported exterior: Green body with lime accents; elevated inlet shoulders, deep undercut and a triangular airbox. The rear of the visible shoulder descends steeply. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "engine_cover": "Photo-supported exterior: Green body with lime accents; elevated inlet shoulders, deep undercut and a triangular airbox. The rear of the visible shoulder descends steeply. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
         "floor": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "diffuser": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "rear_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "suspension": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages.",
         "halo": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim."
       },
       "parameters": {
@@ -693,16 +1147,16 @@
       ],
       "notes": "Pink nose and blue body panels; compact rounded airbox and a gently descending sidepod shoulder. Original exterior reconstruction from 11 September 2026 Madrid photographs, reviewed 21 September. Exact sections, hidden floor/diffuser geometry and suspension hardpoints remain authored estimates; sponsor artwork is omitted.",
       "component_notes": {
-        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "nose": "Photo-supported exterior: Pink nose and blue body panels; compact rounded airbox and a gently descending sidepod shoulder. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "front_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "sidepods": "Photo-supported exterior: Pink nose and blue body panels; compact rounded airbox and a gently descending sidepod shoulder. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "engine_cover": "Photo-supported exterior: Pink nose and blue body panels; compact rounded airbox and a gently descending sidepod shoulder. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "engine_cover": "Photo-supported exterior: Pink nose and blue body panels; compact rounded airbox and a gently descending sidepod shoulder. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
         "floor": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "diffuser": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "rear_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "suspension": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages.",
         "halo": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim."
       },
       "parameters": {
@@ -824,16 +1278,16 @@
       ],
       "notes": "Madrid-specific white body with dark blue/green accents; broad forward nose and fuller sidepod shoulders. This is not the standard blue launch livery. Original exterior reconstruction from 11 September 2026 Madrid photographs, reviewed 21 September. Exact sections, hidden floor/diffuser geometry and suspension hardpoints remain authored estimates; sponsor artwork is omitted.",
       "component_notes": {
-        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "nose": "Photo-supported exterior: Madrid-specific white body with dark blue/green accents; broad forward nose and fuller sidepod shoulders. This is not the standard blue launch livery. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "front_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "sidepods": "Photo-supported exterior: Madrid-specific white body with dark blue/green accents; broad forward nose and fuller sidepod shoulders. This is not the standard blue launch livery. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "engine_cover": "Photo-supported exterior: Madrid-specific white body with dark blue/green accents; broad forward nose and fuller sidepod shoulders. This is not the standard blue launch livery. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "engine_cover": "Photo-supported exterior: Madrid-specific white body with dark blue/green accents; broad forward nose and fuller sidepod shoulders. This is not the standard blue launch livery. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
         "floor": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "diffuser": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "rear_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "suspension": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages.",
         "halo": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim."
       },
       "parameters": {
@@ -955,16 +1409,16 @@
       ],
       "notes": "White forward body, black lower surfaces and red accents; broad inlet shoulders and a triangular airbox outline. Original exterior reconstruction from 11 September 2026 Madrid photographs, reviewed 21 September. Exact sections, hidden floor/diffuser geometry and suspension hardpoints remain authored estimates; sponsor artwork is omitted.",
       "component_notes": {
-        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "nose": "Photo-supported exterior: White forward body, black lower surfaces and red accents; broad inlet shoulders and a triangular airbox outline. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "front_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "sidepods": "Photo-supported exterior: White forward body, black lower surfaces and red accents; broad inlet shoulders and a triangular airbox outline. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "engine_cover": "Photo-supported exterior: White forward body, black lower surfaces and red accents; broad inlet shoulders and a triangular airbox outline. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "engine_cover": "Photo-supported exterior: White forward body, black lower surfaces and red accents; broad inlet shoulders and a triangular airbox outline. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
         "floor": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "diffuser": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "rear_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "suspension": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages.",
         "halo": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim."
       },
       "parameters": {
@@ -1087,16 +1541,16 @@
       ],
       "notes": "White forward body and dark blue lower panels with a yellow nose tip; compact inlet shoulder and rounded airbox. Red Bull photographs with incorrect gallery filenames are excluded. Original exterior reconstruction from 11 September 2026 Madrid photographs, reviewed 21 September. Exact sections, hidden floor/diffuser geometry and suspension hardpoints remain authored estimates; sponsor artwork is omitted.",
       "component_notes": {
-        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "nose": "Photo-supported exterior: White forward body and dark blue lower panels with a yellow nose tip; compact inlet shoulder and rounded airbox. Red Bull photographs with incorrect gallery filenames are excluded. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "front_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "front_wing": "September Madrid exterior reconstruction 2026.8: broad flap silhouette with an outer drop, distinct taper, raised endplates and curved outboard feet estimated from racing-bulls-3. Separators attach to the evaluated scaled flap skins. Exact sections, thicknesses and small brackets remain estimates; no November upgrade geometry is asserted. Evidence: data/references/wing-detail-2026-11-07.json.",
         "sidepods": "Photo-supported exterior: White forward body and dark blue lower panels with a yellow nose tip; compact inlet shoulder and rounded airbox. Red Bull photographs with incorrect gallery filenames are excluded. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "engine_cover": "Photo-supported exterior: White forward body and dark blue lower panels with a yellow nose tip; compact inlet shoulder and rounded airbox. Red Bull photographs with incorrect gallery filenames are excluded. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "engine_cover": "Photo-supported exterior: White forward body and dark blue lower panels with a yellow nose tip; compact inlet shoulder and rounded airbox. Red Bull photographs with incorrect gallery filenames are excluded. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
         "floor": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "diffuser": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "rear_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "rear_wing": "September Madrid exterior reconstruction 2026.8: pronounced central spoon, tapered flap sections, angular lower endplate transitions and narrow twin supports estimated from technical-21. The central actuator fairing is an exterior estimate; exact sections, thicknesses and internal mechanisms remain unresolved. No November upgrade geometry is asserted. Evidence: data/references/wing-detail-2026-11-07.json.",
         "suspension": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages.",
         "halo": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim."
       },
       "parameters": {
@@ -1198,6 +1652,458 @@
         "primary": "#f2f2f0",
         "upper": "#ecedf0",
         "accent": "#ffe100"
+      },
+      "wing_profiles": {
+        "front_wing": {
+          "mainplane": [
+            [
+              0,
+              -2.55,
+              0.091,
+              0.196,
+              0.027,
+              0.016,
+              0.006
+            ],
+            [
+              0.17,
+              -2.54,
+              0.096,
+              0.202,
+              0.03,
+              0.018,
+              0.006
+            ],
+            [
+              0.44,
+              -2.495,
+              0.111,
+              0.197,
+              0.029,
+              0.017,
+              0.006
+            ],
+            [
+              0.67,
+              -2.435,
+              0.124,
+              0.185,
+              0.025,
+              0.015,
+              0.005
+            ],
+            [
+              0.8,
+              -2.41,
+              0.088,
+              0.185,
+              0.019,
+              0.012,
+              0.004
+            ],
+            [
+              0.87,
+              -2.395,
+              0.123,
+              0.168,
+              0.013,
+              0.01,
+              0.004
+            ],
+            [
+              0.9,
+              -2.385,
+              0.103,
+              0.16,
+              0.009,
+              0.008,
+              0.004
+            ]
+          ],
+          "slot_flap": [
+            [
+              0.13,
+              -2.362,
+              0.142,
+              0.165,
+              0.054,
+              0.02,
+              0.005
+            ],
+            [
+              0.34,
+              -2.335,
+              0.157,
+              0.16,
+              0.057,
+              0.022,
+              0.005
+            ],
+            [
+              0.59,
+              -2.29,
+              0.163,
+              0.145,
+              0.058,
+              0.021,
+              0.005
+            ],
+            [
+              0.74,
+              -2.26,
+              0.15,
+              0.113,
+              0.047,
+              0.018,
+              0.004
+            ],
+            [
+              0.8,
+              -2.25,
+              0.139,
+              0.09,
+              0.033,
+              0.012,
+              0.004
+            ]
+          ],
+          "upper_flap": [
+            [
+              0.135,
+              -2.22,
+              0.21,
+              0.145,
+              0.055,
+              0.023,
+              0.004
+            ],
+            [
+              0.34,
+              -2.202,
+              0.229,
+              0.145,
+              0.056,
+              0.024,
+              0.004
+            ],
+            [
+              0.59,
+              -2.175,
+              0.235,
+              0.13,
+              0.054,
+              0.023,
+              0.004
+            ],
+            [
+              0.74,
+              -2.172,
+              0.22,
+              0.1,
+              0.042,
+              0.016,
+              0.0035
+            ],
+            [
+              0.8,
+              -2.18,
+              0.195,
+              0.075,
+              0.029,
+              0.012,
+              0.003
+            ]
+          ],
+          "endplate": [
+            [
+              0,
+              0.8,
+              0.09,
+              -2.41,
+              0.8,
+              0.169,
+              -2.41
+            ],
+            [
+              0.22,
+              0.8,
+              0.095,
+              -2.33,
+              0.798,
+              0.302,
+              -2.33
+            ],
+            [
+              0.5,
+              0.8,
+              0.105,
+              -2.23,
+              0.798,
+              0.32,
+              -2.23
+            ],
+            [
+              0.78,
+              0.8,
+              0.118,
+              -2.12,
+              0.8,
+              0.316,
+              -2.12
+            ],
+            [
+              1,
+              0.8,
+              0.123,
+              -2.025,
+              0.8,
+              0.3,
+              -2.025
+            ]
+          ],
+          "foot": [
+            [
+              0,
+              0.8,
+              0.09,
+              -2.41,
+              0.9,
+              0.103,
+              -2.385
+            ],
+            [
+              0.22,
+              0.8,
+              0.095,
+              -2.33,
+              0.906,
+              0.132,
+              -2.32
+            ],
+            [
+              0.53,
+              0.8,
+              0.107,
+              -2.22,
+              0.908,
+              0.141,
+              -2.21
+            ],
+            [
+              0.78,
+              0.8,
+              0.118,
+              -2.12,
+              0.902,
+              0.129,
+              -2.11
+            ],
+            [
+              1,
+              0.8,
+              0.123,
+              -2.025,
+              0.889,
+              0.13,
+              -2.01
+            ]
+          ],
+          "reference_parameters": {
+            "chord": 0.2822,
+            "sweep": 0.086,
+            "camber": 0.0405
+          },
+          "upper_edge_roll": 0.018,
+          "foot_crown": 0.008
+        },
+        "rear_wing": {
+          "profiles": [
+            [
+              [
+                0,
+                1.845,
+                0.781,
+                0.237,
+                0.047,
+                0.019,
+                0.007
+              ],
+              [
+                0.22,
+                1.845,
+                0.79,
+                0.232,
+                0.046,
+                0.02,
+                0.007
+              ],
+              [
+                0.41,
+                1.839,
+                0.835,
+                0.22,
+                0.033,
+                0.018,
+                0.006
+              ],
+              [
+                0.505,
+                1.828,
+                0.865,
+                0.204,
+                0.024,
+                0.015,
+                0.005
+              ]
+            ],
+            [
+              [
+                0,
+                2.053,
+                0.841,
+                0.127,
+                0.044,
+                0.019,
+                0.005
+              ],
+              [
+                0.22,
+                2.05,
+                0.85,
+                0.125,
+                0.044,
+                0.02,
+                0.005
+              ],
+              [
+                0.41,
+                2.03,
+                0.889,
+                0.118,
+                0.032,
+                0.016,
+                0.004
+              ],
+              [
+                0.505,
+                2.012,
+                0.908,
+                0.105,
+                0.023,
+                0.012,
+                0.004
+              ]
+            ],
+            [
+              [
+                0,
+                2.165,
+                0.899,
+                0.127,
+                0.046,
+                0.019,
+                0.004
+              ],
+              [
+                0.22,
+                2.159,
+                0.908,
+                0.125,
+                0.045,
+                0.02,
+                0.004
+              ],
+              [
+                0.41,
+                2.136,
+                0.942,
+                0.118,
+                0.03,
+                0.016,
+                0.004
+              ],
+              [
+                0.505,
+                2.108,
+                0.947,
+                0.107,
+                0.025,
+                0.012,
+                0.0035
+              ]
+            ]
+          ],
+          "endplate": [
+            [
+              0,
+              0.33,
+              0.255,
+              1.84,
+              0.365,
+              0.28,
+              1.99
+            ],
+            [
+              0.18,
+              0.342,
+              0.365,
+              1.84,
+              0.391,
+              0.39,
+              2.08
+            ],
+            [
+              0.34,
+              0.396,
+              0.485,
+              1.855,
+              0.459,
+              0.525,
+              2.17
+            ],
+            [
+              0.46,
+              0.475,
+              0.59,
+              1.845,
+              0.499,
+              0.625,
+              2.265
+            ],
+            [
+              0.58,
+              0.502,
+              0.69,
+              1.84,
+              0.506,
+              0.72,
+              2.31
+            ],
+            [
+              0.79,
+              0.502,
+              0.873,
+              1.82,
+              0.506,
+              0.875,
+              2.3
+            ],
+            [
+              1,
+              0.502,
+              0.983,
+              1.83,
+              0.506,
+              0.987,
+              2.278
+            ]
+          ],
+          "pylon_half_spacing": 0.075,
+          "reference_parameters": {
+            "chord": 0.2965,
+            "camber": 0.0493
+          }
+        }
       }
     },
     "audi": {
@@ -1218,16 +2124,16 @@
       ],
       "notes": "Dark graphite/silver body and red accents; broad inlet shoulder, sculpted undercut and triangular airbox outline. Unrelated white-car photographs are excluded. Original exterior reconstruction from 11 September 2026 Madrid photographs, reviewed 21 September. Exact sections, hidden floor/diffuser geometry and suspension hardpoints remain authored estimates; sponsor artwork is omitted.",
       "component_notes": {
-        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "nose": "Photo-supported exterior: Dark graphite/silver body and red accents; broad inlet shoulder, sculpted undercut and triangular airbox outline. Unrelated white-car photographs are excluded. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "front_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "sidepods": "Photo-supported exterior: Dark graphite/silver body and red accents; broad inlet shoulder, sculpted undercut and triangular airbox outline. Unrelated white-car photographs are excluded. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "engine_cover": "Photo-supported exterior: Dark graphite/silver body and red accents; broad inlet shoulder, sculpted undercut and triangular airbox outline. Unrelated white-car photographs are excluded. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "engine_cover": "Photo-supported exterior: Dark graphite/silver body and red accents; broad inlet shoulder, sculpted undercut and triangular airbox outline. Unrelated white-car photographs are excluded. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
         "floor": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "diffuser": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "rear_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "suspension": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages.",
         "halo": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim."
       },
       "parameters": {
@@ -1348,16 +2254,16 @@
       ],
       "notes": "White and black split livery; broad nose, fuller sidepod shoulders and rounded airbox. Rear and underside detail is poorly resolved in available Madrid photographs. Original exterior reconstruction from 11 September 2026 Madrid photographs, reviewed 21 September. Exact sections, hidden floor/diffuser geometry and suspension hardpoints remain authored estimates; sponsor artwork is omitted.",
       "component_notes": {
-        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "chassis": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Generic cockpit display, grips, controls and harness hardware are estimated construction detail, not a verified team cockpit layout.",
         "nose": "Photo-supported exterior: White and black split livery; broad nose, fuller sidepod shoulders and rounded airbox. Rear and underside detail is poorly resolved in available Madrid photographs. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "front_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "sidepods": "Photo-supported exterior: White and black split livery; broad nose, fuller sidepod shoulders and rounded airbox. Rear and underside detail is poorly resolved in available Madrid photographs. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "engine_cover": "Photo-supported exterior: White and black split livery; broad nose, fuller sidepod shoulders and rounded airbox. Rear and underside detail is poorly resolved in available Madrid photographs. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "engine_cover": "Photo-supported exterior: White and black split livery; broad nose, fuller sidepod shoulders and rounded airbox. Rear and underside detail is poorly resolved in available Madrid photographs. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: The exhaust outlet has an estimated dark recessed aperture; internal exhaust construction is not modeled.",
         "floor": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "diffuser": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "rear_wing": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
         "suspension": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
-        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim.",
+        "wheels": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim. Detail pass 2026.7: Open rim barrels, recessed rotor faces, calipers and wheel hardware are generic exterior estimates; rotor ventilation marks do not model internal cooling passages.",
         "halo": "Shared exterior construction adapted to this car; individual internal geometry and exact part identity are unresolved. Dimensions are visual estimates. Reference date: 11 September 2026. No aerodynamic performance claim."
       },
       "parameters": {
