@@ -8,7 +8,7 @@ x-app: &app
   ADMIN_TOKEN: ${ADMIN_TOKEN:?Run python3 scripts/configure.py to create your local review credentials}
   SESSION_SECRET: ${SESSION_SECRET:?Run python3 scripts/configure.py first}
   DEBUG: "false"
-  RENDER_SAMPLES: ${RENDER_SAMPLES:-128}
+  RENDER_SAMPLES: ${RENDER_SAMPLES:-160}
   BUILD_TIMEOUT_SECONDS: ${BUILD_TIMEOUT_SECONDS:-7200}
   COOKIE_SECURE: ${COOKIE_SECURE:-false}
   ENABLE_DEMO_DATA: ${ENABLE_DEMO_DATA:-false}

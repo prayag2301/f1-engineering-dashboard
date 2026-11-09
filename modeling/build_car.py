@@ -22,6 +22,7 @@ PI = math.pi
 CAR_OBJECTS = []
 COMPONENT = "chassis"
 ATTACHMENTS = []
+WING_ATTACHMENTS = []
 CATALOG = json.loads((Path(__file__).resolve().parent / "catalog.json").read_text())
 
 
@@ -443,18 +444,34 @@ def sectional_wing(name, stations, mat, *, split=False):
         )
 
 
-def ruled_skin(name, rows, mat, thickness=0.005):
+def wing_point(stations, x, t, skin=1):
+    """Point on the same thickness-aware airfoil used for the exported skin."""
+    z, y, chord, rise, camber, thickness = station_sample(stations, abs(x))
+    return (x, y + rise * t + camber * math.sin(PI * t)
+            + skin * thickness * 2 * math.sqrt(t * (1 - t)) * (1 - 0.72 * t),
+            z + chord * t)
+
+
+def ruled_skin(name, rows, mat, thickness=0.005, *, edge_roll=0, crown=0):
     """Curved thin shell between two 3D rails, with rounded solid edges."""
     verts, faces = [], []
+    across = 16 if edge_roll or crown else 4
     for i in range(49):
         a = station_sample(rows, rows[0][0] + (rows[-1][0] - rows[0][0]) * i / 48)
-        for j in range(5):
-            t = j / 4
-            verts.append(tuple((1 - t) * a[:3] + t * a[3:]))
+        for j in range(across + 1):
+            t = j / across
+            point = (1 - t) * a[:3] + t * a[3:]
+            point[1] += crown * math.sin(PI * t)
+            if edge_roll:
+                # Curl only the upper rim; flap contact below it stays on the rail.
+                curl = max(0, (t - 0.75) / 0.25)
+                point[0] += edge_roll * (1 - math.cos(curl * PI / 2))
+                point[1] -= abs(edge_roll) * (curl - math.sin(curl * PI / 2) * 2 / PI)
+            verts.append(tuple(point))
     for i in range(48):
-        for j in range(4):
-            a = i * 5 + j
-            faces.append((a, a + 1, a + 6, a + 5))
+        for j in range(across):
+            a = i * (across + 1) + j
+            faces.append((a, a + 1, a + across + 2, a + across + 1))
     obj = mesh(name, verts, faces, mat)
     mod = obj.modifiers.new("Composite skin", "SOLIDIFY")
     mod.thickness = thickness
@@ -528,9 +545,18 @@ def build_front_wing(team, p, carbon, paint):
             [0.68, 0.822, 0.122, -2.15, 0.804, 0.287, -2.15],
             [1, 0.83, 0.125, -2.02, 0.819, 0.313, -2.02],
         ]
-    chord_scale = p["chord"] / (0.31 if ferrari else 0.285)
-    camber_scale = p["camber"] / (0.046 if ferrari else 0.038)
-    sweep_delta = p["sweep"] - (0.12 if ferrari else 0.085)
+    shape = CATALOG["teams"][team].get("wing_profiles", {}).get("front_wing", {})
+    if shape:
+        main, flap, upper, end = (shape[k] for k in ("mainplane", "slot_flap", "upper_flap", "endplate"))
+    reference = shape.get("reference_parameters", {
+        "chord": 0.31 if ferrari else 0.285,
+        "camber": 0.046 if ferrari else 0.038,
+        "sweep": 0.12 if ferrari else 0.085,
+    })
+    chord_scale = p["chord"] / reference["chord"]
+    camber_scale = p["camber"] / reference["camber"]
+    sweep_delta = p["sweep"] - reference["sweep"]
+    adjusted_profiles = {}
     for name, rows in (("mainplane", main), ("slot_flap", flap), ("upper_flap", upper)):
         adjusted = [
             [
@@ -544,17 +570,19 @@ def build_front_wing(team, p, carbon, paint):
             ]
             for x, z, y, c, rise, camber, thick in rows
         ]
+        adjusted_profiles[name] = adjusted
         sectional_wing(name, adjusted, carbon, split=name != "mainplane")
     for side in (-1, 1):
         ruled_skin(
             "endplate",
             [[t, side * x, y, z, side * a, b, c] for t, x, y, z, a, b, c in end],
             carbon,
+            edge_roll=-side * shape.get("upper_edge_roll", 0),
         )
         # Outboard foot is a swept laminate surface, not a cylindrical tip roll.
         ruled_skin(
             "outboard_foot",
-            [
+            [[t, side * x, y, z, side * a, b, c] for t, x, y, z, a, b, c in shape["foot"]] if shape else [
                 [0, side * 0.822, 0.10, -2.39, side * 0.90, 0.12, -2.38],
                 [
                     0.35,
@@ -570,37 +598,42 @@ def build_front_wing(team, p, carbon, paint):
             ],
             carbon,
             0.004,
+            crown=shape.get("foot_crown", 0),
         )
         # Visible slot separators; spacing and mounting sections are estimated.
         for x in (0.21, 0.71):
-            for a, b in ((flap, upper),):
-                az, ay, ac, ar, *_ = station_sample(a, x)
-                bz, by, *_ = station_sample(b, x)
-                ruled_skin(
+            for lower, upper in (("slot_flap", "upper_flap"),):
+                a = wing_point(adjusted_profiles[lower], side * x, 0.92)
+                b = wing_point(adjusted_profiles[upper], side * x, 0.12, -1)
+                support = ruled_skin(
                     "slot_separator",
                     [
                         [
                             0,
                             side * (x - 0.002),
-                            ay + ar,
-                            az + ac,
+                            a[1],
+                            a[2],
                             side * (x + 0.002),
-                            ay + ar,
-                            az + ac,
+                            a[1],
+                            a[2],
                         ],
                         [
                             1,
                             side * (x - 0.002),
-                            by + 0.01,
-                            bz + 0.018,
+                            b[1],
+                            b[2],
                             side * (x + 0.002),
-                            by + 0.01,
-                            bz + 0.018,
+                            b[1],
+                            b[2],
                         ],
                     ],
                     carbon,
                     0.003,
                 )
+                for name, point in ((lower, a), (upper, b)):
+                    WING_ATTACHMENTS.append({"part": support.name,
+                        "surface": "front_wing." + name + ("_left" if side < 0 else "_right"),
+                        "anchor": point})
 
 
 def build_floor(team, p, carbon):
@@ -783,6 +816,13 @@ def build_rear_wing(team, p, carbon):
             ],
         ]
     )
+    shape = CATALOG["teams"][team].get("wing_profiles", {}).get("rear_wing", {})
+    if shape:
+        profiles = shape["profiles"]
+    reference = shape.get("reference_parameters", {
+        "chord": 0.31 if ferrari else 0.285,
+        "camber": 0.052 if ferrari else 0.044,
+    })
     scaled_profiles = []
     for name, rows in zip(("spoon_mainplane", "slot_flap", "upper_flap"), profiles):
         scaled_profiles.append(
@@ -791,9 +831,9 @@ def build_rear_wing(team, p, carbon):
                     x,
                     z,
                     y,
-                    c * p["chord"] / (0.31 if ferrari else 0.285),
+                    c * p["chord"] / reference["chord"],
                     r,
-                    k * p["camber"] / (0.052 if ferrari else 0.044),
+                    k * p["camber"] / reference["camber"],
                     t,
                 ]
                 for x, z, y, c, r, k, t in rows
@@ -801,29 +841,20 @@ def build_rear_wing(team, p, carbon):
         )
         sectional_wing(
             name,
-            [
-                [
-                    x,
-                    z,
-                    y,
-                    c * p["chord"] / (0.31 if ferrari else 0.285),
-                    r,
-                    k * p["camber"] / (0.052 if ferrari else 0.044),
-                    t,
-                ]
-                for x, z, y, c, r, k, t in rows
-            ],
+            scaled_profiles[-1],
             carbon,
         )
     # Thin slot separators and exposed hinge barrels. Derive their ends from
     # the same airfoil sections so changes of chord cannot leave loose pieces.
     for x in (-0.44, 0.44):
-        for lower, upper in zip(scaled_profiles, scaled_profiles[1:]):
+        for i, (lower, upper) in enumerate(zip(scaled_profiles, scaled_profiles[1:])):
             z, y, chord, rise, camber, _ = station_sample(lower, abs(x))
             a = (x, y + rise * 0.92 + camber * math.sin(PI * 0.92), z + chord * 0.92)
             z, y, chord, rise, camber, _ = station_sample(upper, abs(x))
             b = (x, y + rise * 0.12 + camber * math.sin(PI * 0.12), z + chord * 0.12)
-            ruled_skin(
+            if shape:
+                a, b = wing_point(lower, x, 0.92), wing_point(upper, x, 0.12, -1)
+            support = ruled_skin(
                 "slot_separator",
                 [
                     [0, x, a[1] - 0.004, a[2] - 0.012, x, a[1] - 0.004, a[2] + 0.012],
@@ -840,10 +871,13 @@ def build_rear_wing(team, p, carbon):
                 carbon,
                 16,
             )
+            if shape:
+                for name, point in zip(("spoon_mainplane", "slot_flap", "upper_flap")[i:i+2], (a, b)):
+                    WING_ATTACHMENTS.append({"part": support.name, "surface": "rear_wing." + name, "anchor": point})
     for side in (-1, 1):
         ruled_skin(
             "curved_endplate",
-            [
+            [[t, side * x, y, z, side * a, b, c] for t, x, y, z, a, b, c in shape["endplate"]] if shape else [
                 [0, side * 0.35, 0.29, 1.84, side * 0.385, 0.32, 1.96],
                 [
                     0.3,
@@ -869,31 +903,57 @@ def build_rear_wing(team, p, carbon):
             carbon,
             0.007,
         )
-        z0, y0, chord, rise, camber, _ = station_sample(scaled_profiles[0], 0.13)
+        spacing = shape.get("pylon_half_spacing", 0.13)
+        z0, y0, chord, rise, camber, _ = station_sample(scaled_profiles[0], spacing)
         # Follow the underside of each team's mainplane; the old fixed .83 m
         # top left a visible gap under the higher Mercedes wing.
         top = [
             (y0 + rise * t + camber * math.sin(PI * t), z0 + chord * t)
             for t in (0.48, 0.87)
         ]
-        ruled_skin(
+        if shape:
+            top = [(point[1], point[2]) for point in
+                   (wing_point(scaled_profiles[0], side * spacing, t, -1) for t in (0.48, 0.87))]
+        pylon = ruled_skin(
             "pylon",
             [
-                [0, side * 0.12, 0.30, 1.69, side * 0.12, 0.30, 1.79],
-                [0.5, side * 0.125, 0.57, 1.79, side * 0.125, 0.57, 1.90],
+                [0, side * (spacing * .92 if shape else .12), 0.30, 1.69, side * (spacing * .92 if shape else .12), 0.30, 1.79],
+                [0.5, side * (spacing * .96 if shape else .125), 0.57, 1.79, side * (spacing * .96 if shape else .125), 0.57, 1.90],
                 [
                     1,
-                    side * 0.13,
-                    top[0][0],
+                    side * spacing,
+                    top[0][0] + (0.006 if shape else 0),
                     top[0][1],
-                    side * 0.13,
-                    top[1][0],
+                    side * spacing,
+                    top[1][0] + (0.006 if shape else 0),
                     top[1][1],
                 ],
             ],
             carbon,
             0.012,
         )
+        if shape:
+            pylon.modifiers["Rounded laminate edges"].width = 0.001
+            for y, z in top:
+                WING_ATTACHMENTS.append({"part": pylon.name, "surface": "rear_wing.spoon_mainplane", "anchor": (side * spacing, y, z)})
+            # Exposed mounting shoes are exterior estimates, not hidden actuator parts.
+            shoe = ruled_skin(
+                "pylon_upper_shoe",
+                [[0, side * spacing - .022, top[0][0], top[0][1], side * spacing + .022, top[0][0], top[0][1]],
+                 [1, side * spacing - .022, top[1][0], top[1][1], side * spacing + .022, top[1][0], top[1][1]]],
+                carbon, .006,
+            )
+            for y, z in top:
+                WING_ATTACHMENTS.append({"part": shoe.name, "surface": "rear_wing.spoon_mainplane", "anchor": (side * spacing, y, z)})
+            rounded_box("pylon_lower_shoe", (side * spacing * .925, .323, 1.745), (.034, .045, .115), carbon, .006)
+            for z in (1.72, 1.77):
+                rod("pylon_mount_fastener", (side * spacing * .925 - .019, .33, z),
+                    (side * spacing * .925 + .019, .33, z), .006, carbon, 12)
+    if shape:
+        # Visible central fairing and linkage; internal actuator mechanism is unresolved.
+        _, y, z = wing_point(scaled_profiles[2], 0, .45)
+        loft("actuator_fairing", [(z-.035,.018,y+.014,.025), (z,.026,y+.028,.038), (z+.035,.018,y+.014,.025)], carbon, subdivisions=1)
+        rod("actuator_link", wing_point(scaled_profiles[0], 0, .8), (0,y+.012,z), .007, carbon, 16)
 
 
 def tyre(name, x, z, width, radius, mat):
@@ -941,6 +1001,23 @@ def ring(name, center, radius, thickness, mat, axis="x"):
     if axis == "x":
         obj.rotation_euler[1] = PI / 2
     return register(obj, name, mat)
+
+
+def annulus(name, x, y, z, inner, outer, depth, mat):
+    """Open wheel-axis sleeve; both sides and the bore remain real exported surfaces."""
+    verts = [
+        (x + offset, y + radius * math.cos(j * 2 * PI / 64),
+         z + radius * math.sin(j * 2 * PI / 64))
+        for offset, radius in ((-depth / 2, inner), (-depth / 2, outer),
+                               (depth / 2, outer), (depth / 2, inner))
+        for j in range(64)
+    ]
+    faces = [
+        (k * 64 + j, k * 64 + (j + 1) % 64,
+         ((k + 1) % 4) * 64 + (j + 1) % 64, ((k + 1) % 4) * 64 + j)
+        for k in range(4) for j in range(64)
+    ]
+    return mesh(name, verts, faces, mat)
 
 
 def build_car(team, params):
@@ -1078,6 +1155,21 @@ def build_car(team, params):
             "mirror", (side * 0.63, 0.665, -0.51), (0.17, 0.065, 0.09), red, 0.02
         )
     rounded_box("steering_wheel", (0, 0.48, -0.47), (0.25, 0.08, 0.045), carbon, 0.025)
+    # Generic visible construction detail, not team-specific cockpit measurements.
+    rounded_box("steering_display", (0, 0.493, -0.443), (0.085, 0.035, 0.004), black, 0.003)
+    for side in (-1, 1):
+        tube("steering_grip", [(side * 0.102, 0.515, -0.442),
+                              (side * 0.12, 0.48, -0.442),
+                              (side * 0.102, 0.45, -0.442)], 0.013, rubber)
+        for j in range(3):
+            rod("steering_button", (side * (0.05 + j * 0.021), 0.473, -0.444),
+                (side * (0.05 + j * 0.021), 0.473, -0.437), 0.005, accent, 12)
+        ruled_skin("shoulder_harness", [
+            [0, side * 0.06 - 0.018, 0.56, 0.18, side * 0.06 + 0.018, 0.56, 0.18],
+            [0.5, side * 0.055 - 0.018, 0.39, 0.08, side * 0.055 + 0.018, 0.39, 0.08],
+            [1, side * 0.04 - 0.018, 0.34, -0.12, side * 0.04 + 0.018, 0.34, -0.12],
+        ], black, 0.003)
+    rounded_box("harness_buckle", (0, 0.35, -0.12), (0.05, 0.014, 0.04), alloy, 0.004)
     rod("telemetry_aerial", (0, 0.58, -0.85), (0, 0.76, -0.85), 0.003, carbon, 8)
 
     COMPONENT = "nose"
@@ -1349,6 +1441,7 @@ def build_car(team, params):
                     carbon,
                 )
     rod("exhaust", (0, 0.34, 1.55), (0, 0.37, 2.04), 0.039, alloy, 32)
+    rod("exhaust_recess", (0, 0.37, 2.039), (0, 0.37, 2.042), 0.033, black, 48)
 
     COMPONENT = "halo"
     tube(
@@ -1500,23 +1593,38 @@ def build_car(team, params):
         tyre(tag + "_tyre", x, z, width, radius, rubber)
         side = 1 if x > 0 else -1
         outer = x + side * (width * 0.48)
-        rod(
-            tag + "_rim_barrel",
-            (x - width * 0.46, radius, z),
-            (x + width * 0.46, radius, z),
-            0.229,
-            alloy,
-            64,
-        )
-        # Dark inset dish masks the solid barrel and provides a convincing rim cavity.
-        rod(
-            tag + "_rim_inset",
-            (outer, radius, z),
-            (outer + side * 0.004, radius, z),
-            0.213,
-            black,
-            64,
-        )
+        annulus(tag + "_rim_barrel", x, radius, z, 0.210, 0.229, width * 0.92, alloy)
+        rotor_x = outer - side * 0.025
+        annulus(tag + "_brake_rotor", rotor_x, radius, z, 0.075, 0.177, 0.018, carbon)
+        annulus(tag + "_rotor_bell", rotor_x, radius, z, 0.043, 0.082, 0.025, alloy)
+        rounded_box(tag + "_brake_caliper", (rotor_x, radius, z + 0.151),
+                    (0.065, 0.15, 0.065), alloy, 0.012)
+        # Recessed ventilation marks and mounting hardware remain visible between spokes.
+        for j in range(24):
+            a = j * 2 * PI / 24
+            for r in (0.125, 0.154):
+                y, zz = radius + math.sin(a) * r, z + math.cos(a) * r
+                rod(tag + "_rotor_vent", (rotor_x + side * 0.009, y, zz),
+                    (rotor_x + side * 0.0094, y, zz), 0.003, black, 8)
+        # Batch identical vent material into one draw call per wheel in the website GLB.
+        vents = [o for o in CAR_OBJECTS if o.name.startswith("wheels." + tag + "_rotor_vent")]
+        bpy.ops.object.select_all(action="DESELECT")
+        for obj in vents:
+            obj.select_set(True)
+            CAR_OBJECTS.remove(obj)
+        bpy.context.view_layer.objects.active = vents[0]
+        bpy.ops.object.join()
+        CAR_OBJECTS.append(bpy.context.object)
+        for j in range(6):
+            a = j * 2 * PI / 6
+            y, zz = radius + math.sin(a) * 0.065, z + math.cos(a) * 0.065
+            rod(tag + "_rotor_fastener", (rotor_x, y, zz),
+                (rotor_x + side * 0.016, y, zz), 0.005, alloy, 6)
+        valve_a = PI / 5
+        rod(tag + "_valve", (outer, radius + math.sin(valve_a) * 0.203,
+                             z + math.cos(valve_a) * 0.203),
+            (outer + side * 0.018, radius + math.sin(valve_a) * 0.203,
+             z + math.cos(valve_a) * 0.203), 0.004, alloy, 12)
         ring(tag + "_rim_lip", (outer + side * 0.005, radius, z), 0.22, 0.008, alloy)
         ring(
             tag + "_sidewall_line",
@@ -1621,7 +1729,7 @@ def main():
     parser.add_argument("--output", required=True)
     parser.add_argument("--preview-only", action="store_true")
     parser.add_argument("--geometry-only", action="store_true")
-    parser.add_argument("--samples", type=int, default=64)
+    parser.add_argument("--samples", type=int, default=80)
     parser.add_argument(
         "--device",
         choices=("CPU", "METAL"),
@@ -1735,6 +1843,7 @@ def main():
                 "shape_hashes": shape_hashes,
                 "generator_version": CATALOG["generator_version"],
                 "suspension_attachments": ATTACHMENTS,
+                "wing_attachments": WING_ATTACHMENTS,
             },
             indent=2,
         )

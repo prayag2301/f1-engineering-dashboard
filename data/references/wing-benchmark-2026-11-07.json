@@ -1,0 +1,168 @@
+{
+  "generator_version": "2026.8",
+  "scope": "September reconstruction pilots; not November race upgrades",
+  "environment": "Docker Blender 4.3.2 CPU; single sequential preview runs",
+  "samples": 40,
+  "teams": {
+    "mclaren": {
+      "preview_seconds": 190.56897625300007,
+      "changed_components": [
+        "front_wing",
+        "rear_wing"
+      ],
+      "unchanged_component_count": 9,
+      "artifacts": "data/releases/wings-2026-8/mclaren",
+      "assets": {
+        "car.glb": {
+          "bytes": 5986240,
+          "sha256": "f8307f558943671cf5164db189e333a9d1393a382c53b9320569648c4a624151"
+        },
+        "source.blend": {
+          "bytes": 8816068,
+          "sha256": "f6b096cd2a9800a61e5014beb1eb7545cfabff6202f9c3e47a0cc31f4b4c10e3"
+        },
+        "geometry.json": {
+          "bytes": 10286,
+          "sha256": "d9ab0c7c9c855031d61ba374abeb146f4262879f5e72117f6ff8ee79a8df00c7"
+        },
+        "spec.json": {
+          "bytes": 673,
+          "sha256": "0b5d0536b52fa001c6ec328c409d8fec82b278a44fa354d63ef7d9412d1d475a"
+        },
+        "build_car.py": {
+          "bytes": 71600,
+          "sha256": "b1e7cad9a3d930ea35f1129ed38382e3763b5ab306b1b2f1a1ff151dd6ff3d70"
+        },
+        "catalog.json": {
+          "bytes": 92849,
+          "sha256": "2ce32b90ba0d7d9cef6c08f7899fe467e71e6e3da7ed4658b8a25d78c6f640a9"
+        },
+        "preview_front.png": {
+          "bytes": 2733516,
+          "sha256": "298cee88c14063e6626eee2aca2f75a18c75ece550b204d91553fcdb036707b0"
+        },
+        "preview_side.png": {
+          "bytes": 2926245,
+          "sha256": "20030c88f5b3fe111935b21ee81935df879f8590317c5331c384394529f62544"
+        },
+        "preview_rear.png": {
+          "bytes": 2839229,
+          "sha256": "5e9fa86e7a033efab1748fdc4e4071e0d3d10315f743ad3007b110a1121306ad"
+        },
+        "preview_three_quarter.png": {
+          "bytes": 2981467,
+          "sha256": "e81347a472b633315f11810ea96c8106195d64d1c0778b9831ff2c22d93e0e79"
+        },
+        "neutral_front_wing.png": {
+          "bytes": 1218654,
+          "sha256": "2d47c8ea8892b0eff8a3bcc2563bd56bec9b2a51c89325d3ac7879644e129f80"
+        },
+        "neutral_rear_wing.png": {
+          "bytes": 1267216,
+          "sha256": "4730509f5c2dc45e839bcf07f47c09ba96ce3921d06d2d51028ae52bed72ffcc"
+        }
+      },
+      "viewer": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "frames": 599,
+        "seconds": 8.003899999976158,
+        "fps": 74.83851622356406,
+        "animationTicks": 601,
+        "team": "mclaren",
+        "version_id": "cfb61978-d2e8-41ac-b66d-ec4765813acb",
+        "measurement": "Local draft GLB injected into existing website viewer; not published"
+      }
+    },
+    "racing_bulls": {
+      "preview_seconds": 204.55308946800005,
+      "changed_components": [
+        "front_wing",
+        "rear_wing"
+      ],
+      "unchanged_component_count": 9,
+      "artifacts": "data/releases/wings-2026-8/racing_bulls",
+      "assets": {
+        "car.glb": {
+          "bytes": 6012304,
+          "sha256": "2989634b83df0dce8ad78b85ce2595ba55885b24bfe0c711be19f68a8921ff9b"
+        },
+        "source.blend": {
+          "bytes": 8812684,
+          "sha256": "ad9eb17e922c25083a1e916e1f9475d787820f905c86dc44f2b5e0f35e05c456"
+        },
+        "geometry.json": {
+          "bytes": 10277,
+          "sha256": "f45f84042b3e3e6dcb8c3768db3898de68756c86934a955bdcc785b98c5f4021"
+        },
+        "spec.json": {
+          "bytes": 679,
+          "sha256": "e042e9d3790d212f237059977081a16b32e606e92e2024dd4930668d6fdfa5a8"
+        },
+        "build_car.py": {
+          "bytes": 71600,
+          "sha256": "b1e7cad9a3d930ea35f1129ed38382e3763b5ab306b1b2f1a1ff151dd6ff3d70"
+        },
+        "catalog.json": {
+          "bytes": 92849,
+          "sha256": "2ce32b90ba0d7d9cef6c08f7899fe467e71e6e3da7ed4658b8a25d78c6f640a9"
+        },
+        "preview_front.png": {
+          "bytes": 2659669,
+          "sha256": "a623d1ae720d1b6660e3229f77ec90a67ef1a83285bc6eb412521cdd75d31777"
+        },
+        "preview_side.png": {
+          "bytes": 2738972,
+          "sha256": "5f5052bd82a9b8a0a419174e282699aa85f850ec495655563a9f904962cbf755"
+        },
+        "preview_rear.png": {
+          "bytes": 2734865,
+          "sha256": "72a8cf08da15b1203d84be1421ceaf93fcc251f3edea753adfa68cb170eb7a90"
+        },
+        "preview_three_quarter.png": {
+          "bytes": 2880340,
+          "sha256": "1836c25dfd15e06b7bed8fc03ec0d7d723e53cec47fc909df1f3aab81c83f609"
+        },
+        "neutral_front_wing.png": {
+          "bytes": 1215822,
+          "sha256": "c92db339f0dc2739f16b6db506280e23cbed4535d48dd8acefcd8433c7257ea0"
+        },
+        "neutral_rear_wing.png": {
+          "bytes": 1270317,
+          "sha256": "f022ec19f0fbb65fc5db9b73c7a5fbe948871f38d47ad3e0d0ff754f9898cec9"
+        }
+      },
+      "viewer": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "frames": 600,
+        "seconds": 8.013699999928475,
+        "fps": 74.8717820738679,
+        "animationTicks": 601,
+        "team": "racing_bulls",
+        "version_id": "22bc2b98-d7c8-4f73-8587-db81039866ca",
+        "measurement": "Local draft GLB injected into existing website viewer; not published"
+      }
+    }
+  },
+  "tests": {
+    "service_tests_passed": 53,
+    "grid_log": "data/releases/wings-2026-8/grid-wing-check.log",
+    "grid_completed": true,
+    "rebuilt_worker_grid_log": "data/releases/wings-2026-8/rebuilt-worker-check.log",
+    "rebuilt_worker_grid_passed": true
+  },
+  "limits": [
+    "Full 4K renders and publication not performed",
+    "Timing is one run per setting, not a cross-device guarantee",
+    "Viewer FPS measured only on Apple M1 Metal at 1920x1080 with local draft injection"
+  ],
+  "mclaren_baseline_seconds": 171.091609951,
+  "mclaren_increase_percent": 11.384173839721479
+}

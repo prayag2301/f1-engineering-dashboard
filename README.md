@@ -129,7 +129,7 @@ The [architecture notes](docs/architecture.md) explain evidence, version history
 
 For host development, expose PostgreSQL/Redis in a private Compose override and configure host `DATABASE_URL` / `REDIS_URL`. Run `npm run dev:backend` and `npm run dev:frontend`. Production Compose exposes only the web port on localhost.
 
-Optional Compose settings: `WEB_PORT`, `RENDER_SAMPLES` (128), `BUILD_TIMEOUT_SECONDS` (7200), and `COOKIE_SECURE` (false for localhost HTTP). CPU Blender rendering and browser graphics are separate. [Docker Desktop GPU support](https://docs.docker.com/desktop/features/gpu/) documents the Windows/WSL2 GPU path; the native Debian Blender package supports [ARM64](https://packages.debian.org/trixie/arm64/blender).
+Optional Compose settings: `WEB_PORT`, `RENDER_SAMPLES` (160), `BUILD_TIMEOUT_SECONDS` (7200), and `COOKIE_SECURE` (false for localhost HTTP). CPU Blender rendering and browser graphics are separate. [Docker Desktop GPU support](https://docs.docker.com/desktop/features/gpu/) documents the Windows/WSL2 GPU path; the native Debian Blender package supports [ARM64](https://packages.debian.org/trixie/arm64/blender).
 
 ## Accuracy and asset provenance
 

@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     ENABLE_DEMO_DATA: bool = False
     BLENDER_BINARY: str = "blender"
     BUILD_TIMEOUT_SECONDS: int = 7200
-    RENDER_SAMPLES: int = 128
+    RENDER_SAMPLES: int = 160
     SOURCE_MAX_BYTES: int = 15_000_000
     SOURCE_TIMEOUT_SECONDS: int = 30
     CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"

@@ -1,0 +1,25 @@
+# Front and rear wing reconstruction passes
+
+Generator 2026.8 develops distinct McLaren and Racing Bulls wing reconstructions from September Madrid photographs. The cars retain their September observation dates. November upgrade declarations are not used to backdate a newer wing onto these configurations.
+
+The [reference ledger](../data/references/wing-detail-2026-11-07.json) records the inspected images, dates, observations and hashes. McLaren's detached front assembly exposes the flap outlines, slot brackets, narrow endplates and contoured outboard feet. Its rear photograph shows the shallow central bowl and actuator fairing. Racing Bulls' exposed rear assembly resolves paired supports and lower endplate transitions; the track photograph supplies front-wing and whole-car context. Numerical sections, thicknesses and mounting dimensions remain exterior estimates.
+
+The front pass replaces scaled generic pilot-team contours with explicit element stations and endplate/foot outlines. Slot attachments must follow the adjusted wing surfaces when chord, camber or sweep changes. The rear pass separates mainplane and flap contours, endplate transitions and support placement for the two pilots, including visible attachment detail.
+
+Existing eleven assembly IDs remain stable. Only `front_wing` and `rear_wing` belong in these new component revisions relative to generator 2026.7. Other constructors retain their previously documented silhouette estimates; the front attachment correction applies wherever the shared builder is used. Existing published scenes and snapshot pins remain intact.
+
+Acceptance requires exported wing surfaces with valid winding, open element gaps, attached supports under non-default parameters, unchanged hashes for the other nine assemblies, full-grid geometry checks and review of the two pilot cars in complete and close-up views. Render sample ceilings remain unchanged from 2026.7, so any measured timing difference isolates the wing construction work rather than another sampling increase.
+
+These are reconstruction corrections, not a claim of factory dimensions, aerodynamic performance or confirmed November race fitment. New publication still requires complete release artifacts and the normal four-view review.
+
+The first geometry checks exposed intersecting outer front flaps and small gaps at pylon corners and flap-to-endplate joints. The revised stations and attachment construction correct those defects. Checks compare the actual exported support and wing meshes, probe overlap clearance with rays, and exercise altered chord, sweep and camber values. A negative unit test verifies that moving a support away from its reported anchor fails validation.
+
+The McLaren same-settings Docker CPU comparison measured 171.09 seconds for frozen 2026.7 and 190.57 seconds for 2026.8, an 11.4% increase. Both runs produced geometry, GLB, an editable scene and four 1080p previews at 40 samples. This single sequential pair measures the added wing work; it is not a full 4K timing guarantee or a measurement against the earlier 2026.6 build.
+
+Review artifacts are under `data/releases/wings-2026-8/mclaren/` and `data/releases/wings-2026-8/racing_bulls/`. Each pilot has four complete-car previews and isolated `neutral_front_wing.png` and `neutral_rear_wing.png` views. The rear light belongs to the existing rear-wing assembly and appears separately below the wing when that assembly is isolated; complete-car views establish its position on the car.
+
+Both pilot preview sets and neutral close-ups were inspected. The 53 focused service tests passed, and the completed Docker geometry run passed all eleven constructors, the Ferrari front-wing isolation case and both pilot parameter-stress cases. Both pilot builds preserve all nine non-wing component hashes. Racing Bulls' four-view preview build took 204.55 seconds at 40 samples; no comparable Racing Bulls baseline render was timed. Frozen source consistency, artifact hashes and timings are recorded in [the wing benchmark](../data/references/wing-benchmark-2026-11-07.json). Local website viewer checks for this wing revision measured 74.84 FPS for McLaren and 74.87 FPS for Racing Bulls at 1920×1080 using Apple M1 Metal. These eight-second checks injected the draft GLBs into the existing viewer without publishing them; they are machine-specific observations, not a cross-device performance guarantee.
+
+The local API and worker images were rebuilt with generator 2026.8 and a 160-sample worker setting. The rebuilt Docker worker passed the complete eleven-team geometry suite and parameter-stress cases; its log is `data/releases/wings-2026-8/rebuilt-worker-check.log`. Published model pointers have not been changed.
+
+Fresh dependency resolution exposed an incompatible Kombu/Redis combination with Celery 5.4. The shared requirements now pin Kombu 5.3.7. A real Redis transport connection passed in the rebuilt worker, and both worker and scheduler reached ready state after restart. The website returned HTTP 200.

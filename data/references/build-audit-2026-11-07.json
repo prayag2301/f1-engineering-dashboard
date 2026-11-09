@@ -1,0 +1,316 @@
+{
+  "checked_at": "2026-11-07",
+  "scope": "Pinned local Pages archive; live Docker unavailable",
+  "archive_sha256_verified": "22b91c2da8ae8ec7c18111aa272bb01b814eb6c351019086414364856aa0429a",
+  "current_cars": [
+    {
+      "team": "ferrari",
+      "version_id": "4b31f675-bcfb-4915-af44-fe0d8c34dcf0",
+      "observed_at": "2026-01-23T12:00:00+00:00",
+      "label": "SF-26 \u00b7 suspension & aero details 2026.5",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.555000066757202
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 205100,
+        "glb_bytes": 5366096,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    },
+    {
+      "team": "mercedes",
+      "version_id": "ba5ee807-40c2-4c5f-97ff-69b1c6927005",
+      "observed_at": "2026-01-22T12:00:00+00:00",
+      "label": "W17 \u00b7 suspension & aero details 2026.5",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 207611,
+        "glb_bytes": 5434756,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    },
+    {
+      "team": "mclaren",
+      "version_id": "cfb61978-d2e8-41ac-b66d-ec4765813acb",
+      "observed_at": "2026-09-11T12:55:00+00:00",
+      "label": "MCL40 \u00b7 Madrid exterior reference",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 209940,
+        "glb_bytes": 5463112,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    },
+    {
+      "team": "red_bull",
+      "version_id": "62834333-0cae-42fa-8e0d-925918528908",
+      "observed_at": "2026-09-11T12:55:00+00:00",
+      "label": "RB22 \u00b7 Madrid exterior reference",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 209940,
+        "glb_bytes": 5467092,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    },
+    {
+      "team": "aston_martin",
+      "version_id": "732e92a1-21c3-4c75-82d4-1fdd8188730c",
+      "observed_at": "2026-09-11T12:55:00+00:00",
+      "label": "AMR26 \u00b7 Madrid exterior reference",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 206550,
+        "glb_bytes": 5384516,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    },
+    {
+      "team": "alpine",
+      "version_id": "a79c85a1-f79c-4079-accf-4625bab8350e",
+      "observed_at": "2026-09-11T12:55:00+00:00",
+      "label": "A526 \u00b7 Madrid exterior reference",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 209940,
+        "glb_bytes": 5467464,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    },
+    {
+      "team": "williams",
+      "version_id": "67e19005-0916-47ef-8e53-53a1c40c1a05",
+      "observed_at": "2026-09-11T12:55:00+00:00",
+      "label": "FW48 \u00b7 Madrid exterior reference",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 206550,
+        "glb_bytes": 5366352,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    },
+    {
+      "team": "haas",
+      "version_id": "dc34e2a3-79f1-48b8-a68e-db0b80c584d7",
+      "observed_at": "2026-09-11T12:55:00+00:00",
+      "label": "VF-26 \u00b7 Madrid exterior reference",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 206550,
+        "glb_bytes": 5356928,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    },
+    {
+      "team": "racing_bulls",
+      "version_id": "22bc2b98-d7c8-4f73-8587-db81039866ca",
+      "observed_at": "2026-09-11T12:55:00+00:00",
+      "label": "VCARB 03 \u00b7 Madrid exterior reference",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 209940,
+        "glb_bytes": 5467088,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    },
+    {
+      "team": "audi",
+      "version_id": "1453bec7-c67c-46a9-9bff-4554e09075e1",
+      "observed_at": "2026-09-11T12:55:00+00:00",
+      "label": "R26 \u00b7 Madrid exterior reference",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 206550,
+        "glb_bytes": 5378540,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    },
+    {
+      "team": "cadillac",
+      "version_id": "24ffacc7-a1ec-40e8-bd5b-1b9d862ce69e",
+      "observed_at": "2026-09-11T12:55:00+00:00",
+      "label": "MAC-26 \u00b7 Madrid exterior reference",
+      "geometry": {
+        "bounds_m": [
+          [
+            -0.9743999242782597,
+            0.0005814731121063232,
+            -2.549999952316284
+          ],
+          [
+            0.9743999540805817,
+            1.0739999413490295,
+            2.3259999454021454
+          ]
+        ],
+        "triangles": 209940,
+        "glb_bytes": 5496544,
+        "component_count": 11,
+        "textures": 1,
+        "wheelbase_m": 3.4000003337860107,
+        "regulation_reference": "fia-2026-c-issue20",
+        "coordinate_system": "metres; Y-up; nose -Z"
+      },
+      "verified_public_assets": 9
+    }
+  ],
+  "unique_current_public_assets_verified": 99
+}
