@@ -128,6 +128,8 @@ def validate_geometry(path, regulation_path=None):
 
 
 def validate_release(directory: Path, manifest):
+    if manifest.get("inspection_only"):
+        raise ValueError("Inspection drafts are not complete releases.")
     required = {
         "glb",
         "source",
@@ -160,6 +162,12 @@ def validate_release(directory: Path, manifest):
                 if image.size != expected:
                     raise ValueError(f"Wrong render dimensions: {key}")
                 image.verify()
+    frozen_catalog = json.loads((directory / assets["catalog"]["filename"]).read_text())
+    if (
+        frozen_catalog.get("wing_profile_schema_version") == 1
+        and assets.get("wing_profiles", {}).get("filename") != "wing_profiles.py"
+    ):
+        raise ValueError("The release is missing the frozen wing_profiles helper.")
     geometry = json.loads((directory / assets["geometry"]["filename"]).read_text())
     if geometry.get("component_hashes") != manifest.get("component_hashes"):
         raise ValueError("Component geometry hashes disagree with the manifest.")

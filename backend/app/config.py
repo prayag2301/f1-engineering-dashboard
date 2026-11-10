@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     MODELING_ROOT: Path = PROJECT_ROOT / "modeling"
     ADMIN_TOKEN: str = ""
     SESSION_SECRET: str = ""
+    LOCAL_REVIEW_ACCESS: bool = False
     COOKIE_SECURE: bool = False
     ENABLE_DEMO_DATA: bool = False
     BLENDER_BINARY: str = "blender"

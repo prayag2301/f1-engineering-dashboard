@@ -404,6 +404,8 @@ def queue_build(db, version):
             "This version already has validated artifacts. Create a new draft for a rebuild.",
         )
     job = BuildJob(version_id=version.id, kind="build", status="queued")
+    if version.manifest.get("inspection_only"):
+        version.manifest = {**version.manifest, "inspection_only": False, "assets": {}}
     version.status = "building"
     version.visual_review = {}
     db.add(job)
@@ -414,13 +416,47 @@ def queue_build(db, version):
 
 def artifact_path(version, filename):
     # The manifest is the only file allowlist; no arbitrary paths are served.
-    permitted = {a["filename"] for a in version.manifest.get("assets", {}).values()}
+    inspection = inspection_preview(version)
+    if version.manifest.get("inspection_only") and not inspection:
+        raise HTTPException(404, "Inspection artifact unavailable.")
+    manifest = inspection["manifest"] if inspection else version.manifest
+    permitted = {a["filename"] for a in manifest.get("assets", {}).values()}
     if filename not in permitted or Path(filename).name != filename:
         raise HTTPException(404, "Artifact not found.")
-    path = get_settings().RELEASE_ROOT / str(version.id) / filename
+    root = get_settings().RELEASE_ROOT
+    if inspection or version.manifest.get("inspection_only"):
+        root = root / ".inspections"
+    path = root / str(version.id) / filename
     if not path.is_file():
         raise HTTPException(404, "Artifact unavailable.")
     return path
+
+
+def inspection_preview(version):
+    """Keep a checked import visible until a complete build replaces it."""
+    if version.status not in {"draft", "building", "failed"}:
+        return None
+    from app.services.validation import sha256
+
+    stage = get_settings().RELEASE_ROOT / ".inspections" / str(version.id)
+    try:
+        manifest = json.loads((stage / "inspection.json").read_text())
+        spec = json.loads((stage / "spec.json").read_text())
+        if (
+            manifest["generator_version"] != version.manifest["generator_version"]
+            or spec.get("version_id") != str(version.id)
+            or spec["parameters"]
+            != {
+                name: c["parameters"]
+                for name, c in version.manifest["components"].items()
+            }
+            or manifest["component_hashes"] != version.manifest.get("component_hashes")
+            or sha256(stage / "car.glb") != manifest["assets"]["glb"]["sha256"]
+        ):
+            return None
+        return {"stage": stage, "manifest": {**manifest, "inspection_only": True}}
+    except (OSError, ValueError, KeyError):
+        return None
 
 
 def build_preview(db, version):
@@ -431,7 +467,7 @@ def build_preview(db, version):
     available. Only the current running attempt can supply these files.
     """
     if version.status != "building":
-        return None
+        return inspection_preview(version)
     job = (
         db.query(BuildJob)
         .filter_by(version_id=version.id, kind="build", status="running")
@@ -439,14 +475,14 @@ def build_preview(db, version):
         .first()
     )
     if not job:
-        return None
+        return inspection_preview(version)
     stage = get_settings().RELEASE_ROOT / ".staging" / f"{job.id}-{job.attempts}"
     from app.services.validation import validate_geometry, validate_component_history
 
     try:
         geometry = json.loads((stage / "geometry.json").read_text())
         if geometry["generator_version"] != version.manifest["generator_version"]:
-            return None
+            return inspection_preview(version)
         validation = validate_geometry(stage / "car.glb", stage / "regulations.json")
         parent = db.get(CarVersion, version.parent_id) if version.parent_id else None
         if parent:
@@ -455,7 +491,7 @@ def build_preview(db, version):
                 parent.manifest,
             )
     except (OSError, ValueError, KeyError):
-        return None  # Export is incomplete or invalid. Publication gates still apply.
+        return inspection_preview(version)
     files = {"glb": "car.glb"}
     from PIL import Image
 

@@ -1,0 +1,323 @@
+{
+  "validated_at": "2026-11-10",
+  "generator_version": "2026.10",
+  "baseline_generator": "2026.9",
+  "baseline_commit": "63086fd51966f71394a21632d1f12f51afcbde31",
+  "status": "local geometry candidates; not published",
+  "scope": "First increment of pass A: camber-peak controls and lateral endplate shoulder rails for front/rear pilot wings.",
+  "reference_record": "data/references/wing-detail-2026-11-07.json",
+  "interpretation": "Small authored contour changes guided by existing September reference coverage. Camber peaks and shoulder offsets are estimates, not measured sections or November race upgrades.",
+  "tests": {
+    "backend_passed": 149,
+    "archive_passed": 14,
+    "archive_subtests_passed": 10,
+    "blender_grid_cases_passed": 14,
+    "grid_log": "data/releases/shape-2026-10/grid-check.log",
+    "negative_checks": [
+      "invalid camber peaks",
+      "non-finite coordinates",
+      "unordered/mixed stations",
+      "incompatible shoulder rails",
+      "missing frozen helper",
+      "detached support"
+    ],
+    "legacy_annotation_reuse": "tested with and without helper"
+  },
+  "pilots": {
+    "mclaren": {
+      "changed_components": [
+        "front_wing",
+        "rear_wing"
+      ],
+      "unchanged_components": [
+        "chassis",
+        "diffuser",
+        "engine_cover",
+        "floor",
+        "halo",
+        "nose",
+        "sidepods",
+        "suspension",
+        "wheels"
+      ],
+      "variants": {
+        "baseline": {
+          "geometry_seconds": 9.100488587000655,
+          "validation": {
+            "bounds_m": [
+              [
+                -0.9743999242782597,
+                0.0005814731121063232,
+                -2.549999952316284
+              ],
+              [
+                0.9743999540805817,
+                1.0739999413490295,
+                2.3259999454021454
+              ]
+            ],
+            "triangles": 241552,
+            "glb_bytes": 6344572,
+            "component_count": 11,
+            "textures": 1,
+            "wheelbase_m": 3.4000003337860107,
+            "regulation_reference": "fia-2026-c-issue20",
+            "coordinate_system": "metres; Y-up; nose -Z"
+          }
+        },
+        "candidate": {
+          "geometry_seconds": 8.150646336999671,
+          "validation": {
+            "bounds_m": [
+              [
+                -0.9743999242782597,
+                0.0005814731121063232,
+                -2.549999952316284
+              ],
+              [
+                0.9743999540805817,
+                1.0739999413490295,
+                2.3259999454021454
+              ]
+            ],
+            "triangles": 246640,
+            "glb_bytes": 6478924,
+            "component_count": 11,
+            "textures": 1,
+            "wheelbase_m": 3.4000003337860107,
+            "regulation_reference": "fia-2026-c-issue20",
+            "coordinate_system": "metres; Y-up; nose -Z"
+          }
+        }
+      },
+      "artifacts": {
+        "baseline/car.glb": {
+          "path": "data/releases/shape-2026-10/baseline/mclaren/car.glb",
+          "sha256": "211a8075622ce5f7811c8dd01ecb027bef8148e8e08e108354b4210ddcbc48fb"
+        },
+        "baseline/source.blend": {
+          "path": "data/releases/shape-2026-10/baseline/mclaren/source.blend",
+          "sha256": "ca1a1cab8d8a61db9e07287c231b3c30f82dd645ba3086f0c29035db857a653c"
+        },
+        "baseline/geometry.json": {
+          "path": "data/releases/shape-2026-10/baseline/mclaren/geometry.json",
+          "sha256": "401a5e53ef02a9a2bcbf1f1283f6fc6a82ecddd0d9fe88ef93c203d86f865b73"
+        },
+        "baseline/build_car.py": {
+          "path": "data/releases/shape-2026-10/baseline/mclaren/build_car.py",
+          "sha256": "1bfd95ccf34b21732391bf3f48e20ec6acbcbf1c740ee61c008a6730b3f3afc1"
+        },
+        "baseline/catalog.json": {
+          "path": "data/releases/shape-2026-10/baseline/mclaren/catalog.json",
+          "sha256": "310f0e986948d0412d64d35fff714206ab8f7a93e32cab6fd7f13046014b8afd"
+        },
+        "baseline/review/neutral_front_wing.png": {
+          "path": "data/releases/shape-2026-10/baseline/mclaren/review/neutral_front_wing.png",
+          "sha256": "42ffca4aa1cb79abda643789e5dc84b37f823481483e64a857744263e5b0c2ca"
+        },
+        "baseline/review/neutral_rear_wing.png": {
+          "path": "data/releases/shape-2026-10/baseline/mclaren/review/neutral_rear_wing.png",
+          "sha256": "362463701cb648008ccfd483b817122bc7e8bf895afa7fd25f59fc5e42ae6b01"
+        },
+        "candidate/car.glb": {
+          "path": "data/releases/shape-2026-10/candidate/mclaren/car.glb",
+          "sha256": "f2edac1a39292fb5643a1181860ea77b45823f49fb2800648a0a6a0e03c42136"
+        },
+        "candidate/source.blend": {
+          "path": "data/releases/shape-2026-10/candidate/mclaren/source.blend",
+          "sha256": "d97c463d7b0b6f229535458a640144fb11e9523b2d43ac3a5d47952153019178"
+        },
+        "candidate/geometry.json": {
+          "path": "data/releases/shape-2026-10/candidate/mclaren/geometry.json",
+          "sha256": "00874635172def53e0a18a39eb5f5c033dfec2a17647b1a6a9dfac7b2ed35e0a"
+        },
+        "candidate/build_car.py": {
+          "path": "data/releases/shape-2026-10/candidate/mclaren/build_car.py",
+          "sha256": "190e13a5a69b39631d52ba285b7cbad7dcd2caf6e507c55b7efe72c6d092013f"
+        },
+        "candidate/catalog.json": {
+          "path": "data/releases/shape-2026-10/candidate/mclaren/catalog.json",
+          "sha256": "07e6f0d263b413112cf7c4866721d35c8d8e6d9732e74beff169dfae648abb4f"
+        },
+        "candidate/review/neutral_front_wing.png": {
+          "path": "data/releases/shape-2026-10/candidate/mclaren/review/neutral_front_wing.png",
+          "sha256": "d7f7b5c06acd11bbea276e0c995cc8ba9d008852a611ffc63eefbde824727a63"
+        },
+        "candidate/review/neutral_rear_wing.png": {
+          "path": "data/releases/shape-2026-10/candidate/mclaren/review/neutral_rear_wing.png",
+          "sha256": "ccb860acd090223469b4011d4e32676001b070b7bc1ae6625173cd4366ef05a4"
+        },
+        "candidate/wing_profiles.py": {
+          "path": "data/releases/shape-2026-10/candidate/mclaren/wing_profiles.py",
+          "sha256": "68d5760e2345c821795a415da983bae2d536fcca59606b5bf8c20a49811cf0b5"
+        }
+      },
+      "triangle_growth_percent": 2.106,
+      "glb_growth_percent": 2.118,
+      "viewer_smoke": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "frames": 480,
+        "seconds": 8.008,
+        "fps": 59.940059940059946,
+        "animationTicks": 481,
+        "team": "mclaren",
+        "version_id": "cfb61978-d2e8-41ac-b66d-ec4765813acb"
+      }
+    },
+    "racing_bulls": {
+      "changed_components": [
+        "front_wing",
+        "rear_wing"
+      ],
+      "unchanged_components": [
+        "chassis",
+        "diffuser",
+        "engine_cover",
+        "floor",
+        "halo",
+        "nose",
+        "sidepods",
+        "suspension",
+        "wheels"
+      ],
+      "variants": {
+        "baseline": {
+          "geometry_seconds": 7.9694001289999505,
+          "validation": {
+            "bounds_m": [
+              [
+                -0.9743999242782597,
+                0.0005814731121063232,
+                -2.549999952316284
+              ],
+              [
+                0.9743999540805817,
+                1.0739999413490295,
+                2.3259999454021454
+              ]
+            ],
+            "triangles": 241560,
+            "glb_bytes": 6366008,
+            "component_count": 11,
+            "textures": 1,
+            "wheelbase_m": 3.4000003337860107,
+            "regulation_reference": "fia-2026-c-issue20",
+            "coordinate_system": "metres; Y-up; nose -Z"
+          }
+        },
+        "candidate": {
+          "geometry_seconds": 9.038436336999439,
+          "validation": {
+            "bounds_m": [
+              [
+                -0.9743999242782597,
+                0.0005814731121063232,
+                -2.549999952316284
+              ],
+              [
+                0.9743999540805817,
+                1.0739999413490295,
+                2.3259999454021454
+              ]
+            ],
+            "triangles": 246624,
+            "glb_bytes": 6491916,
+            "component_count": 11,
+            "textures": 1,
+            "wheelbase_m": 3.4000003337860107,
+            "regulation_reference": "fia-2026-c-issue20",
+            "coordinate_system": "metres; Y-up; nose -Z"
+          }
+        }
+      },
+      "artifacts": {
+        "baseline/car.glb": {
+          "path": "data/releases/shape-2026-10/baseline/racing_bulls/car.glb",
+          "sha256": "dfc167cf335de62292a3f99b5baf3809a52f8e2273358ce9aca619484b475f89"
+        },
+        "baseline/source.blend": {
+          "path": "data/releases/shape-2026-10/baseline/racing_bulls/source.blend",
+          "sha256": "b19dc4925d44a0d255f93412e0a5f5f76d3cddd6468bbbafd9be5fad7938f899"
+        },
+        "baseline/geometry.json": {
+          "path": "data/releases/shape-2026-10/baseline/racing_bulls/geometry.json",
+          "sha256": "965c16a889fb35264ff2fd14060a139551df1e9a47b994c8e7eaa8631ec43bc9"
+        },
+        "baseline/build_car.py": {
+          "path": "data/releases/shape-2026-10/baseline/racing_bulls/build_car.py",
+          "sha256": "1bfd95ccf34b21732391bf3f48e20ec6acbcbf1c740ee61c008a6730b3f3afc1"
+        },
+        "baseline/catalog.json": {
+          "path": "data/releases/shape-2026-10/baseline/racing_bulls/catalog.json",
+          "sha256": "310f0e986948d0412d64d35fff714206ab8f7a93e32cab6fd7f13046014b8afd"
+        },
+        "baseline/review/neutral_front_wing.png": {
+          "path": "data/releases/shape-2026-10/baseline/racing_bulls/review/neutral_front_wing.png",
+          "sha256": "a6d4eeb3b85e956f2493722ecaa401c65022b895f5b6145b45c6fcf6bcce2f01"
+        },
+        "baseline/review/neutral_rear_wing.png": {
+          "path": "data/releases/shape-2026-10/baseline/racing_bulls/review/neutral_rear_wing.png",
+          "sha256": "cab1410c5a3ca2db0cd0725fea02cde55650414166246a429e2a4d1542c2141e"
+        },
+        "candidate/car.glb": {
+          "path": "data/releases/shape-2026-10/candidate/racing_bulls/car.glb",
+          "sha256": "ad65edf14d00172b5f378fef17f9c5784646b1fb18ec88bb81233900f32a4ca4"
+        },
+        "candidate/source.blend": {
+          "path": "data/releases/shape-2026-10/candidate/racing_bulls/source.blend",
+          "sha256": "b3a599af9def96ea4f0278df1975015950ca6d99f229dfca4cc026a090804f1e"
+        },
+        "candidate/geometry.json": {
+          "path": "data/releases/shape-2026-10/candidate/racing_bulls/geometry.json",
+          "sha256": "e01ebb7a7f1029efbc4276e6360a571c1cfe67e5c59e0505559220ca3d5af628"
+        },
+        "candidate/build_car.py": {
+          "path": "data/releases/shape-2026-10/candidate/racing_bulls/build_car.py",
+          "sha256": "190e13a5a69b39631d52ba285b7cbad7dcd2caf6e507c55b7efe72c6d092013f"
+        },
+        "candidate/catalog.json": {
+          "path": "data/releases/shape-2026-10/candidate/racing_bulls/catalog.json",
+          "sha256": "07e6f0d263b413112cf7c4866721d35c8d8e6d9732e74beff169dfae648abb4f"
+        },
+        "candidate/review/neutral_front_wing.png": {
+          "path": "data/releases/shape-2026-10/candidate/racing_bulls/review/neutral_front_wing.png",
+          "sha256": "79a648cff59ff54577eef5a8bf17aa18f6d2db50dcb1c309f521aab48c2c8898"
+        },
+        "candidate/review/neutral_rear_wing.png": {
+          "path": "data/releases/shape-2026-10/candidate/racing_bulls/review/neutral_rear_wing.png",
+          "sha256": "f66827f289bd819a77388d09268f380f122b7366bb9e9bd77a00d2fb0ef5d8be"
+        },
+        "candidate/wing_profiles.py": {
+          "path": "data/releases/shape-2026-10/candidate/racing_bulls/wing_profiles.py",
+          "sha256": "68d5760e2345c821795a415da983bae2d536fcca59606b5bf8c20a49811cf0b5"
+        }
+      },
+      "triangle_growth_percent": 2.096,
+      "glb_growth_percent": 1.978,
+      "viewer_smoke": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+        "drawingBuffer": [
+          1920,
+          1080
+        ],
+        "frames": 479,
+        "seconds": 8.0055,
+        "fps": 59.83386421834989,
+        "animationTicks": 481,
+        "team": "racing_bulls",
+        "version_id": "22bc2b98-d7c8-4f73-8587-db81039866ca"
+      }
+    }
+  },
+  "limits": [
+    "Only the first wing-control increment is implemented; other planned geometry passes remain.",
+    "Neutral comparisons show subtle local contour changes; photographic accuracy is not established.",
+    "No full four-view 4K build, repeated total-time benchmark, hosted CI or publication.",
+    "Geometry timings are single runs; browser FPS is a loading/orbit smoke check, not a comparative performance gate.",
+    "The McLaren browser check overlapped the end of Docker rendering."
+  ]
+}

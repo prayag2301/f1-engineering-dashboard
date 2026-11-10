@@ -18,7 +18,7 @@ python3 scripts/configure.py
 docker compose up -d --build
 ```
 
-Open **http://127.0.0.1:3000/review** (or the `WEB_PORT` configured in `.env`) and sign in with `ADMIN_TOKEN` from your local `.env`. Credentials are generated locally and never sent to the frontend bundle. Do not commit `.env`.
+Open **http://127.0.0.1:3000/review** (or the `WEB_PORT` configured in `.env`). The local Docker stack opens Studio directly, without a token prompt. `LOCAL_REVIEW_ACCESS=false` restores token sign-in for an authenticated deployment. Credentials remain outside the frontend bundle; do not commit `.env`.
 
 The initial migration queues a reference draft for each catalog constructor. Native ARM64/AMD64 Blender builds editable scenes, GLBs, four 1080p previews, and four 3840×2160 PNGs. CPU rendering can take tens of minutes per car, depending on your Mac and sample count. Inspect progress with:
 
@@ -93,7 +93,7 @@ Public endpoints:
 - `GET|HEAD /api/v1/releases/{version_id}/{filename}`
 - `GET|HEAD /api/v1/models/{team}/latest.glb` — redirects to the current published asset
 
-Maintainer endpoints under `/api/v1/review` provide session login, dashboard, source import, candidate review, version creation, build, visual review, publication, rollback, collection, and retry. Browser sessions are signed, HttpOnly, SameSite=Strict, and time limited. Scripts may use `Authorization: Bearer <ADMIN_TOKEN>`.
+Maintainer endpoints under `/api/v1/review` provide session login, dashboard, source import, candidate review, version creation, build, visual review, publication, rollback, collection, and retry. The loopback-bound Docker stack enables `LOCAL_REVIEW_ACCESS` by default. With that setting disabled, browser sessions are signed, HttpOnly, SameSite=Strict, and time limited; scripts may use `Authorization: Bearer <ADMIN_TOKEN>`. Browser write requests still require the review header and reject cross-site requests in both modes.
 
 `POST /api/v1/models/{team}/regenerate` requires authentication and returns HTTP 202 with a draft build job. It never overwrites a published model.
 

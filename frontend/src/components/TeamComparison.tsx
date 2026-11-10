@@ -45,7 +45,7 @@ export default function TeamComparison({
       const available = comparisons.filter(
         (v) =>
           v.team_key !== primaryTeam &&
-          ["building", "ready", "published"].includes(v.status) &&
+          ["draft", "building", "ready", "published"].includes(v.status) &&
           v.manifest.assets.glb,
       );
       setReleases(available);
@@ -53,7 +53,7 @@ export default function TeamComparison({
         available.some((v) => v.id === previous)
           ? previous
           : ((
-              available.find((v) => ["building", "ready"].includes(v.status)) ??
+              available.find((v) => ["draft", "building", "ready"].includes(v.status)) ??
               available.find((v) => v.is_current) ??
               available[0]
             )?.id ?? ""),

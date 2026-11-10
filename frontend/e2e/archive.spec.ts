@@ -93,7 +93,7 @@ test("private constructor comparison can inspect building geometry without unloc
   };
   let reads = 0;
   await page.route("**/api/v1/review/session", (route) =>
-    route.fulfill({ json: { authenticated: true } }),
+    route.fulfill({ json: { authenticated: true, local_access: true } }),
   );
   await page.route("**/api/v1/review/dashboard", (route) => {
     reads++;
@@ -108,6 +108,8 @@ test("private constructor comparison can inspect building geometry without unloc
     });
   });
   await page.goto("/review");
+  await expect(page.getByLabel("Review token")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Sign out", exact: true })).toHaveCount(0);
   await expect(
     page.getByText(/Geometry preview: the mesh passed validation/),
   ).toBeVisible();
@@ -280,9 +282,19 @@ test("mobile layout and keyboard controls remain usable", async ({ page }) => {
   ).toHaveAttribute("aria-pressed", "true");
 });
 
-test("maintainer can sign in, inspect drafts, and sign out", async ({
+test("review access follows the local or authenticated configuration", async ({
   page,
 }) => {
+  const session = await (await page.request.get("/api/v1/review/session")).json();
+  if (session.local_access) {
+    await page.goto("/review");
+    await expect(page.locator(".draft-item").first()).toBeVisible();
+    await expect(page.getByLabel("Review token")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Sign out", exact: true })).toHaveCount(0);
+    await page.reload();
+    await expect(page.locator(".draft-item").first()).toBeVisible();
+    return;
+  }
   const token =
     process.env.E2E_ADMIN_TOKEN ||
     readFileSync(resolve(__dirname, "../../.env"), "utf8")

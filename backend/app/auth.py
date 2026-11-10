@@ -18,6 +18,8 @@ def signer():
 
 
 def is_admin(request: Request) -> bool:
+    if get_settings().LOCAL_REVIEW_ACCESS:
+        return True
     token = request.headers.get("authorization", "")
     expected = get_settings().ADMIN_TOKEN
     if (
@@ -39,8 +41,8 @@ def require_admin(request: Request):
     if not is_admin(request):
         raise HTTPException(401, "Sign in to review releases.")
     # Browser writes require same-origin fetch intent, in addition to SameSite cookies.
-    if request.method not in {"GET", "HEAD", "OPTIONS"} and not request.headers.get(
-        "authorization"
+    if request.method not in {"GET", "HEAD", "OPTIONS"} and (
+        get_settings().LOCAL_REVIEW_ACCESS or not request.headers.get("authorization")
     ):
         if request.headers.get("x-f1-review") != "1":
             raise HTTPException(403, "Missing review request header.")

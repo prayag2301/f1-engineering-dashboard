@@ -1,8 +1,127 @@
 """A validated private mesh must never become a public or publishable release."""
 
 import json
+import shutil
+import pytest
 from PIL import Image
 from app.services.releases import bootstrap_baseline, queue_build, build_preview, now
+from app.services.local_builds import adopt_build
+from app.services.validation import validate_release
+
+
+def inspection_fixture(db, settings, monkeypatch, tmp_path):
+    version = bootstrap_baseline(db, "mclaren")
+    folder = tmp_path / "incoming"
+    folder.mkdir()
+    for name in ("build_car.py", "wing_profiles.py", "catalog.json"):
+        shutil.copy2(settings.MODELING_ROOT / name, folder / name)
+    shutil.copy2(
+        settings.REFERENCE_ROOT / "regulations-2026.json", folder / "regulations.json"
+    )
+    (folder / "spec.json").write_text(
+        json.dumps(
+            {
+                "team_key": version.team_key,
+                "parameters": {
+                    k: v["parameters"]
+                    for k, v in version.manifest["components"].items()
+                },
+            }
+        )
+    )
+    (folder / "geometry.json").write_text(
+        json.dumps(
+            {
+                "generator_version": version.manifest["generator_version"],
+                "component_hashes": {
+                    k: "a" * 64 for k in version.manifest["components"]
+                },
+            }
+        )
+    )
+    (folder / "source.blend").write_bytes(b"BLENDER fixture")
+    (folder / "car.glb").write_bytes(b"validated inspection mesh")
+    monkeypatch.setattr(
+        "app.services.local_builds.validate_geometry", lambda *a: {"triangles": 42}
+    )
+    return version, folder
+
+
+def test_imported_inspection_is_private_and_full_build_can_replace_it(
+    client, db, settings, monkeypatch, tmp_path
+):
+    version, folder = inspection_fixture(db, settings, monkeypatch, tmp_path)
+    adopt_build(db, version.id, folder, inspection_only=True)
+    db.commit()
+    assert version.status == "draft" and version.manifest["inspection_only"]
+    assert not (settings.RELEASE_ROOT / str(version.id)).exists()
+    url = version.manifest["assets"]["glb"]["url"]
+    assert client.get(url).status_code == 404
+    assert client.get("/api/v1/cars/mclaren/versions").json() == []
+    client.headers["Authorization"] = "Bearer test-maintainer-token"
+    assert client.get(url).content == b"validated inspection mesh"
+    assert client.get(url).headers["cache-control"] == "private, no-store"
+    dashboard = client.get("/api/v1/review/dashboard").json()
+    assert dashboard["versions"][0]["manifest"]["inspection_only"]
+    assert (
+        client.post(f"/api/v1/review/versions/{version.id}/publish").status_code == 409
+    )
+    with pytest.raises(ValueError, match="not complete releases"):
+        validate_release(folder, version.manifest)
+    job = queue_build(db, version)
+    db.commit()
+    assert not version.manifest["assets"] and not version.manifest["inspection_only"]
+    assert client.get(url).status_code == 200
+    queued = client.get("/api/v1/review/dashboard").json()["versions"][0]
+    assert queued["status"] == "building" and queued["manifest"]["inspection_only"]
+    imported = settings.RELEASE_ROOT / ".inspections" / str(version.id) / "car.glb"
+    original = imported.read_bytes()
+    imported.write_bytes(b"tampered")
+    assert client.get(url).status_code == 404
+    imported.write_bytes(original)
+    version.status = "failed"
+    db.commit()
+    assert build_preview(db, version)["manifest"]["inspection_only"]
+    # Full adoption uses a separate destination and the full artifact gate.
+    for prefix in ("preview_", "render_"):
+        for view in ("front", "side", "rear", "three_quarter"):
+            Image.new("RGB", (1, 1)).save(folder / f"{prefix}{view}.png")
+    calls = []
+    monkeypatch.setattr(
+        "app.services.local_builds.validate_release",
+        lambda *a: calls.append(a) or {"valid": True},
+    )
+    adopt_build(db, version.id, folder)
+    db.commit()
+    assert len(calls) == 1 and version.status == "ready"
+    assert not version.manifest["inspection_only"] and job.status == "succeeded"
+    assert (settings.RELEASE_ROOT / str(version.id) / "car.glb").is_file()
+
+
+@pytest.mark.parametrize("fault", ["source", "fingerprints", "queued", "geometry"])
+def test_invalid_inspection_never_becomes_available(
+    db, settings, monkeypatch, tmp_path, fault
+):
+    version, folder = inspection_fixture(db, settings, monkeypatch, tmp_path)
+    if fault == "source":
+        (folder / "wing_profiles.py").write_text("changed source")
+    elif fault == "fingerprints":
+        p = folder / "geometry.json"
+        data = json.loads(p.read_text())
+        data["component_hashes"].pop("nose")
+        p.write_text(json.dumps(data))
+    elif fault == "queued":
+        queue_build(db, version)
+    else:
+
+        def invalid(*args):
+            raise ValueError("Invalid mesh")
+
+        monkeypatch.setattr("app.services.local_builds.validate_geometry", invalid)
+    with pytest.raises(ValueError):
+        adopt_build(db, version.id, folder, inspection_only=True)
+    assert not version.manifest.get("inspection_only")
+    assert not (settings.RELEASE_ROOT / ".inspections" / str(version.id)).exists()
 
 
 def preparing(db, settings, monkeypatch):

@@ -43,4 +43,6 @@ if missing:
             "\n" + "\n".join(f"{key}={value}" for key, value in missing.items()) + "\n"
         )
 path.chmod(0o600)
-print("Local credentials are ready in .env. Use ADMIN_TOKEN to sign in at /review.")
+print(
+    "Local setup is ready in .env. The default Docker stack opens /review without a token prompt."
+)
