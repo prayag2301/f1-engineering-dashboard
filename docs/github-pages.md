@@ -14,7 +14,8 @@ PNGs. Navigation, direct team links, comparison, and downloads work under the
 repository subpath, without an API or database. The review route on Pages
 explains the archive and never requests credentials.
 
-Docker runs collection, Blender, and the authenticated review studio locally.
+Docker runs collection, Blender, and the token-free review studio locally on a
+loopback address. Set `LOCAL_REVIEW_ACCESS=false` for authenticated deployments.
 Monday collection does not automatically publish or deploy. After a reviewed
 release or rollback, export a new snapshot to update the public site.
 
@@ -95,9 +96,11 @@ git push origin codex/github-pages-release
 
 Use a new unique tag each time, and never replace an existing tag's assets.
 Large files stay outside Git history. CI checks both the compressed bundle SHA
-and every extracted asset. An 850 MiB archive cap leaves room for the application
-within GitHub Pages' 1 GB site limit. Growth beyond that requires an explicit
-storage decision; older history is never silently removed.
+and every extracted asset. The November wing update raises the archive cap from
+850 to 900 MiB to retain all published history alongside the two new builds.
+The static build also checks the complete exported site, including application
+files, against a conservative 1,000,000,000-byte Pages limit. Growth beyond these
+limits requires another storage decision; older history is never silently removed.
 
 ## Handover from the existing site
 

@@ -32,7 +32,8 @@ ASSETS = {"glb": "car.glb"} | {
     for view in VIEWS
 }
 # Leave room below Pages' 1 GB site limit for the application itself.
-MAX_ARCHIVE_BYTES = 850 * 1024 * 1024
+MAX_ARCHIVE_BYTES = 900 * 1024 * 1024
+MAX_SITE_BYTES = 1_000_000_000
 ASSET_PATTERN = re.compile(r"assets/[a-f0-9]{64}\.(glb|png)")
 SOURCE_FIELDS = (
     "id",
@@ -272,8 +273,19 @@ def validate(directory, require_baselines=False):
         raise ValueError("Unexpected files in the public archive.")
     size = sum(path.stat().st_size for path in files if path.is_file())
     if size > MAX_ARCHIVE_BYTES:
-        raise ValueError("Archive exceeds 850 MiB; reduce assets before deployment.")
+        raise ValueError(
+            "Archive exceeds the size limit; review asset storage before deployment."
+        )
     return {"versions": count, "unique_assets": len(checked), "bytes": size}
+
+
+def validate_site(directory):
+    directory = Path(directory)
+    summary = validate(directory / "archive")
+    size = sum(path.stat().st_size for path in directory.rglob("*") if path.is_file())
+    if size > MAX_SITE_BYTES:
+        raise ValueError("Complete site exceeds the 1 GB Pages limit.")
+    return summary | {"site_bytes": size}
 
 
 def export(api, output):
@@ -446,6 +458,8 @@ def main():
     command = commands.add_parser("validate")
     command.add_argument("directory", type=Path)
     command.add_argument("--require-baselines", action="store_true")
+    command = commands.add_parser("validate_site")
+    command.add_argument("directory", type=Path)
     args = vars(parser.parse_args())
     command = args.pop("command")
     try:
