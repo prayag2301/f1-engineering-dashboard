@@ -158,3 +158,58 @@ The fixture emits neutral front/rear wing PNGs at fixed 1280×720 cameras and
 to the input scene. Full render sampling is unchanged. Matching images support
 visual comparison; they do not establish full 4K quality or the combined runtime
 budget. Pilot artifacts are in `data/releases/realism-2026-9/`.
+
+### Wing shape controls (2026.10)
+
+The first geometry-plan pass adds an optional eighth airfoil-station column:
+the chord fraction of maximum camber (0.25–0.75). Seven-column profiles retain
+the original centered camber. A smooth remapping moves that maximum while
+preserving the leading/trailing positions. Exported skins and surface-mounted
+supports evaluate the same curve; existing rise/sweep controls still set twist
+and planform.
+
+`endplate_shoulder` supplies a third rail at the same stations as `endplate`.
+Its points describe the surface midpoint between the boundary rails, before
+the existing upper-edge roll. This first version permits bounded lateral
+shaping; height and longitudinal position remain the boundary midpoint to
+avoid folded patches. Both boundaries stay fixed. McLaren and Racing Bulls
+use small estimated shoulder offsets and spanwise camber-peak changes. These
+are reconstruction candidates, not newly measured dimensions or race upgrades.
+
+`wing_profiles.py` validates these controls before scene construction and when
+the backend loads the catalog. Worker/native builds freeze this helper beside
+the builder and catalog; adoption verifies its source and release validation
+requires its checksum for the new profile schema. Legacy annotation-only
+releases retain their original source set. Dockerfiles already copy the entire
+modeling directory; rebuild API and worker images together before using the
+new generator. Published snapshots are unchanged.
+
+Only the two wing assemblies should change for the pilots. Sampling ceilings
+are unchanged; full-build timing and final photographic accuracy still require
+the plan's separate acceptance gates. Local comparison artifacts belong under
+`data/releases/shape-2026-10/`.
+
+The [validation record](../data/references/shape-validation-2026-10.json) records
+149 backend tests, 14 archive tests, 14 Blender grid/variation cases and both
+browser smoke checks. Matched pilot exports change only the two wings, with
+approximately 2.1% more triangles. Neutral before/after fixtures show subtle
+contour changes; they do not establish photographic accuracy or a full-build
+performance result.
+
+For private Studio inspection before final renders exist, call
+`adopt_build(db, version_id, directory, inspection_only=True)` for a draft whose
+specification and declared component revisions match the frozen build. This
+checks the source, catalog, geometry and component history, then stores the
+assets under `.inspections/<version_id>` in the release volume. The version
+remains a draft: authenticated reviewers can rotate, isolate and compare its
+model, while final review and publication stay unavailable. A later full build
+uses the normal release directory and artifact gates. The checked import stays
+available while that build is queued or exporting geometry; the active build's
+validated preview takes precedence once available. A completed release uses
+its own assets without overwriting the inspection files.
+
+The local McLaren and Racing Bulls imports are recorded in
+[Studio inspection verification](../data/references/studio-inspection-2026-10.json).
+They retain the existing observation dates and published pointers. Their
+revisions also declare earlier reconstruction changes relative to the public
+2026.6 parents; the 2026.9-to-2026.10 comparison above changes only the wings.

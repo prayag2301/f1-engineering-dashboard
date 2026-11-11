@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-11-10",
+  "url": "http://localhost:3001/review",
+  "pilots": [
+    {
+      "id": "e85ae65c-abeb-4b29-aad6-967280c9099a",
+      "team": "racing_bulls",
+      "label": "VCARB 03 \u00b7 2026.10 wing geometry inspection",
+      "status": "building",
+      "private": true,
+      "glb_sha256": "ad65edf14d00172b5f378fef17f9c5784646b1fb18ec88bb81233900f32a4ca4"
+    },
+    {
+      "id": "dc8ae2d0-7903-482d-ad56-70f4608b79f0",
+      "team": "mclaren",
+      "label": "MCL40 \u00b7 2026.10 wing geometry inspection",
+      "status": "building",
+      "private": true,
+      "glb_sha256": "dc0c4e2767d209c8ee7b1ed43ac1385a1b2ff421f793236854255c14e5d17103"
+    }
+  ],
+  "checks": [
+    "private authenticated GLB access",
+    "artifact checksum",
+    "excluded from public archive",
+    "both models rendered",
+    "component isolation",
+    "neutral surfaces",
+    "two-constructor comparison",
+    "publication unavailable"
+  ],
+  "page_errors": [],
+  "backend_tests_passed": 155,
+  "frontend_typecheck": "passed",
+  "local_services": "api, worker, scheduler and web rebuilt; API updated for inspection fallback without restarting active render jobs",
+  "limits": [
+    "Full renders were queued in Studio during inspection; they are not approved or published.",
+    "This check verifies inspection functionality, not photographic accuracy or final 4K quality."
+  ],
+  "access_mode_change": "After the authenticated import checks, local Docker Studio enabled LOCAL_REVIEW_ACCESS. Local review now needs no token; the public archive still lists only published releases.",
+  "browser_e2e_passed": 6
+}

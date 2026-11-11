@@ -59,6 +59,35 @@ def test_cookie_auth_and_cross_site_rejection(client):
     assert client.get("/api/v1/review/dashboard").status_code == 401
 
 
+def test_local_studio_needs_no_token_but_keeps_request_intent_checks(
+    client, settings, monkeypatch
+):
+    monkeypatch.setattr(settings, "LOCAL_REVIEW_ACCESS", True)
+    monkeypatch.setattr(settings, "ADMIN_TOKEN", "")
+    monkeypatch.setattr(settings, "SESSION_SECRET", "")
+    assert client.get("/api/v1/review/session").json() == {
+        "authenticated": True,
+        "local_access": True,
+    }
+    assert client.get("/api/v1/review/dashboard").status_code == 200
+    assert client.post("/api/v1/review/collect").status_code == 403
+    assert (
+        client.post(
+            "/api/v1/review/collect",
+            headers={
+                "X-F1-Review": "1",
+                "Sec-Fetch-Site": "cross-site",
+                "Authorization": "Bearer unused",
+            },
+        ).status_code
+        == 403
+    )
+    assert (
+        client.post("/api/v1/review/collect", headers={"X-F1-Review": "1"}).status_code
+        == 202
+    )
+
+
 def test_demo_routes_are_opt_in(admin):
     response = admin.post("/api/v1/seed/")
     assert response.status_code == 403

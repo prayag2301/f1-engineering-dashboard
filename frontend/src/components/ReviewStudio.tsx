@@ -23,6 +23,7 @@ const localDate = (date: string) => new Date(date).toISOString().slice(0, 16);
 
 export default function ReviewStudio() {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+  const [localAccess, setLocalAccess] = useState(false);
   const [token, setToken] = useState("");
   const [data, setData] = useState<Dashboard | null>(null);
   const [catalog, setCatalog] = useState<Catalog | null>(null);
@@ -40,8 +41,11 @@ export default function ReviewStudio() {
     setCatalog(cat);
   }, []);
   useEffect(() => {
-    request<{ authenticated: boolean }>("/review/session")
-      .then((v) => setAuthenticated(v.authenticated))
+    request<{ authenticated: boolean; local_access?: boolean }>("/review/session")
+      .then((v) => {
+        setLocalAccess(!!v.local_access);
+        setAuthenticated(v.authenticated);
+      })
       .catch((e) => setError(e.message));
   }, []);
   useEffect(() => {
@@ -91,6 +95,8 @@ export default function ReviewStudio() {
       setBusy(false);
     }
   }
+  if (authenticated === null && !error)
+    return <p role="status">Opening review studio…</p>;
   if (authenticated !== true)
     return (
       <div className="login-card">
@@ -140,7 +146,7 @@ export default function ReviewStudio() {
             A publication records what you can substantiate.
           </p>
         </div>
-        <button onClick={logout}>Sign out</button>
+        {!localAccess && <button onClick={logout}>Sign out</button>}
       </div>
       <div className="review-tabs" role="tablist" aria-label="Review sections">
         {[
@@ -373,7 +379,7 @@ function DraftReview({
   const canCompare = comparisons.some(
     (v) =>
       v.team_key !== version.team_key &&
-      ["building", "ready", "published"].includes(v.status) &&
+      ["draft", "building", "ready", "published"].includes(v.status) &&
       v.manifest.assets.glb,
   );
   return (
@@ -397,6 +403,12 @@ function DraftReview({
           Geometry preview: the mesh passed validation; studio renders are still
           building. Approval and publication remain locked until every required
           artifact is complete.
+        </p>
+      )}
+      {version.manifest.inspection_only && (
+        <p className="notice">
+          Inspection draft: explore the imported model below. Final studio renders
+          and publication review are still pending.
         </p>
       )}
       {version.manifest.assets.glb ? (

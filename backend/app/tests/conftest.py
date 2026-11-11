@@ -41,6 +41,7 @@ def settings(monkeypatch, tmp_path):
     settings = get_settings()
     monkeypatch.setattr(settings, "ADMIN_TOKEN", "test-maintainer-token")
     monkeypatch.setattr(settings, "SESSION_SECRET", "test-session-secret-" * 3)
+    monkeypatch.setattr(settings, "LOCAL_REVIEW_ACCESS", False)
     monkeypatch.setattr(settings, "RELEASE_ROOT", tmp_path)
     monkeypatch.setattr(settings, "ENABLE_DEMO_DATA", False)
     return settings

@@ -105,13 +105,16 @@ def login(payload: Login, request: Request, response: Response):
 
 @auth.get("/session")
 def session(request: Request):
-    return {"authenticated": is_admin(request)}
+    return {
+        "authenticated": is_admin(request),
+        "local_access": get_settings().LOCAL_REVIEW_ACCESS,
+    }
 
 
 @admin.delete("/session")
 def logout(response: Response):
     response.delete_cookie(COOKIE, path="/")
-    return {"authenticated": False}
+    return {"authenticated": get_settings().LOCAL_REVIEW_ACCESS}
 
 
 @public.get("/cars/catalog")
@@ -253,7 +256,7 @@ def draft_preview_asset(
     preview = build_preview(db, get_version(db, version_id))
     if (
         not preview
-        or preview["job_id"] != str(job_id)
+        or preview.get("job_id") != str(job_id)
         or preview["attempt"] != attempt
         or filename
         not in {a["filename"] for a in preview["manifest"]["assets"].values()}

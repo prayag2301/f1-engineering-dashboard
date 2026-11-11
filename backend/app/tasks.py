@@ -222,6 +222,9 @@ def build_version(job_id, version_id, attempt):
                 "This draft targets a different modeling generator. Create a new draft with the current references instead of rebuilding it with different source code."
             )
         shutil.copy2(settings.MODELING_ROOT / "build_car.py", stage / "build_car.py")
+        shutil.copy2(
+            settings.MODELING_ROOT / "wing_profiles.py", stage / "wing_profiles.py"
+        )
         shutil.copy2(settings.MODELING_ROOT / "catalog.json", stage / "catalog.json")
         shutil.copy2(
             settings.REFERENCE_ROOT / "regulations-2026.json",
@@ -280,6 +283,8 @@ def build_version(job_id, version_id, attempt):
             for view in ("front", "side", "rear", "three_quarter")
         }
     )
+    if (stage / "wing_profiles.py").is_file():
+        filenames["wing_profiles"] = "wing_profiles.py"
     assets = {
         key: {
             "filename": name,

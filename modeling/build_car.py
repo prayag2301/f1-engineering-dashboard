@@ -18,12 +18,16 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from wing_profiles import camber_shape, validate_wing_profiles
+
 PI = math.pi
 CAR_OBJECTS = []
 COMPONENT = "chassis"
 ATTACHMENTS = []
 WING_ATTACHMENTS = []
 CATALOG = json.loads((Path(__file__).resolve().parent / "catalog.json").read_text())
+validate_wing_profiles(CATALOG["teams"])
 
 
 def V(point):
@@ -417,13 +421,15 @@ def sectional_wing(name, stations, mat, *, split=False):
                 )
             else:
                 x = stations[-1][0] * (2 * i / spans - 1)
-            z, y, chord, rise, camber, thickness = station_sample(stations, abs(x))
+            section = station_sample(stations, abs(x))
+            z, y, chord, rise, camber, thickness = section[:6]
+            peak = section[6] if len(section) == 7 else 0.5
             for j in range(sections):
                 theta = 2 * PI * j / sections
                 t = (1 - math.cos(theta)) / 2
                 skin = thickness * math.sin(theta) * (1 - 0.72 * t)
                 verts.append(
-                    (x, y + rise * t + camber * math.sin(PI * t) + skin, z + chord * t)
+                    (x, y + rise * t + camber * camber_shape(t, peak) + skin, z + chord * t)
                 )
         for i in range(spans):
             for j in range(sections):
@@ -446,21 +452,27 @@ def sectional_wing(name, stations, mat, *, split=False):
 
 def wing_point(stations, x, t, skin=1):
     """Point on the same thickness-aware airfoil used for the exported skin."""
-    z, y, chord, rise, camber, thickness = station_sample(stations, abs(x))
-    return (x, y + rise * t + camber * math.sin(PI * t)
+    section = station_sample(stations, abs(x))
+    z, y, chord, rise, camber, thickness = section[:6]
+    peak = section[6] if len(section) == 7 else 0.5
+    return (x, y + rise * t + camber * camber_shape(t, peak)
             + skin * thickness * 2 * math.sqrt(t * (1 - t)) * (1 - 0.72 * t),
             z + chord * t)
 
 
-def ruled_skin(name, rows, mat, thickness=0.005, *, edge_roll=0, crown=0):
+def ruled_skin(name, rows, mat, thickness=0.005, *, edge_roll=0, crown=0, shoulder=None):
     """Curved thin shell between two 3D rails, with rounded solid edges."""
     verts, faces = [], []
-    across = 16 if edge_roll or crown else 4
+    across = 16 if edge_roll or crown or shoulder is not None else 4
     for i in range(49):
-        a = station_sample(rows, rows[0][0] + (rows[-1][0] - rows[0][0]) * i / 48)
+        station = rows[0][0] + (rows[-1][0] - rows[0][0]) * i / 48
+        a = station_sample(rows, station)
+        middle = station_sample(shoulder, station) if shoulder is not None else None
         for j in range(across + 1):
             t = j / across
             point = (1 - t) * a[:3] + t * a[3:]
+            if middle is not None:
+                point += 4 * t * (1 - t) * (middle - (a[:3] + a[3:]) / 2)
             point[1] += crown * math.sin(PI * t)
             if edge_roll:
                 # Curl only the upper rim; flap contact below it stays on the rail.
@@ -567,8 +579,9 @@ def build_front_wing(team, p, carbon, paint):
                 rise,
                 camber * camber_scale,
                 thick,
+                *extra,
             ]
-            for x, z, y, c, rise, camber, thick in rows
+            for x, z, y, c, rise, camber, thick, *extra in rows
         ]
         adjusted_profiles[name] = adjusted
         sectional_wing(name, adjusted, carbon, split=name != "mainplane")
@@ -578,6 +591,8 @@ def build_front_wing(team, p, carbon, paint):
             [[t, side * x, y, z, side * a, b, c] for t, x, y, z, a, b, c in end],
             carbon,
             edge_roll=-side * shape.get("upper_edge_roll", 0),
+            shoulder=[[t, side * x, y, z] for t, x, y, z in shape["endplate_shoulder"]]
+            if "endplate_shoulder" in shape else None,
         )
         # Outboard foot is a swept laminate surface, not a cylindrical tip roll.
         ruled_skin(
@@ -835,8 +850,9 @@ def build_rear_wing(team, p, carbon):
                     r,
                     k * p["camber"] / reference["camber"],
                     t,
+                    *extra,
                 ]
-                for x, z, y, c, r, k, t in rows
+                for x, z, y, c, r, k, t, *extra in rows
             ]
         )
         sectional_wing(
@@ -848,9 +864,9 @@ def build_rear_wing(team, p, carbon):
     # the same airfoil sections so changes of chord cannot leave loose pieces.
     for x in (-0.44, 0.44):
         for i, (lower, upper) in enumerate(zip(scaled_profiles, scaled_profiles[1:])):
-            z, y, chord, rise, camber, _ = station_sample(lower, abs(x))
+            z, y, chord, rise, camber, _ = station_sample(lower, abs(x))[:6]
             a = (x, y + rise * 0.92 + camber * math.sin(PI * 0.92), z + chord * 0.92)
-            z, y, chord, rise, camber, _ = station_sample(upper, abs(x))
+            z, y, chord, rise, camber, _ = station_sample(upper, abs(x))[:6]
             b = (x, y + rise * 0.12 + camber * math.sin(PI * 0.12), z + chord * 0.12)
             if shape:
                 a, b = wing_point(lower, x, 0.92), wing_point(upper, x, 0.12, -1)
@@ -902,9 +918,11 @@ def build_rear_wing(team, p, carbon):
             ],
             carbon,
             0.007,
+            shoulder=[[t, side * x, y, z] for t, x, y, z in shape["endplate_shoulder"]]
+            if "endplate_shoulder" in shape else None,
         )
         spacing = shape.get("pylon_half_spacing", 0.13)
-        z0, y0, chord, rise, camber, _ = station_sample(scaled_profiles[0], spacing)
+        z0, y0, chord, rise, camber, _ = station_sample(scaled_profiles[0], spacing)[:6]
         # Follow the underside of each team's mainplane; the old fixed .83 m
         # top left a visible gap under the higher Mercedes wing.
         top = [

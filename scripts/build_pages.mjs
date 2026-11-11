@@ -19,7 +19,6 @@ const env = {
   NEXT_PUBLIC_BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH ?? "/f1-engineering-dashboard",
 };
 run(process.execPath, ["node_modules/next/dist/bin/next", "build"], path.join(root, "frontend"), env);
-run(python, ["scripts/pages.py", "validate", "frontend/out/archive"], root);
 writeFileSync(path.join(root, "frontend/out/.nojekyll"), "");
 writeFileSync(path.join(root, "frontend/out/deployment.json"), JSON.stringify({
   commit: process.env.GITHUB_SHA || "local-preview",
@@ -27,3 +26,4 @@ writeFileSync(path.join(root, "frontend/out/deployment.json"), JSON.stringify({
   base_path: env.NEXT_PUBLIC_BASE_PATH,
   built_at: new Date().toISOString(),
 }, null, 2) + "\n");
+run(python, ["scripts/pages.py", "validate_site", "frontend/out"], root);

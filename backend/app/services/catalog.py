@@ -1,4 +1,5 @@
 import hashlib
+import importlib.util
 import json
 import math
 from functools import lru_cache
@@ -7,7 +8,16 @@ from app.config import get_settings
 
 @lru_cache()
 def catalog():
-    return json.loads((get_settings().MODELING_ROOT / "catalog.json").read_text())
+    root = get_settings().MODELING_ROOT
+    data = json.loads((root / "catalog.json").read_text())
+    if data.get("wing_profile_schema_version") == 1:
+        spec = importlib.util.spec_from_file_location(
+            "wing_profiles", root / "wing_profiles.py"
+        )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        module.validate_wing_profiles(data["teams"])
+    return data
 
 
 def validate_parameters(component, parameters):

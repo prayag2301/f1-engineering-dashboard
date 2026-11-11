@@ -86,6 +86,7 @@ export interface CarVersion {
     component_hashes?: Record<string, string>;
     no_new_modeled_change: boolean;
     reconstruction_notice: string;
+    inspection_only?: boolean;
     validation?: { triangles: number; glb_bytes: number; textures: number };
   };
 }

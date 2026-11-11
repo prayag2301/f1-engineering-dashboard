@@ -30,7 +30,7 @@ def main():
     def build(team):
         out = (args.output / team).resolve()
         out.mkdir(exist_ok=False)  # Never replace an earlier frozen build.
-        for name in ["build_car.py", "catalog.json"]:
+        for name in ["build_car.py", "wing_profiles.py", "catalog.json"]:
             shutil.copy2(ROOT / "modeling" / name, out / name)
         shutil.copy2(
             ROOT / "data/references/regulations-2026.json", out / "regulations.json"

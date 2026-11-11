@@ -1,0 +1,190 @@
+{
+  "validated_at": "2026-11-11",
+  "generator_version": "2026.10",
+  "code_revision": "77fcf60d59b8131abc2b3754e4ee383d526576f7",
+  "scope": "Reviewed McLaren and Racing Bulls September reconstruction corrections; first camber-peak/endplate-shoulder increment, not new November race upgrades.",
+  "snapshot": {
+    "release": "pages-2026-11-11-wing-shape",
+    "sha256": "23badc3c346b025f5f7d85b7e12b81a5f5e314cb89a8f8574dac15b742df97a0",
+    "versions": 19,
+    "unique_assets": 171,
+    "archive_bytes": 916536438,
+    "local_static_site_bytes": 918897448,
+    "other_current_pointers_unchanged": 9,
+    "all_previous_versions_retained": true
+  },
+  "validation": {
+    "backend_tests_previously_passed": 155,
+    "archive_tests_previously_passed": 15,
+    "blender_grid_and_parameter_cases_previously_passed": 14,
+    "local_studio_browser_tests_previously_passed": 6,
+    "pages_browser_tests_passed_with_final_archive": 27,
+    "static_build_typecheck_lint": "passed",
+    "full_release_artifact_validation": "passed for both releases",
+    "four_view_visual_review": "completed for both releases",
+    "checkpoint_hash_verification": "16 files verified after resume; all 11 Racing Bulls component hashes match reviewed candidate"
+  },
+  "pilots": {
+    "mclaren": {
+      "version_id": "dc8ae2d0-7903-482d-ad56-70f4608b79f0",
+      "parent_id": "cfb61978-d2e8-41ac-b66d-ec4765813acb",
+      "previous_current_id": "cfb61978-d2e8-41ac-b66d-ec4765813acb",
+      "published_at": "2026-11-10T14:33:34.150569+00:00",
+      "assets": {
+        "glb": {
+          "sha256": "dc0c4e2767d209c8ee7b1ed43ac1385a1b2ff421f793236854255c14e5d17103",
+          "bytes": 6478924
+        },
+        "preview_front": {
+          "sha256": "c5365d86c199f7142257140f090335e4bbde66f0e84bc9342d5e86b29c5a4f7a",
+          "bytes": 2463815
+        },
+        "preview_side": {
+          "sha256": "f6c2acd67d9bc9d427bdb3076dc392080405cb6a304acb9bb509f1dbfca7ce42",
+          "bytes": 2640759
+        },
+        "preview_rear": {
+          "sha256": "a4d57bae087cb4f50e2cd170e4f826da8b0b996f20621f62a24e7158aedc6166",
+          "bytes": 2573941
+        },
+        "preview_three_quarter": {
+          "sha256": "d5abb558c6193fbd98a5cd54e813fbcc75ddc475ef201b8bdb0ea9ce698008c4",
+          "bytes": 2707033
+        },
+        "render_front": {
+          "sha256": "590fb5a72cc8eae5e67050ddc0676bc7358a37a1077e48127b86a137a7aaaac9",
+          "bytes": 9612953
+        },
+        "render_side": {
+          "sha256": "cfe59fbad79b0119c8d3f373c893143bd669039ac794796eb4db38274a4f8db3",
+          "bytes": 10313562
+        },
+        "render_rear": {
+          "sha256": "58dc5a1e19fddbafa2e0106400f9ba16cb60d082008cb810e59b02222c59c388",
+          "bytes": 10106043
+        },
+        "render_three_quarter": {
+          "sha256": "95b04a2554e36bc0d5fe5df9a79da3121ae0f6bde7e3b71d5c31cde0c0433150",
+          "bytes": 10556540
+        }
+      },
+      "component_hashes": {
+        "chassis": "4d80a96e31296bfe41b25742903d7242dbc92d2b52f232d310ad949ea6bf7c87",
+        "diffuser": "4933a56fbf99725a99f5fa571e8f6c713aff90faf630515440212dbec5288956",
+        "engine_cover": "0b5287c896b2b336d3a6868a686189cbba37334ee7849cad7aeb7ce60a15eb8f",
+        "floor": "b6444fbcb4e1c6895dd0688dc8c16e1fc3694b188d86217c4e5046d7d3782d4d",
+        "front_wing": "d29bbdcb2e84fe9d4c33949aba004cac22b2448d6251ebfdd97cf9b5c51afa61",
+        "halo": "bd861344152c942242a360a5181a81a8b59c9aaba4dcaf6306a92c13f9fda8ca",
+        "nose": "1e922906d6fd66c2f6e743e37df629225fb8b72d835a7d77aed4808306e357c3",
+        "rear_wing": "fc8379089db60447b5dbffd14dd96414c36cb6963e7d3e8d597ad815bfd4aee3",
+        "sidepods": "e6d4d305af8e9aff408103cda00b6e7c9eddf40f576ef714914ee4b55d19e48a",
+        "suspension": "32e028f63ced6d80d7251d31634623a0035c7eb2a0e1e7c6b1d5e36aaab03388",
+        "wheels": "3ec589209bddc00bed28e1acf7e6025c81f5ed9c21be1844c1b750949bfcbf0c"
+      },
+      "visual_review": {
+        "front": true,
+        "side": true,
+        "rear": true,
+        "three_quarter": true,
+        "notes": "Reviewed front, side, rear and three-quarter production views against the retained September McLaren track and technical references, plus isolated neutral wing comparisons. Swept front flaps, open slots, endplate returns, the shallow rear bowl and paired supports remain visible and connected. Generator 2026.10 adds estimated camber-peak and endplate shoulder controls; other assemblies match the 2026.9 comparison baseline. Relative to the published 2026.6 parent this release also includes the declared earlier exterior-detail corrections. This is a reconstruction correction of the same September configuration, not evidence of a November upgrade. Exact sections, body proportions, hidden underside geometry and actuator internals remain approximate; sponsor artwork is omitted and residual render noise remains. No factory-dimensional, aerodynamic-performance or total-build-time compliance claim.",
+        "reference_urls": [
+          "https://cdn-7.motorsport.com/images/mgl/6VyKmKGY/s1100/dettaglio-tecnico-mclaren-mcl4.webp",
+          "https://cdn-4.motorsport.com/images/mgl/01QNkNv0/s1100/dettaglio-tecnico-mclaren-mcl4.webp",
+          "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#mclaren"
+        ],
+        "reviewed_at": "2026-11-10T14:33:22.565381+00:00"
+      },
+      "completed_image_render_seconds": 2369.86
+    },
+    "racing_bulls": {
+      "version_id": "e85ae65c-abeb-4b29-aad6-967280c9099a",
+      "parent_id": "22bc2b98-d7c8-4f73-8587-db81039866ca",
+      "previous_current_id": "22bc2b98-d7c8-4f73-8587-db81039866ca",
+      "published_at": "2026-11-11T20:23:43.564376+00:00",
+      "assets": {
+        "glb": {
+          "sha256": "80d5d10357c8ea1ae75f7d39e9ca0b56f10b8fdc79b88a51b376ef0136c7ba95",
+          "bytes": 6491916
+        },
+        "preview_front": {
+          "sha256": "5faeffa1432bb1d5303cbd70dcccaf7f6b12a7aa36028cfccfcb5f2ee14d3ebb",
+          "bytes": 2396819
+        },
+        "preview_side": {
+          "sha256": "89192e5043be7575bd1199f8c81ea2ebe10488b436e6358ad3def26e0a36d13d",
+          "bytes": 2484020
+        },
+        "preview_rear": {
+          "sha256": "98430ea45892f2923f4c8b8f06b3befdf4166f99b5150bc6000ec8189bec6f9f",
+          "bytes": 2491786
+        },
+        "preview_three_quarter": {
+          "sha256": "429dc8957d0437968e9423a7ec3f39aa9bac4c4b0cac4dff281625aec6b9fce7",
+          "bytes": 2616738
+        },
+        "render_front": {
+          "sha256": "b72c7b536881679bcbb26f127cbb33d896b5e550823dd728505d9bd73718f186",
+          "bytes": 9353953
+        },
+        "render_side": {
+          "sha256": "bbb284f6855cfd58e6b1a4afa1411c2cf72aecf89142d5de40bfed7828b3d12c",
+          "bytes": 9720153
+        },
+        "render_rear": {
+          "sha256": "3349d69ea1192476be837283c45c4749bfe4ab17bbfe9cdb34a034cd51e2bfed",
+          "bytes": 9769039
+        },
+        "render_three_quarter": {
+          "sha256": "eed9b972a7841c0c2caac619ae856eb87317ceab9771064b0a1a5aa1bad46502",
+          "bytes": 10217221
+        }
+      },
+      "component_hashes": {
+        "chassis": "4524f3f227a00c268913ce4feb5fab7ab942a86991b58b09c1f11bad63820161",
+        "diffuser": "f60e0a9caf6496168434f0917d3937bff76040b2defc372405afea290b955913",
+        "engine_cover": "6e1e760b21fd030633b4bc702a6ced2de302e03e82e577698a37e9a085e74ab2",
+        "floor": "4247e07e6badcdaca5b2bb18fce3372825b69276035dc4dadf195cbad0a62e5e",
+        "front_wing": "dc295f5142f5f2213aa5e9467787b296b11aa0cecd12ce2d38c46b7326f73d18",
+        "halo": "5afefe777c42e1e44a612ac0426c72341b246ab8e47f03ad21089b2fb2d3c936",
+        "nose": "bafa4385c20aba56e444243c95fdf9bb7256a6ee37dabf6d5d447e3c91dd7cdd",
+        "rear_wing": "f2f8101b269347d4f5f334787a98c4476083b04b6a9113c0ef39ed2b2cb1ad74",
+        "sidepods": "6e8bf36d617adc82525ccce78ec8f56c84dcfb522aeeb5c5c4b3542e6def0ba0",
+        "suspension": "89be8fca45f5195980a166037c1db1893a74396decf8d1ed1b9fabd8dc722242",
+        "wheels": "8dfd8c8b6a676190e71ef4cc9d4dec3b948b2602cf37fa174d43d945aa3baff7"
+      },
+      "visual_review": {
+        "front": true,
+        "side": true,
+        "rear": true,
+        "three_quarter": true,
+        "notes": "Reviewed front, side, rear and three-quarter production views against retained September Racing Bulls track and technical references, plus the prior isolated neutral wing comparisons. The broad front flap silhouette, open slots, contoured endplates, rear central bowl and paired supports remain visible and connected. The full worker geometry matches all eleven reviewed candidate component hashes. Generator 2026.10 adds estimated camber-peak and endplate shoulder controls; other assemblies match the 2026.9 comparison baseline. Relative to the published 2026.6 parent this release also includes declared earlier exterior-detail corrections. The rear views were resumed from the checksummed Blender 4.3.2 scene at the same CPU/160-sample settings; six completed images were retained. This is a reconstruction correction of the same September configuration, not evidence of a November race upgrade. Exact sections, body proportions, concealed underside geometry and actuator internals remain approximate; sponsor artwork is omitted and residual render noise remains. No factory-dimensional, aerodynamic-performance or total-build-time compliance claim.",
+        "reference_urls": [
+          "https://cdn-4.motorsport.com/images/mgl/YP74B4B2/s1100/dettaglio-tecnico-racing-bulls.webp",
+          "https://cdn-5.motorsport.com/images/mgl/0R7BZqZ2/s1100/arvid-lindblad-racing-bulls.webp",
+          "https://es.motorsport.com/f1/galleries/galeria-fotos-madring-viernes-libres1/14036/#racing_bulls"
+        ],
+        "reviewed_at": "2026-11-11T20:23:42.743157+00:00"
+      },
+      "completed_image_render_seconds": 2483.53
+    }
+  },
+  "limitations": [
+    "Numerical wing sections, body proportions and hidden surfaces are approximate exterior reconstructions, not measured factory geometry.",
+    "Residual render noise and simplified sponsor-free liveries remain.",
+    "Completed-image timing excludes job setup, interrupted rear-preview work and checkpoint downtime; it does not establish the original 20\u201330% full-build budget.",
+    "No repeated matched full-build benchmark or second-device browser benchmark was performed for this publication."
+  ],
+  "checkpoint_resume": {
+    "blender_version": "4.3.2",
+    "device": "CPU",
+    "samples": 160,
+    "retained_images": 6,
+    "resumed_images": [
+      "preview_rear.png",
+      "render_rear.png"
+    ],
+    "frozen_geometry_unchanged": true,
+    "helper_sha256": "d126e2292ad08a5c3a929707ea30edf3c91de0eac131b5cbc788c745876f0c82",
+    "checkpoint_sha256": "78b00943dca822a756808849bd826cadcc05503396c3e894ab09921db34015e8"
+  }
+}

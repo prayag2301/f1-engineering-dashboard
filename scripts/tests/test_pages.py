@@ -214,8 +214,18 @@ class ArchiveTests(unittest.TestCase):
 
     def test_oversized_archives_are_rejected(self):
         with patch.object(pages, "MAX_ARCHIVE_BYTES", 1):
-            with self.assertRaisesRegex(ValueError, "850 MiB"):
+            with self.assertRaisesRegex(ValueError, "Archive exceeds the size limit"):
                 pages.validate(self.directory)
+
+    def test_complete_site_limit_includes_application_files(self):
+        site = self.directory.parent
+        archive_bytes = pages.validate(self.directory)["bytes"]
+        (site / "index.html").write_bytes(b"application")
+        with patch.object(pages, "MAX_SITE_BYTES", archive_bytes + 11):
+            self.assertEqual(pages.validate_site(site)["site_bytes"], archive_bytes + 11)
+        with patch.object(pages, "MAX_SITE_BYTES", archive_bytes + 10):
+            with self.assertRaisesRegex(ValueError, "Complete site exceeds"):
+                pages.validate_site(site)
 
     def test_tar_path_traversal_links_duplicates_and_devices_are_rejected(self):
         for name, kind in [

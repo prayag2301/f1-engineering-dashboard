@@ -368,10 +368,19 @@ def test_artifact_gate_checks_editable_sources_and_all_render_sizes(tmp_path):
     manifest["assets"]["render_front"]["sha256"] = sha256(image_path)
     with pytest.raises(ValueError, match="dimensions"):
         validate_release(tmp_path, manifest)
+    Image.new("RGB", (3840, 2160)).save(image_path)
+    manifest["assets"]["render_front"]["sha256"] = sha256(image_path)
+    (tmp_path / "catalog.json").write_text(
+        json.dumps({"wing_profile_schema_version": 1})
+    )
+    manifest["assets"]["catalog"]["sha256"] = sha256(tmp_path / "catalog.json")
+    with pytest.raises(ValueError, match="frozen wing_profiles"):
+        validate_release(tmp_path, manifest)
 
 
+@pytest.mark.parametrize("with_helper", [False, True])
 def test_annotation_build_reuses_every_parent_render_without_blender(
-    db, settings, monkeypatch
+    db, settings, monkeypatch, with_helper
 ):
     from sqlalchemy.orm import sessionmaker
 
@@ -394,6 +403,8 @@ def test_annotation_build_reuses_every_parent_render_without_blender(
             for view in VIEWS
         }
     )
+    if with_helper:
+        names["wing_profiles"] = "wing_profiles.py"
     hashes = {key: "test-component-hash" for key in parent.component_revisions}
     for key, name in names.items():
         (folder / name).write_text(
